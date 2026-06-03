@@ -70,6 +70,29 @@ bundle exec rspec
 4. Run the server: `rails server`
 5. Access at [http://localhost:3000](http://localhost:3000)
 
+## Running With Docker
+
+Build and start the app with PostgreSQL:
+
+```sh
+docker compose up --build
+```
+
+The app will be available at [http://localhost:3000](http://localhost:3000).
+The container runs `rails db:prepare` automatically before starting the server.
+
+To load sample data:
+
+```sh
+docker compose exec web rails db:seed
+```
+
+To run specs:
+
+```sh
+docker compose exec web bundle exec rspec
+```
+
 ## Admin Access
 
 - Default admin user (from seeds):
