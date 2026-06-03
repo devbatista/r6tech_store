@@ -8,7 +8,6 @@
     <li>
       <strong><%= link_to product.name, product_path(product) %></strong>
       - <%= number_to_currency(product.price) %>
-      (<%= product.stock %> em estoque)
     </li>
   <% end %>
 </ul>

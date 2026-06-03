@@ -2,7 +2,6 @@ puts "Clearing old data..."
 
 OrderItem.delete_all
 Order.delete_all
-ProductStock.delete_all
 Product.delete_all
 Category.delete_all
 Storage.delete_all

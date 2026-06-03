@@ -47,15 +47,15 @@ RSpec.describe Category, type: :model do
   describe "products relationships" do
     it "can have many products" do
       category = Category.create!(name: "Electronics")
-      product1 = Product.create!(name: "TV", price: 1000, stock: 10, category: category)
-      product2 = Product.create!(name: "Radio", price: 100, stock: 5, category: category)
+      product1 = Product.create!(name: "TV", price: 1000, category: category)
+      product2 = Product.create!(name: "Radio", price: 100, category: category)
       expect(category.products).to(include(product1, product2))
       expect(category.products.count).to(eq(2))
     end
 
     it "nullifies product category on category destroy" do
       category = Category.create!(name: "Books")
-      product = Product.create!(name: "Shop book", price: 50, stock: 3, category: category)
+      product = Product.create!(name: "Shop book", price: 50, category: category)
       category.destroy
       expect(product.reload.category_id).to(be_nil)
     end

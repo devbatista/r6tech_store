@@ -348,22 +348,6 @@
     }
 }
 
-.block-stock {
-    @include flex(center,center);
-    width: max-content;
-    height: 24px;
-    padding: 2px 8px;
-    gap: 10px;
-    border-radius: 4px;
-    background: var(--Surface-3);
-    color: var(--Secondary);
-    font-size: 12px;
-    font-weight: 500;
-    &.bg-1 {
-        background: #EDEDED;
-    }
-}
-
 .block-available {
     @include flex(center,center);
     width: max-content;

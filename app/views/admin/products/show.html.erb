@@ -4,7 +4,6 @@
 <p><strong>Category:</strong> <%= @product.category&.name %></p>
 <p><strong>Description:</strong> <%= @product.description %></p>
 <p><strong>Price:</strong> <%= number_to_currency(@product.price) %></p>
-<p><strong>Stock:</strong> <%= @product.stock %></p>
 
 <%= link_to "Edit", edit_admin_product_path(@product), class: "btn btn-warning" %>
 <%= link_to "Back", admin_products_path, class: "btn btn-secondary" %>

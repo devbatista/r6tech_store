@@ -11,7 +11,8 @@ RSpec.describe OrderItem, type: :model do
   describe "validação de preço" do
     let(:user) { User.create!(name: "Teste", email: "teste@email.com", password: "123456") }
     let(:order) { Order.create!(user: user, status: "pending", total: 10) }
-    let(:product) { Product.create!(name: "Produto", price: 10, stock: 5) }
+    let(:category) { Category.create!(name: "Produtos") }
+    let(:product) { Product.create!(name: "Produto", price: 10, category: category) }
 
     it "não permite preço negativo" do
       order_item = OrderItem.new(order: order, product: product, quantity: 1, price: -1)

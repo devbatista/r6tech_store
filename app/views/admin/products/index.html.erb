@@ -68,12 +68,6 @@
             <div class="body-title">Price</div>
           </li>
           <li>
-            <div class="body-title">Quantity</div>
-          </li>
-          <li>
-            <div class="body-title">Stock</div>
-          </li>
-          <li>
             <div class="body-title">Start date</div>
           </li>
           <li>
@@ -90,14 +84,6 @@
               </div>
               <div class="body-text text-main-dark mt-4">#<%= product.id[0,8] %></div>
               <div class="body-text text-main-dark mt-4"><%= number_to_currency(product.price) %></div>
-              <div class="body-text text-main-dark mt-4"><%= product.stock_quantity %></div>
-              <div>
-                <% if product.in_stock? %>
-                  <div class="block-available bg-1 fw-7">In Stock</div>
-                <% else %>
-                  <div class="block-stock bg-1 fw-7">Out of stock</div>
-                <% end %>
-              </div>
               <div class="body-text text-main-dark mt-4"><%= product.created_at.strftime("%d/%m/%Y") %></div>
               <div class="list-icon-function">
                 <div class="item eye">
