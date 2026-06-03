@@ -60,6 +60,9 @@
           <li>
             <div class="body-title">Email</div>
           </li>
+          <li>
+            <div class="body-title">Action</div>
+          </li>
         </ul>
         <ul class="flex flex-column">
           <% @clients.each do |client| %>
@@ -77,6 +80,13 @@
               <div class="body-text"><%= client.phone %></div>
               <div class="body-text"><%= client.birthdate %></div>
               <div class="body-text"><%= client.email %></div>
+              <div class="list-icon-function">
+                <div class="item eye">
+                  <%= link_to admin_client_path(client) do %>
+                    <i class="icon-eye"></i>
+                  <% end %>
+                </div>
+              </div>
             </li>
           <% end %>
         </ul>

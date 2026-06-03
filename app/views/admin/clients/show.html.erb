@@ -80,7 +80,7 @@
         <% if @addresses.any? %>
           <ul class="flex flex-column has-divider-line">
             <% @addresses.each do |address| %>
-              <li class="py-10">
+              <li style="padding: 10px 0;">
                 <div class="flex items-center gap10 mb-4">
                   <div class="body-title-2"><%= address.label.presence || "Address" %></div>
                   <% if address.default? %>
@@ -109,6 +109,7 @@
           <li><div class="body-title">Total</div></li>
           <li><div class="body-title">Date</div></li>
           <li><div class="body-title">Status</div></li>
+          <li><div class="body-title">Action</div></li>
         </ul>
         <ul class="flex flex-column">
           <% @recent_orders.each do |order| %>
@@ -131,6 +132,13 @@
             <div class="body-text text-main-dark mt-4"><%= l(order.created_at, format: :short) %></div>
             <div>
               <div class="<%= order_status_badge_class(order.status) %> bg-1 fw-7"><%= order.status.capitalize %></div>
+            </div>
+            <div class="list-icon-function">
+              <div class="item eye">
+                <%= link_to admin_order_path(order) do %>
+                  <i class="icon-eye"></i>
+                <% end %>
+              </div>
             </div>
           </li>
           <% end %>
