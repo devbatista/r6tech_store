@@ -1,0 +1,40 @@
+<%= form_with model: color, url: form_url, method: form_method, html: { class: "product-form" } do |form| %>
+  <% if color.errors.any? %>
+    <div class="wg-box product-form-errors mb-30">
+      <div class="body-title">Check the color information</div>
+      <ul>
+        <% color.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="wg-box mb-20">
+    <div class="product-form-two-columns">
+      <fieldset class="name">
+        <div class="body-title mb-10">Name <span class="tf-color-1">*</span></div>
+        <%= form.text_field :name, placeholder: "e.g. Midnight", required: true %>
+      </fieldset>
+
+      <fieldset>
+        <div class="body-title mb-10">Color <span class="tf-color-1">*</span></div>
+        <div class="flex items-center gap10">
+          <%= form.color_field :hex, value: (color.hex.presence || "#000000"),
+                               style: "width:56px;height:44px;padding:2px;",
+                               oninput: "this.nextElementSibling.textContent = this.value" %>
+          <span class="body-text"><%= color.hex.presence || "#000000" %></span>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+
+  <div class="product-form-actions">
+    <button class="tf-button" type="submit">
+      <i class="icon-save"></i><%= color.new_record? ? "Create color" : "Update color" %>
+    </button>
+    <%= link_to admin_settings_colors_path, class: "tf-button style-3" do %>
+      <i class="icon-arrow-left"></i>Cancel
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,48 @@
+<div class="main-content-inner">
+  <%= render 'layouts/flash' %>
+
+  <div class="main-content-wrap">
+    <%= render "admin/settings/header", title: "Storages" %>
+
+    <div class="wg-box">
+      <div class="flex items-center justify-between gap10 flex-wrap">
+        <div class="body-title"><%= pluralize(@storages.size, "storage option") %></div>
+        <%= link_to new_admin_settings_storage_path, class: "tf-button style-1 w208" do %>
+          <i class="icon-plus"></i>Add storage
+        <% end %>
+      </div>
+
+      <div class="wg-table table-all-category">
+        <ul class="table-title flex gap20 mb-14">
+          <li><div class="body-title">Storage</div></li>
+          <li><div class="body-title">Action</div></li>
+        </ul>
+        <ul class="flex flex-column">
+          <% @storages.each do |storage| %>
+          <li class="wg-product item-row gap20">
+            <div class="body-text fw-6"><%= storage.value %></div>
+            <div class="list-icon-function">
+              <div class="item edit">
+                <%= link_to edit_admin_settings_storage_path(storage) do %>
+                  <i class="icon-edit-3"></i>
+                <% end %>
+              </div>
+              <div class="item trash">
+                <%= link_to admin_settings_storage_path(storage),
+                            data: { turbo_method: :delete, turbo_confirm: "Remove this storage option?" } do %>
+                  <i class="icon-trash-2"></i>
+                <% end %>
+              </div>
+            </div>
+          </li>
+          <% end %>
+          <% if @storages.empty? %>
+          <li class="wg-product item-row gap20">
+            <div class="body-text text-tiny">No storage options registered yet.</div>
+          </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

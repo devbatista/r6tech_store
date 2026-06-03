@@ -28,6 +28,19 @@ Rails.application.routes.draw do
       end
     end
     resources :clients, only: [:index, :show]
+
+    namespace :settings do
+      root to: "store#show"
+      resource :store, only: [:show, :update], controller: "store"
+      resource :shipping, only: [:show, :update], controller: "shipping"
+      resource :notifications, only: [:show, :update], controller: "notifications"
+      resource :payments, only: [:show, :update], controller: "payments"
+      resource :appearance, only: [:show, :update], controller: "appearance"
+      resource :account, only: [:show, :update], controller: "account"
+      resources :colors
+      resources :storages
+      resources :administrators
+    end
   end
 
   # Login

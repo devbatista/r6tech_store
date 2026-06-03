@@ -95,7 +95,7 @@
                     <% end %>
                   </li>
                   <li class="menu-item mt-3">
-                    <%= link_to admin_root_path, class: "nav-link" do %>
+                    <%= link_to admin_settings_store_path, class: "nav-link" do %>
                     <div class="icon"><i class="icon-settings"></i></div>
                     <div class="text">Settings</div>
                     <% end %>
@@ -425,12 +425,12 @@
                         </a>
                       </li>
                       <li>
-                        <a href="setting.html" class="user-item">
+                        <%= link_to admin_settings_account_path, class: "user-item" do %>
                           <div class="icon">
                             <i class="icon-settings"></i>
                           </div>
-                          <div class="body-title-2">Setting</div>
-                        </a>
+                          <div class="body-title-2">Account</div>
+                        <% end %>
                       </li>
                       <li>
                         <a href="#" class="user-item">

@@ -1,0 +1,53 @@
+<div class="main-content-inner">
+  <%= render 'layouts/flash' %>
+
+  <div class="main-content-wrap">
+    <%= render "admin/settings/header", title: "Colors" %>
+
+    <div class="wg-box">
+      <div class="flex items-center justify-between gap10 flex-wrap">
+        <div class="body-title"><%= pluralize(@colors.size, "color") %></div>
+        <%= link_to new_admin_settings_color_path, class: "tf-button style-1 w208" do %>
+          <i class="icon-plus"></i>Add color
+        <% end %>
+      </div>
+
+      <div class="wg-table table-all-category">
+        <ul class="table-title flex gap20 mb-14">
+          <li><div class="body-title">Color</div></li>
+          <li><div class="body-title">Hex</div></li>
+          <li><div class="body-title">Action</div></li>
+        </ul>
+        <ul class="flex flex-column">
+          <% @colors.each do |color| %>
+          <li class="wg-product item-row gap20">
+            <div class="name">
+              <span style="display:inline-block;width:28px;height:28px;border-radius:6px;border:1px solid #e0e0e0;background:<%= color.hex %>;"></span>
+              <div class="body-text fw-6"><%= color.name %></div>
+            </div>
+            <div class="body-text text-main-dark mt-4"><%= color.hex %></div>
+            <div class="list-icon-function">
+              <div class="item edit">
+                <%= link_to edit_admin_settings_color_path(color) do %>
+                  <i class="icon-edit-3"></i>
+                <% end %>
+              </div>
+              <div class="item trash">
+                <%= link_to admin_settings_color_path(color),
+                            data: { turbo_method: :delete, turbo_confirm: "Remove this color?" } do %>
+                  <i class="icon-trash-2"></i>
+                <% end %>
+              </div>
+            </div>
+          </li>
+          <% end %>
+          <% if @colors.empty? %>
+          <li class="wg-product item-row gap20">
+            <div class="body-text text-tiny">No colors registered yet.</div>
+          </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

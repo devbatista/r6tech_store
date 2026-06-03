@@ -1,0 +1,8 @@
+<div class="main-content-inner">
+  <%= render 'layouts/flash' %>
+
+  <div class="main-content-wrap">
+    <%= render "admin/settings/header", title: "Colors" %>
+    <%= render "form", color: @color, form_url: admin_settings_color_path(@color), form_method: :patch %>
+  </div>
+</div>

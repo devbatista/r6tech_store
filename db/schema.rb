@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_03_130100) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_03_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -131,6 +131,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_130100) do
     t.decimal "price"
     t.datetime "updated_at", null: false
     t.index ["category_id"], name: "index_products_on_category_id"
+  end
+
+  create_table "settings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "contact_email"
+    t.string "contact_phone"
+    t.datetime "created_at", null: false
+    t.string "currency", default: "BRL"
+    t.boolean "default_dark_mode", default: false, null: false
+    t.string "default_order_status", default: "pending"
+    t.string "facebook_url"
+    t.decimal "free_shipping_threshold", precision: 10, scale: 2
+    t.string "instagram_url"
+    t.string "notification_sender"
+    t.boolean "notify_on_delivered", default: false, null: false
+    t.boolean "notify_on_paid", default: true, null: false
+    t.boolean "notify_on_shipped", default: true, null: false
+    t.boolean "pay_boleto", default: false, null: false
+    t.boolean "pay_credit_card", default: true, null: false
+    t.boolean "pay_pix", default: true, null: false
+    t.decimal "shipping_fee", precision: 10, scale: 2, default: "0.0"
+    t.string "store_name"
+    t.decimal "tax_rate", precision: 5, scale: 2, default: "0.0"
+    t.string "timezone", default: "Brasilia"
+    t.datetime "updated_at", null: false
+    t.string "whatsapp"
   end
 
   create_table "storages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

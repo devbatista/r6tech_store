@@ -1,0 +1,52 @@
+<div class="main-content-inner">
+  <%= render 'layouts/flash' %>
+
+  <div class="main-content-wrap">
+    <%= render "admin/settings/header", title: "Administrators" %>
+
+    <div class="wg-box">
+      <div class="flex items-center justify-between gap10 flex-wrap">
+        <div class="body-title"><%= pluralize(@administrators.size, "administrator") %></div>
+        <%= link_to new_admin_settings_administrator_path, class: "tf-button style-1 w208" do %>
+          <i class="icon-plus"></i>Add administrator
+        <% end %>
+      </div>
+
+      <div class="wg-table table-all-category">
+        <ul class="table-title flex gap20 mb-14">
+          <li><div class="body-title">Name</div></li>
+          <li><div class="body-title">Email</div></li>
+          <li><div class="body-title">Phone</div></li>
+          <li><div class="body-title">Action</div></li>
+        </ul>
+        <ul class="flex flex-column">
+          <% @administrators.each do |admin| %>
+          <li class="wg-product item-row gap20">
+            <div class="body-text fw-6">
+              <%= admin.name %>
+              <% if admin == current_user %><span class="block-available fw-7">You</span><% end %>
+            </div>
+            <div class="body-text text-main-dark mt-4"><%= admin.email %></div>
+            <div class="body-text text-main-dark mt-4"><%= admin.phone.presence || "—" %></div>
+            <div class="list-icon-function">
+              <div class="item edit">
+                <%= link_to edit_admin_settings_administrator_path(admin) do %>
+                  <i class="icon-edit-3"></i>
+                <% end %>
+              </div>
+              <% unless admin == current_user %>
+                <div class="item trash">
+                  <%= link_to admin_settings_administrator_path(admin),
+                              data: { turbo_method: :delete, turbo_confirm: "Remove this administrator?" } do %>
+                    <i class="icon-trash-2"></i>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

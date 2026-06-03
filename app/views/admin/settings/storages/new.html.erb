@@ -1,0 +1,8 @@
+<div class="main-content-inner">
+  <%= render 'layouts/flash' %>
+
+  <div class="main-content-wrap">
+    <%= render "admin/settings/header", title: "Storages" %>
+    <%= render "form", storage: @storage, form_url: admin_settings_storages_path, form_method: :post %>
+  </div>
+</div>

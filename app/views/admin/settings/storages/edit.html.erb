@@ -1,0 +1,8 @@
+<div class="main-content-inner">
+  <%= render 'layouts/flash' %>
+
+  <div class="main-content-wrap">
+    <%= render "admin/settings/header", title: "Storages" %>
+    <%= render "form", storage: @storage, form_url: admin_settings_storage_path(@storage), form_method: :patch %>
+  </div>
+</div>
