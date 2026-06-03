@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_03_121200) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_03_130100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -41,6 +41,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_121200) do
     t.uuid "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "addresses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "city"
+    t.string "complement"
+    t.string "country", default: "Brasil"
+    t.datetime "created_at", null: false
+    t.boolean "default", default: false, null: false
+    t.string "label"
+    t.string "neighborhood"
+    t.string "number"
+    t.string "recipient"
+    t.string "state"
+    t.string "street"
+    t.datetime "updated_at", null: false
+    t.uuid "user_id", null: false
+    t.string "zip_code"
+    t.index ["user_id"], name: "index_addresses_on_user_id"
   end
 
   create_table "cart_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -87,10 +105,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_121200) do
 
   create_table "orders", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.uuid "shipping_address_id"
+    t.string "shipping_city"
+    t.string "shipping_complement"
+    t.string "shipping_country"
+    t.string "shipping_neighborhood"
+    t.string "shipping_number"
+    t.string "shipping_recipient"
+    t.string "shipping_state"
+    t.string "shipping_street"
+    t.string "shipping_zip_code"
     t.string "status"
     t.decimal "total"
     t.datetime "updated_at", null: false
     t.uuid "user_id", null: false
+    t.index ["shipping_address_id"], name: "index_orders_on_shipping_address_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
@@ -127,12 +156,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_121200) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "addresses", "users"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "products"
   add_foreign_key "carts", "users"
   add_foreign_key "categories", "categories", column: "parent_id"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "products"
+  add_foreign_key "orders", "addresses", column: "shipping_address_id", on_delete: :nullify
   add_foreign_key "orders", "users"
   add_foreign_key "products", "categories"
 end

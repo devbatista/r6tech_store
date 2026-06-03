@@ -93,6 +93,30 @@
       </div>
     </div>
 
+    <div class="wg-box mb-30">
+      <div>
+        <div class="body-title mb-10">Shipping address</div>
+        <div class="text-tiny">Delivery details</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <% if @order.shipping_address? %>
+        <div class="product-show-details-list">
+          <div class="product-show-detail-row">
+            <span>Recipient</span>
+            <strong><%= @order.shipping_recipient.presence || @order.user&.name || "—" %></strong>
+          </div>
+          <div class="product-show-detail-row">
+            <span>Address</span>
+            <strong><%= @order.shipping_address_line %></strong>
+          </div>
+        </div>
+      <% else %>
+        <div class="body-text text-tiny">No shipping address registered for this order.</div>
+      <% end %>
+    </div>
+
     <div class="wg-box">
       <div class="flex items-center justify-between">
         <h5>Order items</h5>

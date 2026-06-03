@@ -1,0 +1,146 @@
+<div class="main-content-inner">
+  <%= render 'layouts/flash' %>
+
+  <div class="main-content-wrap">
+    <div class="product-show-header mb-30">
+      <div class="product-show-title">
+        <h3><%= @client.name %></h3>
+        <div class="product-show-subtitle">
+          <span><%= @client.email %></span>
+          <span><%= pluralize(@orders_count, "order") %></span>
+        </div>
+      </div>
+
+      <div class="product-show-header-actions">
+        <%= link_to admin_clients_path, class: "tf-button style-3" do %>
+          <i class="icon-arrow-left"></i>Back
+        <% end %>
+      </div>
+
+      <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
+        <li>
+          <%= link_to admin_root_path do %>
+            <div class="text-tiny">Dashboard</div>
+          <% end %>
+        </li>
+        <li><i class="icon-chevron-right"></i></li>
+        <li>
+          <%= link_to admin_clients_path do %>
+            <div class="text-tiny">Clients</div>
+          <% end %>
+        </li>
+        <li><i class="icon-chevron-right"></i></li>
+        <li>
+          <div class="text-tiny">Details</div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="product-show-grid product-show-grid-compact mb-30">
+      <div class="wg-box product-show-panel">
+        <div>
+          <div class="body-title mb-10">Personal information</div>
+          <div class="text-tiny">Account details</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="product-show-details-list">
+          <div class="product-show-detail-row">
+            <span>Name</span>
+            <strong><%= @client.name %></strong>
+          </div>
+          <div class="product-show-detail-row">
+            <span>Email</span>
+            <strong><%= @client.email %></strong>
+          </div>
+          <div class="product-show-detail-row">
+            <span>Phone</span>
+            <strong><%= @client.phone.presence || "—" %></strong>
+          </div>
+          <div class="product-show-detail-row">
+            <span>Birthdate</span>
+            <strong><%= @client.birthdate ? l(@client.birthdate, format: :long) : "—" %></strong>
+          </div>
+          <div class="product-show-detail-row">
+            <span>Member since</span>
+            <strong><%= l(@client.created_at, format: :short) %></strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="wg-box product-show-panel">
+        <div>
+          <div class="body-title mb-10">Addresses</div>
+          <div class="text-tiny"><%= pluralize(@addresses.size, "address", plural: "addresses") %></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <% if @addresses.any? %>
+          <ul class="flex flex-column has-divider-line">
+            <% @addresses.each do |address| %>
+              <li class="py-10">
+                <div class="flex items-center gap10 mb-4">
+                  <div class="body-title-2"><%= address.label.presence || "Address" %></div>
+                  <% if address.default? %>
+                    <div class="block-available fw-7">Default</div>
+                  <% end %>
+                </div>
+                <div class="text-tiny"><%= address.full_line %></div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="body-text text-tiny">No addresses registered.</div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="wg-box">
+      <div class="flex items-center justify-between">
+        <h5>Recent orders</h5>
+        <%= link_to "View all orders", admin_orders_path, class: "tf-button style-3" %>
+      </div>
+      <div class="wg-table table-all-category">
+        <ul class="table-title flex gap20 mb-14">
+          <li><div class="body-title">Order</div></li>
+          <li><div class="body-title">Items</div></li>
+          <li><div class="body-title">Total</div></li>
+          <li><div class="body-title">Date</div></li>
+          <li><div class="body-title">Status</div></li>
+        </ul>
+        <ul class="flex flex-column">
+          <% @recent_orders.each do |order| %>
+          <li class="wg-product item-row gap20">
+            <div class="name">
+              <div class="image">
+                <% first_product = order.order_items.first&.product %>
+                <% if first_product %>
+                  <%= product_thumbnail_tag(first_product, alt: first_product.name) %>
+                <% else %>
+                  <span class="icon-shopping-cart" style="font-size: 24px;"></span>
+                <% end %>
+              </div>
+              <div class="title line-clamp-2 mb-0">
+                <%= link_to "##{order.id[0, 8]}", admin_order_path(order), class: "body-text fw-6" %>
+              </div>
+            </div>
+            <div class="body-text text-main-dark mt-4"><%= order.order_items.sum { |i| i.quantity.to_i } %></div>
+            <div class="body-text text-main-dark mt-4"><%= number_to_currency(order.total) %></div>
+            <div class="body-text text-main-dark mt-4"><%= l(order.created_at, format: :short) %></div>
+            <div>
+              <div class="<%= order_status_badge_class(order.status) %> bg-1 fw-7"><%= order.status.capitalize %></div>
+            </div>
+          </li>
+          <% end %>
+          <% if @recent_orders.empty? %>
+          <li class="wg-product item-row gap20">
+            <div class="body-text text-tiny">This client has no orders yet.</div>
+          </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
