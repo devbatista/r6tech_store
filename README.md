@@ -72,14 +72,26 @@ bundle exec rspec
 
 ## Running With Docker
 
+Add the local development domain to your hosts file:
+
+```sh
+sudo sh -c 'echo "127.0.0.1 r6tech.store-local" >> /etc/hosts'
+```
+
 Build and start the app with PostgreSQL:
 
 ```sh
 docker compose up --build
 ```
 
-The app will be available at [http://localhost:3000](http://localhost:3000).
+The app will be available at [http://r6tech.store-local:3030](http://r6tech.store-local:3030).
 The container runs `rails db:prepare` automatically before starting the server.
+
+Local ports are configurable through environment variables:
+
+```sh
+WEB_PORT=3030 POSTGRES_PORT=5454 docker compose up --build
+```
 
 To load sample data:
 

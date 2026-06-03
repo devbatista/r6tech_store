@@ -1,12 +1,13 @@
 class Product < ApplicationRecord
   has_many :cart_items
   has_many :order_items
-  has_many :stock, class_name: "ProductStock"
+  has_many :product_stocks, dependent: :destroy
 
   belongs_to :category
 
   validates :name, presence: true
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :stock, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :category, presence: true
 
   before_destroy :ensure_no_orders_or_stock
@@ -15,7 +16,7 @@ class Product < ApplicationRecord
   has_many_attached :images
 
   def in_stock?
-    stock.sum(:quantity).positive?
+    product_stocks.sum(:quantity).positive?
   end
 
   private
@@ -33,6 +34,6 @@ class Product < ApplicationRecord
     end
 
     def clean_up_stock_before_destroy
-      stock.destroy_all if stock.any?
+      product_stocks.destroy_all if product_stocks.any?
     end
 end

@@ -5,11 +5,11 @@ class Admin::StocksController < Admin::BaseAdminController
   def show;end
 
   def new
-    @stock = @product.stock.build
+    @stock = @product.product_stocks.build
   end
 
   def create
-    @stock = @product.stock.build(stock_params)
+    @stock = @product.product_stocks.build(stock_params)
     if @stock.save
       redirect_to admin_product_path(@product), notice: "Estoque criado com sucesso."
     else

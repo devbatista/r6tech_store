@@ -7,7 +7,7 @@ class User < ApplicationRecord
   has_many :carts
   has_many :orders
 
-  enum role: { customer: 0, admin: 1 }
+  enum :role, { customer: 0, admin: 1 }
 
   scope :clients, -> { where(role: :customer) }
 
