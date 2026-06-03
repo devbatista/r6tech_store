@@ -1,31 +1,136 @@
-<!-- filepath: app/views/admin/orders/show.html.erb -->
-<h1>Order <%= @order.id %></h1>
+<div class="main-content-inner">
+  <%= render 'layouts/flash' %>
 
-<p><strong>User:</strong> <%= @order.user&.name %> (<%= @order.user&.email %>)</p>
-<p><strong>Status:</strong> <%= @order.status.capitalize %></p>
-<p><strong>Total:</strong> <%= number_to_currency(@order.total) %></p>
-<p><strong>Created At:</strong> <%= l(@order.created_at, format: :short) %></p>
+  <div class="main-content-wrap">
+    <div class="product-show-header mb-30">
+      <div class="product-show-title">
+        <h3>Order #<%= @order.id[0, 8] %></h3>
+        <div class="product-show-subtitle">
+          <span class="<%= order_status_badge_class(@order.status) %> fw-7"><%= @order.status.capitalize %></span>
+          <span><%= l(@order.created_at, format: :long) %></span>
+        </div>
+      </div>
 
-<h3>Order Items</h3>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Product</th>
-      <th>Quantity</th>
-      <th>Unit Price</th>
-      <th>Subtotal</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @order.order_items.each do |item| %>
-      <tr>
-        <td><%= item.product&.name %></td>
-        <td><%= item.quantity %></td>
-        <td><%= number_to_currency(item.price) %></td>
-        <td><%= number_to_currency(item.price * item.quantity) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+      <div class="product-show-header-actions">
+        <%= link_to admin_orders_path, class: "tf-button style-3" do %>
+          <i class="icon-arrow-left"></i>Back
+        <% end %>
+      </div>
 
-<%= link_to "Back", admin_orders_path, class: "btn btn-secondary" %>
+      <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
+        <li>
+          <%= link_to admin_root_path do %>
+            <div class="text-tiny">Dashboard</div>
+          <% end %>
+        </li>
+        <li><i class="icon-chevron-right"></i></li>
+        <li>
+          <%= link_to admin_orders_path do %>
+            <div class="text-tiny">Orders</div>
+          <% end %>
+        </li>
+        <li><i class="icon-chevron-right"></i></li>
+        <li>
+          <div class="text-tiny">Details</div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="product-show-grid product-show-grid-compact mb-30">
+      <div class="wg-box product-show-panel">
+        <div>
+          <div class="body-title mb-10">Customer</div>
+          <div class="text-tiny">Buyer information</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="product-show-details-list">
+          <div class="product-show-detail-row">
+            <span>Name</span>
+            <strong><%= @order.user&.name || "—" %></strong>
+          </div>
+          <div class="product-show-detail-row">
+            <span>Email</span>
+            <strong><%= @order.user&.email || "—" %></strong>
+          </div>
+          <div class="product-show-detail-row">
+            <span>Phone</span>
+            <strong><%= @order.user&.phone.presence || "—" %></strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="wg-box product-show-panel">
+        <div>
+          <div class="body-title mb-10">Order summary</div>
+          <div class="text-tiny">Payment details</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="product-show-details-list">
+          <div class="product-show-detail-row">
+            <span>Status</span>
+            <strong><%= @order.status.capitalize %></strong>
+          </div>
+          <div class="product-show-detail-row">
+            <span>Items</span>
+            <strong><%= @order.order_items.sum { |i| i.quantity.to_i } %></strong>
+          </div>
+          <div class="product-show-detail-row">
+            <span>Created</span>
+            <strong><%= l(@order.created_at, format: :short) %></strong>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="product-show-price">
+          <div class="text-tiny">Total</div>
+          <div><%= number_to_currency(@order.total) %></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wg-box">
+      <div class="flex items-center justify-between">
+        <h5>Order items</h5>
+      </div>
+      <div class="wg-table table-all-category">
+        <ul class="table-title flex gap20 mb-14">
+          <li><div class="body-title">Product</div></li>
+          <li><div class="body-title">Unit price</div></li>
+          <li><div class="body-title">Quantity</div></li>
+          <li><div class="body-title">Subtotal</div></li>
+        </ul>
+        <ul class="flex flex-column">
+          <% @order.order_items.each do |item| %>
+          <li class="wg-product item-row gap20">
+            <div class="name">
+              <div class="image">
+                <% if item.product %>
+                  <%= product_thumbnail_tag(item.product, alt: item.product.name) %>
+                <% else %>
+                  <span class="icon-image" style="font-size: 24px;"></span>
+                <% end %>
+              </div>
+              <div class="title line-clamp-2 mb-0">
+                <span class="body-text fw-6"><%= item.product&.name || "Removed product" %></span>
+              </div>
+            </div>
+            <div class="body-text text-main-dark mt-4"><%= number_to_currency(item.price) %></div>
+            <div class="body-text text-main-dark mt-4"><%= item.quantity %></div>
+            <div class="body-text text-main-dark mt-4"><%= number_to_currency(item.price * item.quantity) %></div>
+          </li>
+          <% end %>
+          <% if @order.order_items.empty? %>
+          <li class="wg-product item-row gap20">
+            <div class="body-text text-tiny">This order has no items.</div>
+          </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

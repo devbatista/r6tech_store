@@ -1,11 +1,12 @@
 <div class="main-content-inner">
+  <%= render 'layouts/flash' %>
   <!-- main-content-wrap -->
   <div class="main-content-wrap">
       <div class="flex items-center flex-wrap justify-between gap20 mb-30">
           <h3>Order List</h3>
           <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
               <li>
-                  <a href="index.html"><div class="text-tiny">Dashboard</div></a>
+                  <%= link_to admin_root_path do %><div class="text-tiny">Dashboard</div><% end %>
               </li>
               <li>
                   <i class="icon-chevron-right"></i>
@@ -25,220 +26,116 @@
       <div class="wg-box">
           <div class="flex items-center justify-between gap10 flex-wrap">
               <div class="wg-filter flex-grow">
-                  <form class="form-search">
-                      <fieldset class="name">
-                          <input type="text" placeholder="Search here..." class="" name="name" tabindex="2" value="" aria-required="true" required="">
-                      </fieldset>
-                      <div class="button-submit">
-                          <button class="" type="submit"><i class="icon-search"></i></button>
+                  <form method="get" class="w-auto">
+                      <div class="show">
+                          <div class="text-tiny">Showing</div>
+                          <div class="select">
+                              <select name="per" onchange="this.form.submit()">
+                                  <option value="10" <%= 'selected' if params[:per].to_s == '10' %>>10</option>
+                                  <option value="20" <%= 'selected' if params[:per].to_s == '20' %>>20</option>
+                                  <option value="30" <%= 'selected' if params[:per].to_s == '30' %>>30</option>
+                              </select>
+                          </div>
+                          <div class="text-tiny">entries</div>
                       </div>
                   </form>
               </div>
-              <a class="tf-button style-1 w208" href="oder-detail.html"><i class="icon-file-text"></i>Export all order</a>
           </div>
           <div class="wg-table table-all-category">
               <ul class="table-title flex gap20 mb-14">
                   <li>
-                      <div class="body-title">Product</div>
-                  </li>    
-                  <li>
-                      <div class="body-title">Order ID</div>
+                      <div class="body-title">Order</div>
                   </li>
                   <li>
-                      <div class="body-title">Price</div>
+                      <div class="body-title">Customer</div>
                   </li>
                   <li>
-                      <div class="body-title">Quantity</div>
+                      <div class="body-title">Items</div>
                   </li>
                   <li>
-                      <div class="body-title">Payment</div>
+                      <div class="body-title">Total</div>
+                  </li>
+                  <li>
+                      <div class="body-title">Date</div>
                   </li>
                   <li>
                       <div class="body-title">Status</div>
-                  </li>
-                  <li>
-                      <div class="body-title">Tracking</div>
                   </li>
                   <li>
                       <div class="body-title">Action</div>
                   </li>
               </ul>
               <ul class="flex flex-column">
+                  <% @orders.each do |order| %>
                   <li class="wg-product item-row gap20">
                       <div class="name">
                           <div class="image">
-                              <img src="<%= asset_path('products/product-1.jpg') %>" alt="">
+                              <% first_product = order.order_items.first&.product %>
+                              <% if first_product %>
+                                  <%= product_thumbnail_tag(first_product, alt: first_product.name) %>
+                              <% else %>
+                                  <span class="icon-shopping-cart" style="font-size: 24px;"></span>
+                              <% end %>
                           </div>
                           <div class="title line-clamp-2 mb-0">
-                              <a href="#" class="body-text fw-6">Oversized Motif T-shirt</a>
+                              <%= link_to "##{order.id[0, 8]}", admin_order_path(order), class: "body-text fw-6" %>
                           </div>
                       </div>
-                      <div class="body-text text-main-dark mt-4">#7712309</div>
-                      <div class="body-text text-main-dark mt-4">$1,452.500</div>
-                      <div class="body-text text-main-dark mt-4">1,638</div>
-                      <div class="body-text text-main-dark mt-4">20</div>
+                      <div class="body-text text-main-dark mt-4"><%= order.user&.name || order.user&.email %></div>
+                      <div class="body-text text-main-dark mt-4"><%= order.order_items.sum { |i| i.quantity.to_i } %></div>
+                      <div class="body-text text-main-dark mt-4"><%= number_to_currency(order.total) %></div>
+                      <div class="body-text text-main-dark mt-4"><%= l(order.created_at, format: :short) %></div>
                       <div>
-                          <div class="block-available bg-1 fw-7">Success</div>
-                      </div>
-                      <div>
-                          <div class="block-tracking bg-1">Tracking</div>
+                          <div class="<%= order_status_badge_class(order.status) %> bg-1 fw-7"><%= order.status.capitalize %></div>
                       </div>
                       <div class="list-icon-function">
                           <div class="item eye">
-                              <i class="icon-eye"></i>
-                          </div>
-                          <div class="item edit">
-                              <i class="icon-edit-3"></i>
-                          </div>
-                          <div class="item trash">
-                              <i class="icon-trash-2"></i>
+                              <%= link_to admin_order_path(order) do %>
+                                  <i class="icon-eye"></i>
+                              <% end %>
                           </div>
                       </div>
                   </li>
+                  <% end %>
+                  <% if @orders.empty? %>
                   <li class="wg-product item-row gap20">
-                      <div class="name">
-                          <div class="image">
-                              <img src="<%= asset_path('products/product-2.jpg') %>" alt="">
-                          </div>
-                          <div class="title line-clamp-2 mb-0">
-                              <a href="#" class="body-text fw-6">Oversized Motif T-shirt</a>
-                          </div>
-                      </div>
-                      <div class="body-text text-main-dark mt-4">#7712309</div>
-                      <div class="body-text text-main-dark mt-4">$1,452.500</div>
-                      <div class="body-text text-main-dark mt-4">1,638</div>
-                      <div class="body-text text-main-dark mt-4">20</div>
-                      <div>
-                          <div class="block-pending bg-1 fw-7">Pending</div>
-                      </div>
-                      <div>
-                          <div class="block-tracking bg-1">Tracking</div>
-                      </div>
-                      <div class="list-icon-function">
-                          <div class="item eye">
-                              <i class="icon-eye"></i>
-                          </div>
-                          <div class="item edit">
-                              <i class="icon-edit-3"></i>
-                          </div>
-                          <div class="item trash">
-                              <i class="icon-trash-2"></i>
-                          </div>
-                      </div>
+                      <div class="body-text text-tiny">No orders recorded yet.</div>
                   </li>
-                  <li class="wg-product item-row gap20">
-                      <div class="name">
-                          <div class="image">
-                              <img src="<%= asset_path('products/product-3.jpg') %>" alt="">
-                          </div>
-                          <div class="title line-clamp-2 mb-0">
-                              <a href="#" class="body-text fw-6">Oversized Motif T-shirt</a>
-                          </div>
-                      </div>
-                      <div class="body-text text-main-dark mt-4">#7712309</div>
-                      <div class="body-text text-main-dark mt-4">$1,452.500</div>
-                      <div class="body-text text-main-dark mt-4">1,638</div>
-                      <div class="body-text text-main-dark mt-4">20</div>
-                      <div>
-                          <div class="block-available bg-1 fw-7">Success</div>
-                      </div>
-                      <div>
-                          <div class="block-tracking bg-1">Tracking</div>
-                      </div>
-                      <div class="list-icon-function">
-                          <div class="item eye">
-                              <i class="icon-eye"></i>
-                          </div>
-                          <div class="item edit">
-                              <i class="icon-edit-3"></i>
-                          </div>
-                          <div class="item trash">
-                              <i class="icon-trash-2"></i>
-                          </div>
-                      </div>
-                  </li>
-                  <li class="wg-product item-row gap20">
-                      <div class="name">
-                          <div class="image">
-                              <img src="<%= asset_path('products/product-4.jpg') %>" alt="">
-                          </div>
-                          <div class="title line-clamp-2 mb-0">
-                              <a href="#" class="body-text fw-6">Oversized Motif T-shirt</a>
-                          </div>
-                      </div>
-                      <div class="body-text text-main-dark mt-4">#7712309</div>
-                      <div class="body-text text-main-dark mt-4">$1,452.500</div>
-                      <div class="body-text text-main-dark mt-4">1,638</div>
-                      <div class="body-text text-main-dark mt-4">20</div>
-                      <div>
-                          <div class="block-available bg-1 fw-7">Success</div>
-                      </div>
-                      <div>
-                          <div class="block-tracking bg-1">Tracking</div>
-                      </div>
-                      <div class="list-icon-function">
-                          <div class="item eye">
-                              <i class="icon-eye"></i>
-                          </div>
-                          <div class="item edit">
-                              <i class="icon-edit-3"></i>
-                          </div>
-                          <div class="item trash">
-                              <i class="icon-trash-2"></i>
-                          </div>
-                      </div>
-                  </li>
-                  <li class="wg-product item-row gap20">
-                      <div class="name">
-                          <div class="image">
-                              <img src="<%= asset_path('products/product-5.jpg') %>" alt="">
-                          </div>
-                          <div class="title line-clamp-2 mb-0">
-                              <a href="#" class="body-text fw-6">Oversized Motif T-shirt</a>
-                          </div>
-                      </div>
-                      <div class="body-text text-main-dark mt-4">#7712309</div>
-                      <div class="body-text text-main-dark mt-4">$1,452.500</div>
-                      <div class="body-text text-main-dark mt-4">1,638</div>
-                      <div class="body-text text-main-dark mt-4">20</div>
-                      <div>
-                          <div class="block-available bg-1 fw-7">Success</div>
-                      </div>
-                      <div>
-                          <div class="block-tracking bg-1">Tracking</div>
-                      </div>
-                      <div class="list-icon-function">
-                          <div class="item eye">
-                              <i class="icon-eye"></i>
-                          </div>
-                          <div class="item edit">
-                              <i class="icon-edit-3"></i>
-                          </div>
-                          <div class="item trash">
-                              <i class="icon-trash-2"></i>
-                          </div>
-                      </div>
-                  </li>
+                  <% end %>
               </ul>
           </div>
           <div class="divider"></div>
           <div class="flex items-center justify-between flex-wrap gap10">
-              <div class="text-tiny">Showing 10 entries</div>
+              <div class="text-tiny">Showing <%= @orders.size %> of <%= @orders.total_count %> entries</div>
               <ul class="wg-pagination">
-                  <li>
-                      <a href="#"><i class="icon-chevron-left"></i></a>
+                  <li class="<%= 'disabled' unless @orders.prev_page %>">
+                      <% if @orders.prev_page %>
+                          <%= link_to url_for(page: @orders.prev_page, per: params[:per]) do %>
+                              <i class="icon-chevron-left"></i>
+                          <% end %>
+                      <% else %>
+                          <span><i class="icon-chevron-left"></i></span>
+                      <% end %>
                   </li>
-                  <li>
-                      <a href="#">1</a>
-                  </li>
-                  <li class="active">
-                      <a href="#">2</a>
-                  </li>
-                  <li>
-                      <a href="#">3</a>
-                  </li>
-                  <li>
-                      <a href="#"><i class="icon-chevron-right"></i></a>
+
+                  <% (1..@orders.total_pages).each do |page| %>
+                      <li class="<%= 'active' if page == @orders.current_page %>">
+                          <% if page == @orders.current_page %>
+                              <a class="disabled"><%= page %></a>
+                          <% else %>
+                              <%= link_to page, url_for(page: page, per: params[:per]) %>
+                          <% end %>
+                      </li>
+                  <% end %>
+
+                  <li class="<%= 'disabled' unless @orders.next_page %>">
+                      <% if @orders.next_page %>
+                          <%= link_to url_for(page: @orders.next_page, per: params[:per]) do %>
+                              <i class="icon-chevron-right"></i>
+                          <% end %>
+                      <% else %>
+                          <span><i class="icon-chevron-right"></i></span>
+                      <% end %>
                   </li>
               </ul>
           </div>
