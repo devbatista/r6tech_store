@@ -90,7 +90,7 @@
               </div>
               <div class="body-text text-main-dark mt-4">#<%= product.id[0,8] %></div>
               <div class="body-text text-main-dark mt-4"><%= number_to_currency(product.price) %></div>
-              <div class="body-text text-main-dark mt-4"><%= product.product_stocks.sum(:quantity) %></div>
+              <div class="body-text text-main-dark mt-4"><%= product.stock_quantity %></div>
               <div>
                 <% if product.in_stock? %>
                   <div class="block-available bg-1 fw-7">In Stock</div>

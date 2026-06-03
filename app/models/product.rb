@@ -15,8 +15,16 @@ class Product < ApplicationRecord
 
   has_many_attached :images
 
+  def stock_quantity
+    if association(:product_stocks).loaded?
+      product_stocks.sum(&:quantity)
+    else
+      product_stocks.sum(:quantity)
+    end
+  end
+
   def in_stock?
-    product_stocks.sum(:quantity).positive?
+    stock_quantity.positive?
   end
 
   private

@@ -3,7 +3,7 @@ class Admin::ProductsController < Admin::BaseAdminController
 
   def index
     per_page = params[:per].presence || 10
-    @products = Product.page(params[:page]).per(per_page)
+    @products = Product.includes(:product_stocks).page(params[:page]).per(per_page)
   end
 
   def show;end

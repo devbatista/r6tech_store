@@ -2,7 +2,7 @@
 
 rm -f tmp/pids/server.pid
 
-if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
+if [ "${PREPARE_DB_ON_BOOT}" == "true" ] && [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
   ./bin/rails db:prepare
 fi
 

@@ -46,14 +46,14 @@ gem "bootsnap", require: false
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri windows ]
+  gem "debug", platforms: %i[ mri windows ], require: false
 
-  gem 'rspec-rails'
-  gem 'factory_bot_rails'
-  gem 'shoulda-matchers'
+  gem 'rspec-rails', require: false
+  gem 'factory_bot_rails', require: false
+  gem 'shoulda-matchers', require: false
 
-  gem 'pry-byebug'
-  gem 'awesome_print'
+  gem 'pry-byebug', require: false
+  gem 'awesome_print', require: false
 end
 
 group :development do

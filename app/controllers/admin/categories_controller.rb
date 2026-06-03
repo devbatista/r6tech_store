@@ -3,7 +3,7 @@ class Admin::CategoriesController < Admin::BaseAdminController
 
   def index
     per_page = params[:per].presence || 10
-    @categories = Category.page(params[:page]).per(per_page)
+    @categories = Category.includes(:parent).page(params[:page]).per(per_page)
   end
 
   def new

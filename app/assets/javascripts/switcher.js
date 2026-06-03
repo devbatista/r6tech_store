@@ -159,7 +159,7 @@ $(document).ready(function () {
                                     '<div class="item color-7047D6"></div>' +
                                     '<div class="item color-189D72"></div>' +
                                     '<div class="more-select">' +
-                                        '<img src="images/bg-menu/more.png" alt="">' +
+                                        '<img src="/assets/bg-menu/more.png" alt="">' +
                                     '</div>' +
                                 '</div>' +
                             '</fieldset>' +
@@ -172,7 +172,7 @@ $(document).ready(function () {
                                     '<div class="item color-1B2627"></div>' +
                                     '<div class="item color-1F2027"></div>' +
                                     '<div class="more-select">' +
-                                        '<img src="images/bg-menu/more.png" alt="">' +
+                                        '<img src="/assets/bg-menu/more.png" alt="">' +
                                     '</div>' +
                                 '</div>' +
                             '</fieldset>' +
