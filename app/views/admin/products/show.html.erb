@@ -1,9 +1,120 @@
-<!-- filepath: app/views/admin/products/show.html.erb -->
-<h1><%= @product.name %></h1>
+<div class="main-content-inner">
+  <%= render 'layouts/flash' %>
 
-<p><strong>Category:</strong> <%= @product.category&.name %></p>
-<p><strong>Description:</strong> <%= @product.description %></p>
-<p><strong>Price:</strong> <%= number_to_currency(@product.price) %></p>
+  <div class="main-content-wrap">
+    <div class="product-show-header mb-30">
+      <div class="product-show-title">
+        <h3><%= @product.name %></h3>
+        <div class="product-show-subtitle">
+          <span><%= @product.category&.name || "Uncategorized" %></span>
+          <span>#<%= @product.id[0, 8] %></span>
+        </div>
+      </div>
 
-<%= link_to "Edit", edit_admin_product_path(@product), class: "btn btn-warning" %>
-<%= link_to "Back", admin_products_path, class: "btn btn-secondary" %>
+      <div class="product-show-header-actions">
+        <%= link_to edit_admin_product_path(@product), class: "tf-button" do %>
+          <i class="icon-edit-3"></i>Edit
+        <% end %>
+        <%= link_to admin_products_path, class: "tf-button style-3" do %>
+          <i class="icon-arrow-left"></i>Back
+        <% end %>
+        <%= link_to admin_product_path(@product),
+                    class: "tf-button style-1 product-show-danger",
+                    data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } do %>
+          <i class="icon-trash-2"></i>Delete
+        <% end %>
+      </div>
+
+      <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
+        <li>
+          <%= link_to admin_root_path do %>
+            <div class="text-tiny">Dashboard</div>
+          <% end %>
+        </li>
+        <li><i class="icon-chevron-right"></i></li>
+        <li>
+          <%= link_to admin_products_path do %>
+            <div class="text-tiny">Products</div>
+          <% end %>
+        </li>
+        <li><i class="icon-chevron-right"></i></li>
+        <li>
+          <div class="text-tiny">Details</div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="product-show-grid product-show-grid-compact">
+      <div class="wg-box product-show-media">
+        <% if @product.images.attached? %>
+          <% main_image = @product.images.first %>
+          <div class="product-show-main-image">
+            <%= image_tag main_image.variant(resize_to_limit: [900, 900]), alt: @product.name %>
+          </div>
+
+          <% if @product.images.size > 1 %>
+            <div class="product-show-thumbs">
+              <% @product.images.each do |image| %>
+                <div class="product-show-thumb">
+                  <%= image_tag image.variant(resize_to_fill: [160, 160]), alt: @product.name %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="product-show-empty-image">
+            <i class="icon-image"></i>
+            <div class="body-title">No product images</div>
+            <div class="text-tiny">Add images by editing this product.</div>
+            <%= link_to edit_admin_product_path(@product), class: "tf-button style-3 product-show-empty-action" do %>
+              <i class="icon-upload-cloud"></i>Add images
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="wg-box product-show-panel">
+        <div>
+          <div class="body-title mb-10">Product details</div>
+          <div class="text-tiny">Catalog information</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="product-show-price">
+          <div class="text-tiny">Price</div>
+          <div><%= number_to_currency(@product.price) %></div>
+        </div>
+
+        <div class="product-show-details-list">
+          <div class="product-show-detail-row">
+            <span>Category</span>
+            <strong><%= @product.category&.name || "Uncategorized" %></strong>
+          </div>
+          <div class="product-show-detail-row">
+            <span>Images</span>
+            <strong><%= @product.images.size %></strong>
+          </div>
+          <div class="product-show-detail-row">
+            <span>Created</span>
+            <strong><%= l(@product.created_at, format: :short) %></strong>
+          </div>
+          <div class="product-show-detail-row">
+            <span>Updated</span>
+            <strong><%= l(@product.updated_at, format: :short) %></strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wg-box product-show-description-box mt-30">
+      <div>
+        <div class="body-title mb-10">Product description</div>
+        <div class="text-tiny">Storefront copy</div>
+      </div>
+      <div class="product-show-description">
+        <%= simple_format(@product.description.presence || "No description registered.") %>
+      </div>
+    </div>
+  </div>
+</div>
