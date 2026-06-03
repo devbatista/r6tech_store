@@ -1,7 +1,7 @@
-class CreateStorages < ActiveRecord::Migration[7.1]
+class CreateStorages < ActiveRecord::Migration[8.1]
   def change
     create_table :storages, id: :uuid do |t|
-      t.string :name
+      t.string :value
     end
   end
 end
