@@ -12,6 +12,14 @@
       </div>
 
       <div class="product-show-header-actions">
+        <% @order.available_status_transitions.each do |next_status| %>
+          <%= button_to order_status_action_label(next_status),
+                        update_status_admin_order_path(@order),
+                        method: :patch,
+                        params: { status: next_status },
+                        class: "tf-button #{next_status == 'cancelled' ? 'style-1 product-show-danger' : 'style-1'}",
+                        form: { data: (next_status == 'cancelled' ? { turbo_confirm: 'Are you sure you want to cancel this order?' } : {}) } %>
+        <% end %>
         <%= link_to admin_orders_path, class: "tf-button style-3" do %>
           <i class="icon-arrow-left"></i>Back
         <% end %>

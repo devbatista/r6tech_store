@@ -5,6 +5,15 @@ class Order < ApplicationRecord
 
   SHIPPING_FIELDS = %i[recipient zip_code street number complement neighborhood city state country].freeze
 
+  # Transições de status permitidas a partir de cada estado.
+  STATUS_TRANSITIONS = {
+    "pending"   => %w[paid cancelled],
+    "paid"      => %w[shipped cancelled],
+    "shipped"   => %w[delivered],
+    "delivered" => [],
+    "cancelled" => []
+  }.freeze
+
   enum :status, {
     pending: "pending",
     paid: "paid",
@@ -15,6 +24,15 @@ class Order < ApplicationRecord
 
   validates :status, presence: true
   validates :total, presence: true, numericality: { greater_than_or_equal_to: 0 }
+
+  # Status para os quais este pedido pode mudar a partir do estado atual.
+  def available_status_transitions
+    STATUS_TRANSITIONS.fetch(status, [])
+  end
+
+  def can_transition_to?(new_status)
+    available_status_transitions.include?(new_status.to_s)
+  end
 
   # Copia (congela) os dados do endereço para o pedido e guarda a referência.
   def assign_shipping_address(address)

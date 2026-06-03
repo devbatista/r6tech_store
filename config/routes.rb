@@ -22,7 +22,11 @@ Rails.application.routes.draw do
     root to: 'dashboard#index'
     resources :products
     resources :categories
-    resources :orders, only: [:index, :show]
+    resources :orders, only: [:index, :show] do
+      member do
+        patch :update_status
+      end
+    end
     resources :clients, only: [:index, :show]
   end
 
