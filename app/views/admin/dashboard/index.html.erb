@@ -19,12 +19,12 @@
             <div>
               <div class="flex gap10 items-center">
                 <div class="body-text mt-2 mb-4">Total Earnings</div>
-                <div class="box-icon-trending up">
-                  <i class="icon-trending-up"></i>
-                  <div class="body-title number">1.56%</div>
+                <div class="box-icon-trending <%= @revenue_growth.negative? ? 'down' : 'up' %>">
+                  <i class="icon-trending-<%= @revenue_growth.negative? ? 'down' : 'up' %>"></i>
+                  <div class="body-title number"><%= number_with_precision(@revenue_growth.abs, precision: 2) %>%</div>
                 </div>
               </div>
-              <h4>$334,945</h4>
+              <h4><%= number_to_currency(@total_revenue) %></h4>
             </div>
           </div>
           <div class="dropdown default">
@@ -62,13 +62,13 @@
             </div>
             <div>
               <div class="flex gap15 items-center">
-                <div class="body-text mt-2 mb-4">Total Orders</div>
-                <div class="box-icon-trending down">
-                  <i class="icon-trending-down"></i>
-                  <div class="body-title number">1.56%</div>
+                <div class="body-text mt-2 mb-4">Orders</div>
+                <div class="box-icon-trending <%= @orders_growth.negative? ? 'down' : 'up' %>">
+                  <i class="icon-trending-<%= @orders_growth.negative? ? 'down' : 'up' %>"></i>
+                  <div class="body-title number"><%= number_with_precision(@orders_growth.abs, precision: 2) %>%</div>
                 </div>
               </div>
-              <h4>2,802</h4>
+              <h4><%= number_with_delimiter(@total_orders) %></h4>
             </div>
           </div>
           <div class="dropdown default">
@@ -108,12 +108,12 @@
             <div>
               <div class="flex gap9 items-center">
                 <div class="body-text mt-2 mb-4">Customers</div>
-                <div class="box-icon-trending up color-violet">
-                  <i class="icon-trending-up"></i>
-                  <div class="body-title number">1.56%</div>
+                <div class="box-icon-trending <%= @customers_growth.negative? ? 'down' : 'up' %> color-violet">
+                  <i class="icon-trending-<%= @customers_growth.negative? ? 'down' : 'up' %>"></i>
+                  <div class="body-title number"><%= number_with_precision(@customers_growth.abs, precision: 2) %>%</div>
                 </div>
               </div>
-              <h4>4,945</h4>
+              <h4><%= number_with_delimiter(@total_customers) %></h4>
             </div>
           </div>
           <div class="dropdown default">
@@ -151,13 +151,12 @@
             </div>
             <div>
               <div class="flex gap10 items-center">
-                <div class="body-text mt-2 mb-4">My Balance</div>
+                <div class="body-text mt-2 mb-4">Products</div>
                 <div class="box-icon-trending up color-blue">
-                  <i class="icon-trending-up"></i>
-                  <div class="body-title number">1.56%</div>
+                  <div class="body-title number">Avg ticket <%= number_to_currency(@average_ticket) %></div>
                 </div>
               </div>
-              <h4>4,945</h4>
+              <h4><%= number_with_delimiter(@total_products) %></h4>
             </div>
           </div>
           <div class="dropdown default">
@@ -305,90 +304,27 @@
             </div>
           </div>
           <ul class="flex flex-column h-full has-divider-line">
+            <% @top_products.each do |product| %>
             <li class="wg-product">
               <div class="name flex-grow">
                 <div class="image">
-                  <img src="<%= asset_path('products/product-1.jpg') %>" alt="">
+                  <%= product_thumbnail_tag(product, alt: product.name) %>
                 </div>
                 <div>
                   <div class="title">
-                    <a href="#" class="body-text">Neptune Longsleeve</a>
+                    <%= link_to product.name, edit_admin_product_path(product), class: "body-text" %>
                   </div>
-                  <div class="price text-tiny">$138</div>
+                  <div class="price text-tiny"><%= number_to_currency(product.price) %></div>
                 </div>
               </div>
-              <div class="sale body-text">952 Sales</div>
+              <div class="sale body-text"><%= number_with_delimiter(product.sold_quantity) %> Sales</div>
             </li>
+            <% end %>
+            <% if @top_products.empty? %>
             <li class="wg-product">
-              <div class="name flex-grow">
-                <div class="image">
-                  <img src="<%= asset_path('products/product-2.jpg') %>" alt="">
-                </div>
-                <div>
-                  <div class="title">
-                    <a href="#" class="body-text">Ribbed Tank Top</a>
-                  </div>
-                  <div class="price text-tiny">$108</div>
-                </div>
-              </div>
-              <div class="sale body-text">952 Sales</div>
+              <div class="body-text text-tiny">No sales recorded yet.</div>
             </li>
-            <li class="wg-product">
-              <div class="name flex-grow">
-                <div class="image">
-                  <img src="<%= asset_path('products/product-3.jpg') %>" alt="">
-                </div>
-                <div>
-                  <div class="title">
-                    <a href="#" class="body-text">Ribbed modal T-shirt</a>
-                  </div>
-                  <div class="price text-tiny">$125</div>
-                </div>
-              </div>
-              <div class="sale body-text">902 Sales</div>
-            </li>
-            <li class="wg-product">
-              <div class="name flex-grow">
-                <div class="image">
-                  <img src="<%= asset_path('products/product-4.jpg') %>" alt="">
-                </div>
-                <div>
-                  <div class="title">
-                    <a href="#" class="body-text">Oversized Motif T-shirt</a>
-                  </div>
-                  <div class="price text-tiny">$98</div>
-                </div>
-              </div>
-              <div class="sale body-text">882 Sales</div>
-            </li>
-            <li class="wg-product">
-              <div class="name flex-grow">
-                <div class="image">
-                  <img src="<%= asset_path('products/product-5.jpg') %>" alt="">
-                </div>
-                <div>
-                  <div class="title">
-                    <a href="#" class="body-text">V-neck linen T-shirt</a>
-                  </div>
-                  <div class="price text-tiny">$158</div>
-                </div>
-              </div>
-              <div class="sale body-text">869 Sales</div>
-            </li>
-            <li class="wg-product">
-              <div class="name flex-grow">
-                <div class="image">
-                  <img src="<%= asset_path('products/product-6.jpg') %>" alt="">
-                </div>
-                <div>
-                  <div class="title">
-                    <a href="#" class="body-text">Jersey thong body</a>
-                  </div>
-                  <div class="price text-tiny">$78</div>
-                </div>
-              </div>
-              <div class="sale body-text">833 Sales</div>
-            </li>
+            <% end %>
           </ul>
         </div>
         <!-- /top-countries -->
@@ -402,19 +338,19 @@
         <div class="wg-table table-recent-orders">
           <ul class="table-title flex gap20 mb-14">
             <li>
-              <div class="body-title text-main-dark">Product</div>
+              <div class="body-title text-main-dark">Order</div>
             </li>
             <li>
               <div class="body-title text-main-dark">Customer</div>
             </li>
             <li>
-              <div class="body-title text-main-dark">Product ID</div>
+              <div class="body-title text-main-dark">Items</div>
             </li>
             <li>
-              <div class="body-title text-main-dark">Quantity</div>
+              <div class="body-title text-main-dark">Total</div>
             </li>
             <li>
-              <div class="body-title text-main-dark">Price</div>
+              <div class="body-title text-main-dark">Date</div>
             </li>
             <li>
               <div class="body-title text-main-dark">Status</div>
@@ -422,112 +358,40 @@
           </ul>
           <div class="divider mb-14"></div>
           <ul class="flex flex-column has-divider-line has-line-bot">
+            <% @recent_orders.each do |order| %>
             <li class="item wg-product gap20">
               <div class="name">
                 <div class="image">
-                  <img src="<%= asset_path('products/product-1.jpg') %>" alt="">
+                  <% first_product = order.order_items.first&.product %>
+                  <% if first_product %>
+                    <%= product_thumbnail_tag(first_product, alt: first_product.name) %>
+                  <% else %>
+                    <span class="icon-shopping-cart" style="font-size: 24px;"></span>
+                  <% end %>
                 </div>
                 <div class="title mb-0">
-                  <a href="#" class="body-text">Oversized Motif T-shirt</a>
+                  <a href="#" class="body-text">#<%= order.id[0, 8] %></a>
                 </div>
               </div>
-              <div class="body-text text-main-dark mt-4">Leslie Alexander</div>
-              <div class="body-text text-main-dark mt-4">1452</div>
-              <div class="body-text text-main-dark mt-4">X1</div>
-              <div class="body-text text-main-dark mt-4">$138</div>
+              <div class="body-text text-main-dark mt-4"><%= order.user&.name || order.user&.email %></div>
+              <div class="body-text text-main-dark mt-4"><%= order.order_items.sum { |i| i.quantity.to_i } %></div>
+              <div class="body-text text-main-dark mt-4"><%= number_to_currency(order.total) %></div>
+              <div class="body-text text-main-dark mt-4"><%= l(order.created_at, format: :short) %></div>
               <div>
-                <div class="block-available fw-7">Paid</div>
+                <div class="<%= order_status_badge_class(order.status) %> fw-7"><%= order.status.capitalize %></div>
               </div>
             </li>
+            <% end %>
+            <% if @recent_orders.empty? %>
             <li class="item wg-product gap20">
-              <div class="name">
-                <div class="image">
-                  <img src="<%= asset_path('products/product-2.jpg') %>" alt="">
-                </div>
-                <div class="title mb-0">
-                  <a href="#" class="body-text">Oversized Motif T-shirt</a>
-                </div>
-              </div>
-              <div class="body-text text-main-dark mt-4">Leslie Alexander</div>
-              <div class="body-text text-main-dark mt-4">1452</div>
-              <div class="body-text text-main-dark mt-4">X1</div>
-              <div class="body-text text-main-dark mt-4">$138</div>
-              <div>
-                <div class="block-pending fw-7">Pending</div>
-              </div>
+              <div class="body-text text-tiny">No orders recorded yet.</div>
             </li>
-            <li class="item wg-product gap20">
-              <div class="name">
-                <div class="image">
-                  <img src="<%= asset_path('products/product-3.jpg') %>" alt="">
-                </div>
-                <div class="title mb-0">
-                  <a href="#" class="body-text">Oversized Motif T-shirt</a>
-                </div>
-              </div>
-              <div class="body-text text-main-dark mt-4">Leslie Alexander</div>
-              <div class="body-text text-main-dark mt-4">1452</div>
-              <div class="body-text text-main-dark mt-4">X1</div>
-              <div class="body-text text-main-dark mt-4">$138</div>
-              <div>
-                <div class="block-available fw-7">Cancel</div>
-              </div>
-            </li>
-            <li class="item wg-product gap20">
-              <div class="name">
-                <div class="image">
-                  <img src="<%= asset_path('products/product-7.jpg') %>" alt="">
-                </div>
-                <div class="title mb-0">
-                  <a href="#" class="body-text">Oversized Motif T-shirt</a>
-                </div>
-              </div>
-              <div class="body-text text-main-dark mt-4">Leslie Alexander</div>
-              <div class="body-text text-main-dark mt-4">1452</div>
-              <div class="body-text text-main-dark mt-4">X1</div>
-              <div class="body-text text-main-dark mt-4">$138</div>
-              <div>
-                <div class="block-published fw-7">Processing</div>
-              </div>
-            </li>
-            <li class="item wg-product gap20">
-              <div class="name">
-                <div class="image">
-                  <img src="<%= asset_path('products/product-4.jpg') %>" alt="">
-                </div>
-                <div class="title mb-0">
-                  <a href="#" class="body-text">Oversized Motif T-shirt</a>
-                </div>
-              </div>
-              <div class="body-text text-main-dark mt-4">Leslie Alexander</div>
-              <div class="body-text text-main-dark mt-4">1452</div>
-              <div class="body-text text-main-dark mt-4">X1</div>
-              <div class="body-text text-main-dark mt-4">$138</div>
-              <div>
-                <div class="block-published fw-7">Processing</div>
-              </div>
-            </li>
+            <% end %>
           </ul>
         </div>
         <div class="flex items-center justify-between flex-wrap gap10">
-          <div class="text-tiny">Showing 1-5 of 15</div>
-          <ul class="wg-pagination">
-            <li>
-              <a href="#"><i class="icon-chevron-left"></i></a>
-            </li>
-            <li>
-              <a href="#">1</a>
-            </li>
-            <li class="active">
-              <a href="#">2</a>
-            </li>
-            <li>
-              <a href="#">3</a>
-            </li>
-            <li>
-              <a href="#"><i class="icon-chevron-right"></i></a>
-            </li>
-          </ul>
+          <div class="text-tiny">Showing the <%= @recent_orders.size %> most recent orders of <%= number_with_delimiter(@total_orders) %></div>
+          <%= link_to "View all", admin_orders_path, class: "tf-button style-3" %>
         </div>
       </div>
       <div class="wg-box">

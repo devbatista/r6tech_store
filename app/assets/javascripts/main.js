@@ -109,9 +109,9 @@
   }
 
   var icon_function = function () {
-    // A remoção da linha é feita pelo Turbo após a confirmação e o destroy no
-    // servidor. Remover a linha aqui no clique ignorava o "Cancelar" do confirm
-    // e tirava o item da tela mesmo sem deletar de fato.
+    // Row removal is handled by Turbo after confirmation and the server-side
+    // destroy. Removing the row here on click ignored the confirm "Cancel" and
+    // took the item off the screen even when it was not actually deleted.
   }
 
   var box_search=function(){
