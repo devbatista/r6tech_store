@@ -1,70 +1,101 @@
-<%= form_with model: @product, url: admin_products_path, local: true, html: { multipart: true } do |form| %>
-  <div class="wg-box mb-30">
-    <fieldset>
-      <div class="body-title mb-10">Upload images</div>
+<%= form_with model: [:admin, @product], local: true, html: { multipart: true, class: "product-form" } do |form| %>
+  <% if @product.errors.any? %>
+    <div class="wg-box product-form-errors mb-30">
+      <div class="body-title">Check the product information</div>
+      <ul>
+        <% @product.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="product-form-grid">
+    <div class="wg-box product-form-media">
+      <div>
+        <div class="body-title mb-10">Images</div>
+        <div class="text-tiny">Use clear product photos with a neutral background.</div>
+      </div>
+
       <div class="upload-image mb-16">
         <div class="up-load">
-          <label class="uploadfile" for="product_images">
+          <label class="uploadfile product-form-upload" for="product_images">
             <span class="icon">
               <i class="icon-upload-cloud"></i>
             </span>
             <div class="text-tiny">
-              Drop your images here or select 
-              <span class="text-secondary">click to browse</span>
+              Drop images here or
+              <span class="text-secondary">browse files</span>
             </div>
-            <%= form.file_field :images, 
+            <%= form.file_field :images,
                                 multiple: true,
                                 direct_upload: true,
                                 id: "product_images",
-                                class: "",
                                 accept: "image/*",
                                 onchange: "previewImages(event)" %>
           </label>
           <div id="preview-images" class="image-preview-grid mt-4 d-none"></div>
         </div>
-        <div class="flex gap20 flex-wrap">
-          <% @product.images.each do |image| %>
-            <div class="item">
-              <%= image_tag image.variant(resize_to_limit: [200, 200]), alt: "" if image.attached? %>
-            </div>
-          <% end %>
+      </div>
+
+      <% if @product.images.attached? %>
+        <div>
+          <div class="body-title mb-10">Current images</div>
+          <div class="product-form-current-images">
+            <% @product.images.each do |image| %>
+              <div class="product-form-current-image">
+                <%= image_tag image.variant(resize_to_fill: [220, 220]), alt: @product.name %>
+              </div>
+            <% end %>
+          </div>
         </div>
+      <% end %>
+    </div>
+
+    <div class="wg-box product-form-fields">
+      <div>
+        <div class="body-title mb-10">Product information</div>
+        <div class="text-tiny">Details shown in the catalog and admin product list.</div>
       </div>
-      <div class="body-text">
-        You need to add at least 4 images. 
-        Pay attention to the quality of the pictures you add, 
-        comply with the background color standards. 
-        Pictures must be in certain dimensions. 
-        Notice that the product shows all the details
+
+      <fieldset class="name">
+        <div class="body-title mb-10">Product title <span class="tf-color-1">*</span></div>
+        <%= form.text_field :name, placeholder: "Enter title", required: true %>
+      </fieldset>
+
+      <div class="product-form-two-columns">
+        <fieldset class="category">
+          <div class="body-title mb-10">Category <span class="tf-color-1">*</span></div>
+          <div class="select">
+            <%= form.select :category_id, category_options, { prompt: "Choose category" } %>
+          </div>
+        </fieldset>
+
+        <fieldset class="price">
+          <div class="body-title mb-10">Price <span class="tf-color-1">*</span></div>
+          <%= form.number_field :price, placeholder: "Price", required: true, step: 0.01, min: 0 %>
+        </fieldset>
       </div>
-    </fieldset>
-  </div>
-  <div class="wg-box mb-30">
-    <fieldset class="name">
-      <div class="body-title mb-10">Product title <span class="tf-color-1">*</span></div>
-      <%= form.text_field :name, class: "mb-10", placeholder: "Enter title", required: true %>
-      <div class="text-tiny text-surface-2">Do not exceed 20 characters when entering the product name.</div>
-    </fieldset>
-    <fieldset class="category">
-      <div class="body-title mb-10">Category <span class="tf-color-1">*</span></div>
-      <div class="select">
-        <%= form.select :category_id, category_options, { prompt: "Choose category" }, class: "" %>
-      </div>
-    </fieldset>
-    <div class="cols-lg gap22">
-      <fieldset class="price">
-        <div class="body-title mb-10">Price <span class="tf-color-1">*</span></div>
-        <%= form.number_field :price, placeholder: "Price", required: true, step: 0.01 %>
+
+      <fieldset class="description">
+        <div class="body-title mb-10">Description <span class="tf-color-1">*</span></div>
+        <%= form.text_area :description, placeholder: "Describe the product for the storefront", required: true, rows: 8 %>
       </fieldset>
     </div>
-    <fieldset class="description">
-      <div class="body-title mb-10">Description <span class="tf-color-1">*</span></div>
-      <%= form.text_area :description, class: "mb-10", placeholder: "Short description about product", required: true %>
-      <div class="text-tiny">Do not exceed 100 characters when entering the product name.</div>
-    </fieldset>
   </div>
-  <div class="cols gap10 flex">
-    <button class="tf-button w380" type="submit">Add product</button>
-    <%= link_to "Cancel", admin_products_path, class: "tf-button style-3 w380" %>
+
+  <div class="product-form-actions">
+    <button class="tf-button" type="submit">
+      <i class="icon-save"></i><%= @product.persisted? ? "Update product" : "Create product" %>
+    </button>
+    <% if @product.persisted? %>
+      <%= link_to admin_product_path(@product), class: "tf-button style-3" do %>
+        <i class="icon-arrow-left"></i>Cancel
+      <% end %>
+    <% else %>
+      <%= link_to admin_products_path, class: "tf-button style-3" do %>
+        <i class="icon-arrow-left"></i>Cancel
+      <% end %>
+    <% end %>
   </div>
 <% end %>

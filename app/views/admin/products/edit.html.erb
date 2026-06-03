@@ -1,4 +1,34 @@
-<!-- filepath: app/views/admin/products/edit.html.erb -->
-<h1>Edit Product</h1>
-<%= render "form" %>
-<%= link_to "Back", admin_products_path, class: "btn btn-secondary mt-2" %>
+<div class="main-content-inner">
+  <%= render 'layouts/flash' %>
+
+  <div class="main-content-wrap">
+    <div class="flex items-center flex-wrap justify-between gap20 mb-30">
+      <h3>Edit Product</h3>
+      <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
+        <li>
+          <%= link_to admin_root_path do %>
+            <div class="text-tiny">Dashboard</div>
+          <% end %>
+        </li>
+        <li><i class="icon-chevron-right"></i></li>
+        <li>
+          <%= link_to admin_products_path do %>
+            <div class="text-tiny">Products</div>
+          <% end %>
+        </li>
+        <li><i class="icon-chevron-right"></i></li>
+        <li>
+          <%= link_to admin_product_path(@product) do %>
+            <div class="text-tiny"><%= @product.name %></div>
+          <% end %>
+        </li>
+        <li><i class="icon-chevron-right"></i></li>
+        <li>
+          <div class="text-tiny">Edit</div>
+        </li>
+      </ul>
+    </div>
+
+    <%= render "form" %>
+  </div>
+</div>

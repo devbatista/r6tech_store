@@ -31,4 +31,39 @@ RSpec.describe Admin::ProductsController, type: :controller do
       expect(response.body).to include("Edit")
     end
   end
+
+  describe "PATCH #update" do
+    it "updates an existing product" do
+      admin = User.create!(
+        name: "Admin",
+        email: "admin-update@example.com",
+        password: "password123",
+        role: :admin
+      )
+      category = Category.create!(name: "Notebooks")
+      product = Product.create!(
+        name: "Old product",
+        description: "Old description",
+        price: 1000,
+        category: category
+      )
+
+      session[:user_id] = admin.id
+
+      patch :update, params: {
+        id: product.id,
+        product: {
+          name: "Updated product",
+          description: "Updated description",
+          price: 1200,
+          category_id: category.id
+        }
+      }
+
+      expect(response).to redirect_to(admin_product_path(product))
+      expect(product.reload.name).to eq("Updated product")
+      expect(product.description).to eq("Updated description")
+      expect(product.price).to eq(1200)
+    end
+  end
 end
