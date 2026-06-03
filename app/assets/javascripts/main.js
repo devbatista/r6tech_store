@@ -109,11 +109,9 @@
   }
 
   var icon_function = function () {
-    if ($('div').hasClass("list-icon-function")) {
-      $(".list-icon-function .trash").on("click", function (e) {
-        $(this).parents(".item-row").remove();
-      })
-    }
+    // A remoção da linha é feita pelo Turbo após a confirmação e o destroy no
+    // servidor. Remover a linha aqui no clique ignorava o "Cancelar" do confirm
+    // e tirava o item da tela mesmo sem deletar de fato.
   }
 
   var box_search=function(){

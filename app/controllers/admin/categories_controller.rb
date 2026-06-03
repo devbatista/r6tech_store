@@ -13,7 +13,7 @@ class Admin::CategoriesController < Admin::BaseAdminController
   def create
     @category = Category.new(category_params)
     if @category.save
-      redirect_to(admin_category_path(@category), notice: "Category created successfully")
+      redirect_to(admin_categories_path, notice: "Category created successfully")
     else
       render :new, status: :unprocessable_entity
     end
@@ -23,7 +23,7 @@ class Admin::CategoriesController < Admin::BaseAdminController
 
   def update
     if @category.update(category_params)
-      redirect_to(admin_category_path(@category), notice: "Category updated successfully")
+      redirect_to(admin_categories_path, notice: "Category updated successfully")
     else
       render :edit, status: :unprocessable_entity
     end
