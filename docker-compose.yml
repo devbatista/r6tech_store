@@ -20,6 +20,14 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
 
+  redis:
+    image: redis:7
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redisdata:/data
+    restart: unless-stopped
+
   web:
     image: r6tech-store-app
     build:
@@ -30,13 +38,32 @@ services:
       - "${WEB_PORT:-3001}:3000"
     depends_on:
       - db
+      - redis
     environment:
       <<: *rails_env
+      REDIS_URL: "${REDIS_URL:-redis://redis:6379/0}"
     volumes:
       - .:/rails:cached
     stdin_open: true
     tty: true
     restart: unless-stopped
 
+  sidekiq:
+    image: r6tech-store-app
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    depends_on:
+      - db
+      - redis
+    environment:
+      <<: *rails_env
+      REDIS_URL: "${REDIS_URL:-redis://redis:6379/0}"
+    volumes:
+      - .:/rails:cached
+    restart: unless-stopped
+
 volumes:
   pgdata:
+  redisdata:

@@ -97,7 +97,7 @@ GEM
       xpath (~> 3.2)
     coderay (1.1.3)
     concurrent-ruby (1.3.6)
-    connection_pool (3.0.2)
+    connection_pool (2.5.5)
     crass (1.0.6)
     date (3.5.1)
     debug (1.10.0)
@@ -113,6 +113,8 @@ GEM
     drb (2.2.3)
     erb (6.0.4)
     erubi (1.13.1)
+    et-orbi (1.4.0)
+      tzinfo
     factory_bot (6.5.3)
       activesupport (>= 6.1.0)
     factory_bot_rails (6.4.4)
@@ -126,6 +128,9 @@ GEM
     ffi (1.17.2-x86_64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
     ffi (1.17.2-x86_64-linux-musl)
+    fugit (1.12.2)
+      et-orbi (~> 1.4)
+      raabro (~> 1.4)
     globalid (1.3.0)
       activesupport (>= 6.1)
     i18n (1.14.8)
@@ -218,6 +223,7 @@ GEM
     public_suffix (6.0.2)
     puma (6.6.0)
       nio4r (~> 2.0)
+    raabro (1.4.0)
     racc (1.8.1)
     rack (3.2.6)
     rack-session (2.1.2)
@@ -262,6 +268,8 @@ GEM
       erb
       psych (>= 4.0.0)
       tsort
+    redis-client (0.29.0)
+      connection_pool
     regexp_parser (2.10.0)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -287,6 +295,8 @@ GEM
       rspec-support (~> 3.13)
     rspec-support (3.13.4)
     rubyzip (2.4.1)
+    rufus-scheduler (3.9.2)
+      fugit (~> 1.1, >= 1.11.1)
     sassc (2.4.0)
       ffi (~> 1.9)
     sassc-rails (2.1.2)
@@ -304,6 +314,15 @@ GEM
       websocket (~> 1.0)
     shoulda-matchers (6.5.0)
       activesupport (>= 5.2.0)
+    sidekiq (7.3.9)
+      base64
+      connection_pool (>= 2.3.0)
+      logger
+      rack (>= 2.2.4)
+      redis-client (>= 0.22.2)
+    sidekiq-scheduler (6.0.2)
+      rufus-scheduler (~> 3.2)
+      sidekiq (>= 7.3, < 9)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -359,6 +378,7 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   bootsnap
   capybara
+  connection_pool (~> 2.5)
   debug
   devise (~> 4.9)
   factory_bot_rails
@@ -373,6 +393,8 @@ DEPENDENCIES
   sassc-rails
   selenium-webdriver
   shoulda-matchers
+  sidekiq (~> 7.3)
+  sidekiq-scheduler (~> 6.0)
   sprockets-rails
   stimulus-rails
   stringio (= 3.1.7)

@@ -116,5 +116,63 @@
         <%= simple_format(@product.description.presence || "No description registered.") %>
       </div>
     </div>
+
+    <div class="wg-box product-show-description-box mt-30">
+      <div>
+        <div class="body-title mb-10">AI suggestions</div>
+        <div class="text-tiny">Review generated content before publishing it.</div>
+      </div>
+
+      <div class="product-show-details-list mt-20">
+        <div class="product-show-detail-row">
+          <span>Description status</span>
+          <strong><%= @product.ai_description_status.humanize %></strong>
+        </div>
+        <div class="product-show-detail-row">
+          <span>Image status</span>
+          <strong><%= @product.ai_image_status.humanize %></strong>
+        </div>
+      </div>
+
+      <% if @product.ai_error.present? %>
+        <div class="alert alert-danger mt-20">
+          <%= @product.ai_error %>
+        </div>
+      <% end %>
+
+      <% if @product.ai_description.present? %>
+        <div class="product-show-description mt-20">
+          <div class="body-title mb-10">Suggested description</div>
+          <%= simple_format(@product.ai_description) %>
+          <%= button_to approve_ai_description_admin_product_path(@product),
+                        method: :patch,
+                        class: "tf-button mt-20" do %>
+            <i class="icon-check"></i>Approve description
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if @product.ai_generated_images.attached? %>
+        <div class="mt-20">
+          <div class="body-title mb-10">Suggested image</div>
+          <div class="product-show-main-image">
+            <%= image_tag @product.ai_generated_images.first.variant(resize_to_limit: [900, 900]), alt: @product.name %>
+          </div>
+          <%= button_to approve_ai_image_admin_product_path(@product),
+                        method: :patch,
+                        class: "tf-button mt-20" do %>
+            <i class="icon-check"></i>Approve image
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="product-form-actions mt-20">
+        <%= button_to generate_ai_suggestions_admin_product_path(@product),
+                      method: :post,
+                      class: "tf-button style-3" do %>
+          <i class="icon-refresh-cw"></i>Generate again
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>

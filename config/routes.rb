@@ -20,7 +20,13 @@ Rails.application.routes.draw do
   namespace :admin do
     get 'dashboard', to: 'dashboard#index'
     root to: 'dashboard#index'
-    resources :products
+    resources :products do
+      member do
+        post :generate_ai_suggestions
+        patch :approve_ai_description
+        patch :approve_ai_image
+      end
+    end
     resources :categories
     resources :orders, only: [:index, :show] do
       member do

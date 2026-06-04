@@ -78,3 +78,6 @@ gem 'devise', '~> 4.9'
 gem "bcrypt", "~> 3.1.7"
 gem "sassc-rails"
 gem "kaminari"
+gem "connection_pool", "~> 2.5"
+gem "sidekiq", "~> 7.3"
+gem "sidekiq-scheduler", "~> 6.0"

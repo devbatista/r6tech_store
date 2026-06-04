@@ -1,5 +1,13 @@
 class Admin::ProductsController < Admin::BaseAdminController
-  before_action :set_product, only: [:show, :edit, :update, :destroy]
+  before_action :set_product, only: [
+    :show,
+    :edit,
+    :update,
+    :destroy,
+    :generate_ai_suggestions,
+    :approve_ai_description,
+    :approve_ai_image
+  ]
 
   def index
     per_page = params[:per].presence || 10
@@ -18,6 +26,7 @@ class Admin::ProductsController < Admin::BaseAdminController
   def create
     @product = Product.new(product_params)
     if @product.save
+      enqueue_ai_suggestions(@product) if @product.needs_ai_suggestions?
       redirect_to(admin_product_path(@product), notice: "Product created successfully")
     else
       render :new, status: :unprocessable_entity
@@ -42,6 +51,33 @@ class Admin::ProductsController < Admin::BaseAdminController
     end
   end
 
+  def generate_ai_suggestions
+    enqueue_ai_suggestions(@product, force: true)
+    redirect_to(admin_product_path(@product), notice: "AI suggestions are being generated")
+  end
+
+  def approve_ai_description
+    if @product.ai_description.present?
+      @product.update!(description: @product.ai_description, ai_description_status: "approved", ai_error: nil)
+      redirect_to(admin_product_path(@product), notice: "AI description approved")
+    else
+      redirect_to(admin_product_path(@product), alert: "No AI description available")
+    end
+  end
+
+  def approve_ai_image
+    image = @product.ai_generated_images.first
+
+    if image.present?
+      @product.images.attach(image.blob)
+      @product.ai_generated_images.detach
+      @product.update!(ai_image_status: "approved", ai_error: nil)
+      redirect_to(admin_product_path(@product), notice: "AI image approved")
+    else
+      redirect_to(admin_product_path(@product), alert: "No AI image available")
+    end
+  end
+
   private
 
     def set_product
@@ -50,6 +86,15 @@ class Admin::ProductsController < Admin::BaseAdminController
 
     def product_params
       params.require(:product).permit(:name, :description, :price, :category_id, images: [])
+    end
+
+    def enqueue_ai_suggestions(product, force: false)
+      updates = { ai_error: nil }
+      updates[:ai_description_status] = "pending" if force || product.description.blank?
+      updates[:ai_image_status] = "pending" if force || !product.images.attached?
+      product.update!(updates) if updates.any?
+
+      ProductAiSuggestionJob.perform_async(product.id, force)
     end
 
     def search_products(products)

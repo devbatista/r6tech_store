@@ -1,0 +1,13 @@
+:concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY", 5) %>
+:queues:
+  - default
+
+:scheduler:
+  :enabled: true
+  :dynamic: false
+  :schedule:
+    product_ai_suggestion_sweep:
+      cron: "0 */5 * * * *"
+      class: "ProductAiSuggestionSweepJob"
+      queue: default
+      description: "Queue AI suggestions for products missing generated content"
