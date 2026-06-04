@@ -70,19 +70,19 @@ module Ai
 
         def description_prompt(context)
           <<~PROMPT
-            Crie uma descricao de produto em portugues do Brasil, com tom comercial claro e confiavel.
-            Use de 2 a 4 paragrafos curtos, sem inventar especificacoes tecnicas ausentes.
+            Crie uma descrição de produto em português do Brasil, com tom comercial claro e confiável.
+            Use de 2 a 4 parágrafos curtos, sem inventar especificações técnicas ausentes.
 
             Produto: #{context[:name]}
             Categoria: #{context[:category]}
-            Preco: #{context[:price]}
+            Preço: #{context[:price]}
           PROMPT
         end
 
         def image_prompt(context)
           <<~PROMPT
-            Gere uma foto de produto para e-commerce, em fundo neutro claro, com iluminacao profissional.
-            O produto deve parecer realista e centralizado, sem texto, logotipos inventados ou marcas d'agua.
+            Gere uma foto de produto para e-commerce, em fundo neutro claro, com iluminação profissional.
+            O produto deve parecer realista e centralizado, sem texto, logotipos inventados ou marcas d'água.
 
             Produto: #{context[:name]}
             Categoria: #{context[:category]}
