@@ -1854,15 +1854,23 @@ a:hover {
 .list-icon-function .item {
   font-size: 20px;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.list-icon-function .item a,
+.list-icon-function .item i {
+  color: inherit;
+}
+.list-icon-function .item:hover {
+  transform: scale(1.15);
 }
 .list-icon-function .item.eye {
-  color: #FF7433;
+  color: #FB7A3F;
 }
 .list-icon-function .item.edit {
-  color: #22C55E;
+  color: #4ADE80;
 }
 .list-icon-function .item.trash {
-  color: #DB1215;
+  color: #EF4444;
 }
 
 .wg-order-detail {

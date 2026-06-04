@@ -707,14 +707,22 @@
     .item {
         font-size: 20px;
         cursor: pointer;
+        transition: transform 0.2s ease;
+        a,
+        i {
+            color: inherit;
+        }
+        &:hover {
+            transform: scale(1.15);
+        }
         &.eye {
-            color: #FF7433;
+            color: #FB7A3F;
         }
         &.edit {
-            color: #22C55E;
+            color: #4ADE80;
         }
         &.trash {
-            color: #DB1215;
+            color: #EF4444;
         }
     }
 }
