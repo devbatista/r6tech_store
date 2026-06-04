@@ -24,6 +24,7 @@
       <div class="flex items-center justify-between gap10 flex-wrap">
         <div class="wg-filter flex-grow">
           <form method="get" class="w-auto">
+            <%= hidden_field_tag :query, @query if @query.present? %>
             <div class="show">
               <div class="text-tiny">Showing</div>
               <div class="select">
@@ -36,9 +37,10 @@
               <div class="text-tiny">entries</div>
             </div>
           </form>
-          <form class="form-search">
+          <form method="get" class="form-search">
+            <%= hidden_field_tag :per, params[:per] if params[:per].present? %>
             <fieldset class="name">
-              <input type="text" placeholder="Search here..." class="" name="name" tabindex="2" value="" aria-required="true" required="">
+              <input type="text" placeholder="Search clients..." name="query" tabindex="2" value="<%= @query %>">
             </fieldset>
             <div class="button-submit">
               <button class="" type="submit"><i class="icon-search"></i></button>
@@ -65,6 +67,7 @@
           </li>
         </ul>
         <ul class="flex flex-column">
+          <% if @clients.any? %>
           <% @clients.each do |client| %>
             <li class="wg-product item-row">
               <div class="name flex-grow">
@@ -89,6 +92,15 @@
               </div>
             </li>
           <% end %>
+          <% else %>
+            <li class="wg-product item-row">
+              <div class="body-text">No clients found.</div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </li>
+          <% end %>
         </ul>
       </div>
       <div class="divider"></div>
@@ -97,7 +109,7 @@
         <ul class="wg-pagination">
           <li class="<%= 'disabled' unless @clients.prev_page %>">
             <% if @clients.prev_page %>
-              <%= link_to url_for(page: @clients.prev_page), class: "" do %>
+              <%= link_to url_for(page: @clients.prev_page, per: params[:per], query: @query.presence), class: "" do %>
                 <i class="icon-chevron-left"></i>
               <% end %>
             <% else %>
@@ -112,14 +124,14 @@
                   <%= page %><!-- Ou qualquer ícone que quiser -->
                 </a>
               <% else %>
-                <%= link_to page, url_for(page: page, per: params[:per]) %>
+                <%= link_to page, url_for(page: page, per: params[:per], query: @query.presence) %>
               <% end %>
             </li>
           <% end %>
 
           <li class="<%= 'disabled' unless @clients.next_page %>">
             <% if @clients.next_page %>
-              <%= link_to url_for(page: @clients.next_page), class: "" do %>
+              <%= link_to url_for(page: @clients.next_page, per: params[:per], query: @query.presence), class: "" do %>
                 <i class="icon-chevron-right"></i>
               <% end %>
             <% else %>

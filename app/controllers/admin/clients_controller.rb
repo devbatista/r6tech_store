@@ -1,7 +1,10 @@
 class Admin::ClientsController < Admin::BaseAdminController
   def index
     per_page = params[:per].presence || 10
-    @clients = User.clients.page(params[:page]).per(per_page)
+    @query = params[:query].to_s.strip
+    clients = User.clients.order(created_at: :desc)
+    clients = search_clients(clients) if @query.present?
+    @clients = clients.page(params[:page]).per(per_page)
   end
 
   def show
@@ -13,4 +16,15 @@ class Admin::ClientsController < Admin::BaseAdminController
                             .limit(5)
     @orders_count = @client.orders.count
   end
+
+  private
+
+    def search_clients(clients)
+      term = "%#{ActiveRecord::Base.sanitize_sql_like(@query)}%"
+
+      clients.where(
+        "users.name ILIKE :term OR users.email ILIKE :term OR users.phone ILIKE :term OR CAST(users.id AS text) ILIKE :term",
+        term: term
+      )
+    end
 end

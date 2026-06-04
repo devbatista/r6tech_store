@@ -3,7 +3,10 @@ class Admin::ProductsController < Admin::BaseAdminController
 
   def index
     per_page = params[:per].presence || 10
-    @products = Product.page(params[:page]).per(per_page)
+    @query = params[:query].to_s.strip
+    products = Product.includes(:category).order(created_at: :desc)
+    products = search_products(products) if @query.present?
+    @products = products.page(params[:page]).per(per_page)
   end
 
   def show;end
@@ -47,5 +50,16 @@ class Admin::ProductsController < Admin::BaseAdminController
 
     def product_params
       params.require(:product).permit(:name, :description, :price, :category_id, images: [])
+    end
+
+    def search_products(products)
+      term = "%#{ActiveRecord::Base.sanitize_sql_like(@query)}%"
+
+      products
+        .left_outer_joins(:category)
+        .where(
+          "products.name ILIKE :term OR products.description ILIKE :term OR categories.name ILIKE :term OR CAST(products.id AS text) ILIKE :term",
+          term: term
+        )
     end
 end

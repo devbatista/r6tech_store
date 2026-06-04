@@ -3,6 +3,38 @@ require 'rails_helper'
 RSpec.describe Admin::ProductsController, type: :controller do
   render_views
 
+  describe "GET #index" do
+    it "filters products by query" do
+      admin = User.create!(
+        name: "Admin",
+        email: "admin-products-index@example.com",
+        password: "password123",
+        role: :admin
+      )
+      category = Category.create!(name: "Computers")
+      Product.create!(
+        name: "Searchable MacBook",
+        description: "Laptop",
+        price: 12000,
+        category: category
+      )
+      Product.create!(
+        name: "Hidden iPhone",
+        description: "Phone",
+        price: 8000,
+        category: category
+      )
+
+      session[:user_id] = admin.id
+
+      get :index, params: { query: "MacBook" }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Searchable MacBook")
+      expect(response.body).not_to include("Hidden iPhone")
+    end
+  end
+
   describe "GET #show" do
     it "renders the product detail page" do
       admin = User.create!(

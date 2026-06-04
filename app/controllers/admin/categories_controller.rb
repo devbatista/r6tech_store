@@ -3,7 +3,10 @@ class Admin::CategoriesController < Admin::BaseAdminController
 
   def index
     per_page = params[:per].presence || 10
-    @categories = Category.includes(:parent).page(params[:page]).per(per_page)
+    @query = params[:query].to_s.strip
+    categories = Category.includes(:parent).order(created_at: :desc)
+    categories = search_categories(categories) if @query.present?
+    @categories = categories.page(params[:page]).per(per_page)
   end
 
   def new
@@ -45,5 +48,16 @@ class Admin::CategoriesController < Admin::BaseAdminController
 
     def category_params
       params.require(:category).permit(:name, :parent_id)
+    end
+
+    def search_categories(categories)
+      term = "%#{ActiveRecord::Base.sanitize_sql_like(@query)}%"
+
+      categories
+        .left_outer_joins(:parent)
+        .where(
+          "categories.name ILIKE :term OR parents_categories.name ILIKE :term OR CAST(categories.id AS text) ILIKE :term",
+          term: term
+        )
     end
 end

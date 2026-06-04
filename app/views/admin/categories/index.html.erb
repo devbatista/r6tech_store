@@ -31,6 +31,7 @@
       <div class="flex items-center justify-between gap10 flex-wrap">
         <div class="wg-filter flex-grow">
           <form method="get" class="w-auto">
+            <%= hidden_field_tag :query, @query if @query.present? %>
             <div class="show">
               <div class="text-tiny">Showing</div>
               <div class="select">
@@ -43,9 +44,10 @@
               <div class="text-tiny">entries</div>
             </div>
           </form>
-          <form class="form-search">
+          <form method="get" class="form-search">
+            <%= hidden_field_tag :per, params[:per] if params[:per].present? %>
             <fieldset class="name">
-              <input type="text" placeholder="Search here..." class="" name="name" tabindex="2" value="" aria-required="true" required="">
+              <input type="text" placeholder="Search categories..." name="query" tabindex="2" value="<%= @query %>">
             </fieldset>
             <div class="button-submit">
               <button class="" type="submit"><i class="icon-search"></i></button>
@@ -69,27 +71,35 @@
           </li>
         </ul>
         <ul class="flex flex-column">
-          <% @categories.each do |category| %>
-          <li class="wg-product item-row gap20">
-            <div class="name">
-              <div class="title line-clamp-2 mb-0">
-                <a href="#" class="body-text"><%= category.name %></a>
+          <% if @categories.any? %>
+            <% @categories.each do |category| %>
+            <li class="wg-product item-row gap20">
+              <div class="name">
+                <div class="title line-clamp-2 mb-0">
+                  <a href="#" class="body-text"><%= category.name %></a>
+                </div>
               </div>
-            </div>
-            <div class="body-text text-main-dark mt-4"><%= category.parent&.name || '' %></div>
-            <div class="list-icon-function">
-              <div class="item edit">
-                <%= link_to edit_admin_category_path(category) do %>
-                <i class="icon-edit-3"></i>
-                <% end %>
+              <div class="body-text text-main-dark mt-4"><%= category.parent&.name || '' %></div>
+              <div class="list-icon-function">
+                <div class="item edit">
+                  <%= link_to edit_admin_category_path(category) do %>
+                  <i class="icon-edit-3"></i>
+                  <% end %>
+                </div>
+                <div class="item trash">
+                  <%= link_to admin_category_path(category), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } do %>
+                  <i class="icon-trash-2"></i>
+                  <% end %>
+                </div>
               </div>
-              <div class="item trash">
-                <%= link_to admin_category_path(category), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } do %>
-                <i class="icon-trash-2"></i>
-                <% end %>
-              </div>
-            </div>
-          </li>
+            </li>
+            <% end %>
+          <% else %>
+            <li class="wg-product item-row gap20">
+              <div class="body-text text-main-dark mt-4">No categories found.</div>
+              <div></div>
+              <div></div>
+            </li>
           <% end %>
         </ul>
       </div>
@@ -99,7 +109,7 @@
         <ul class="wg-pagination">
           <li class="<%= 'disabled' unless @categories.prev_page %>">
             <% if @categories.prev_page %>
-              <%= link_to url_for(page: @categories.prev_page), class: "" do %>
+              <%= link_to url_for(page: @categories.prev_page, per: params[:per], query: @query.presence), class: "" do %>
                 <i class="icon-chevron-left"></i>
               <% end %>
             <% else %>
@@ -114,14 +124,14 @@
                   <%= page %><!-- Ou qualquer ícone que quiser -->
                 </a>
               <% else %>
-                <%= link_to page, url_for(page: page, per: params[:per]) %>
+                <%= link_to page, url_for(page: page, per: params[:per], query: @query.presence) %>
               <% end %>
             </li>
           <% end %>
 
           <li class="<%= 'disabled' unless @categories.next_page %>">
             <% if @categories.next_page %>
-              <%= link_to url_for(page: @categories.next_page), class: "" do %>
+              <%= link_to url_for(page: @categories.next_page, per: params[:per], query: @query.presence), class: "" do %>
                 <i class="icon-chevron-right"></i>
               <% end %>
             <% else %>
