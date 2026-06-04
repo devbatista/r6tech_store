@@ -29,3 +29,11 @@
 
 en:
   hello: "Hello world"
+  number:
+    currency:
+      format:
+        unit: "R$ "
+        separator: ","
+        delimiter: "."
+        precision: 2
+        format: "%u%n"

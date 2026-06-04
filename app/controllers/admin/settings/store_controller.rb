@@ -15,7 +15,7 @@ class Admin::Settings::StoreController < Admin::Settings::BaseController
       params.require(:setting).permit(
         :store_name, :contact_email, :contact_phone,
         :instagram_url, :facebook_url, :whatsapp,
-        :currency, :timezone, :logo
+        :timezone, :logo
       )
     end
 end

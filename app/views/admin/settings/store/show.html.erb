@@ -43,9 +43,8 @@
         <div class="product-form-two-columns">
           <fieldset>
             <div class="body-title mb-10">Currency</div>
-            <div class="select">
-              <%= form.select :currency, Setting::CURRENCIES %>
-            </div>
+            <input type="text" value="Brazilian Real (BRL)" readonly>
+            <div class="text-tiny mt-4">The store currency is fixed.</div>
           </fieldset>
 
           <fieldset>
