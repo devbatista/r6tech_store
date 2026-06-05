@@ -13,7 +13,16 @@ Rails.application.configure do
 
   # Show full error reports.
   config.consider_all_requests_local = true
-  config.hosts << "r6tech.store-local"
+
+  local_host = ENV.fetch("APP_HOST", "r6tech.store-local")
+  local_port = ENV.fetch("APP_PORT", ENV.fetch("WEB_PORT", "80"))
+  local_url_options = { host: local_host }
+  local_url_options[:port] = local_port.to_i unless local_port.blank? || local_port.to_i == 80
+
+  config.hosts << local_host
+  config.action_mailer.default_url_options = local_url_options
+  config.action_controller.default_url_options = local_url_options
+  Rails.application.routes.default_url_options = local_url_options
 
   # Enable server timing
   config.server_timing = true

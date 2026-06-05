@@ -84,13 +84,13 @@ Build and start the app with PostgreSQL:
 docker compose up --build
 ```
 
-The app will be available at [http://r6tech.store-local:3030](http://r6tech.store-local:3030).
+The app will be available at [http://r6tech.store-local](http://r6tech.store-local).
 The container runs `rails db:prepare` automatically before starting the server.
 
 Local ports are configurable through environment variables:
 
 ```sh
-WEB_PORT=3030 POSTGRES_PORT=5454 docker compose up --build
+WEB_PORT=80 POSTGRES_PORT=5454 docker compose up --build
 ```
 
 To load sample data:
