@@ -11,7 +11,7 @@ class BaseController < ApplicationController
 
     def authorize_admin!
       unless current_user&.admin?
-        redirect_to login_path, alert: "Access restricted to administrators."
+        redirect_to login_path, alert: t("flash.access_restricted")
       end
     end
 
@@ -20,6 +20,6 @@ class BaseController < ApplicationController
       return if current_user
 
       reset_session
-      redirect_to login_path, alert: "Your session expired. Please sign in again."
+      redirect_to login_path, alert: t("flash.session_expired")
     end
 end

@@ -3,28 +3,28 @@
   Pass a local `title` for the page heading.
 %>
 <div class="flex items-center flex-wrap justify-between gap20 mb-30">
-  <h3>Settings</h3>
+  <h3><%= t("admin.settings.title") %></h3>
   <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
     <li>
-      <%= link_to admin_root_path do %><div class="text-tiny">Dashboard</div><% end %>
+      <%= link_to admin_root_path do %><div class="text-tiny"><%= t("admin.navigation.dashboard") %></div><% end %>
     </li>
     <li><i class="icon-chevron-right"></i></li>
-    <li><div class="text-tiny">Settings</div></li>
+    <li><div class="text-tiny"><%= t("admin.settings.title") %></div></li>
     <li><i class="icon-chevron-right"></i></li>
     <li><div class="text-tiny"><%= title %></div></li>
   </ul>
 </div>
 
 <% tabs = [
-     ["Store", admin_settings_store_path, "admin/settings/store"],
-     ["Shipping & Orders", admin_settings_shipping_path, "admin/settings/shipping"],
-     ["Payments", admin_settings_payments_path, "admin/settings/payments"],
-     ["Notifications", admin_settings_notifications_path, "admin/settings/notifications"],
-     ["Appearance", admin_settings_appearance_path, "admin/settings/appearance"],
-     ["Colors", admin_settings_colors_path, "admin/settings/colors"],
-     ["Storages", admin_settings_storages_path, "admin/settings/storages"],
-     ["Administrators", admin_settings_administrators_path, "admin/settings/administrators"],
-     ["Account", admin_settings_account_path, "admin/settings/account"]
+     [t("admin.settings.store"), admin_settings_store_path, "admin/settings/store"],
+     [t("admin.settings.shipping_orders"), admin_settings_shipping_path, "admin/settings/shipping"],
+     [t("admin.settings.payments"), admin_settings_payments_path, "admin/settings/payments"],
+     [t("admin.settings.notifications"), admin_settings_notifications_path, "admin/settings/notifications"],
+     [t("admin.settings.appearance"), admin_settings_appearance_path, "admin/settings/appearance"],
+     [t("admin.settings.colors"), admin_settings_colors_path, "admin/settings/colors"],
+     [t("admin.settings.storages"), admin_settings_storages_path, "admin/settings/storages"],
+     [t("admin.settings.administrators"), admin_settings_administrators_path, "admin/settings/administrators"],
+     [t("admin.settings.account"), admin_settings_account_path, "admin/settings/account"]
    ] %>
 
 <div class="wg-box mb-20">

@@ -2,14 +2,14 @@
   <%= render 'layouts/flash' %>
 
   <div class="main-content-wrap">
-    <%= render "admin/settings/header", title: "Payments" %>
+    <%= render "admin/settings/header", title: t("admin.settings.payments") %>
 
     <%= form_with model: @setting, url: admin_settings_payments_path, method: :patch,
                   html: { class: "product-form" } do |form| %>
       <div class="wg-box mb-20">
         <div>
-          <div class="body-title mb-10">Payment methods</div>
-          <div class="text-tiny">Methods offered to customers at checkout.</div>
+          <div class="body-title mb-10"><%= t("admin.settings.payment_methods") %></div>
+          <div class="text-tiny"><%= t("admin.settings.payment_methods_hint") %></div>
         </div>
 
         <div class="divider"></div>
@@ -20,7 +20,7 @@
         </label>
         <label class="flex items-center gap10 mb-14">
           <%= form.check_box :pay_credit_card %>
-          <span class="body-text">Credit card</span>
+          <span class="body-text"><%= t("admin.settings.credit_card") %></span>
         </label>
         <label class="flex items-center gap10">
           <%= form.check_box :pay_boleto %>
@@ -29,7 +29,7 @@
       </div>
 
       <div class="product-form-actions">
-        <button class="tf-button" type="submit"><i class="icon-save"></i>Save changes</button>
+        <button class="tf-button" type="submit"><i class="icon-save"></i><%= t("admin.common.save_changes") %></button>
       </div>
     <% end %>
   </div>

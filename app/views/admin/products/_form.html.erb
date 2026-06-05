@@ -1,7 +1,7 @@
 <%= form_with model: [:admin, @product], local: true, html: { multipart: true, class: "product-form" } do |form| %>
   <% if @product.errors.any? %>
     <div class="wg-box product-form-errors mb-30">
-      <div class="body-title">Check the product information</div>
+      <div class="body-title"><%= t("admin.products.form_errors") %></div>
       <ul>
         <% @product.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -13,8 +13,8 @@
   <div class="product-form-grid">
     <div class="wg-box product-form-media">
       <div>
-        <div class="body-title mb-10">Images</div>
-        <div class="text-tiny">Use clear product photos with a neutral background.</div>
+        <div class="body-title mb-10"><%= t("admin.products.images") %></div>
+        <div class="text-tiny"><%= t("admin.products.images_hint") %></div>
       </div>
 
       <div class="upload-image mb-16">
@@ -24,8 +24,8 @@
               <i class="icon-upload-cloud"></i>
             </span>
             <div class="text-tiny">
-              Drop images here or
-              <span class="text-secondary">browse files</span>
+              <%= t("admin.products.drop_images") %>
+              <span class="text-secondary"><%= t("admin.products.browse_files") %></span>
             </div>
             <%= form.file_field :images,
                                 multiple: true,
@@ -40,7 +40,7 @@
 
       <% if @product.images.attached? %>
         <div>
-          <div class="body-title mb-10">Current images</div>
+          <div class="body-title mb-10"><%= t("admin.products.current_images") %></div>
           <div class="product-form-current-images">
             <% @product.images.each do |image| %>
               <div class="product-form-current-image">
@@ -54,47 +54,47 @@
 
     <div class="wg-box product-form-fields">
       <div>
-        <div class="body-title mb-10">Product information</div>
-        <div class="text-tiny">Details shown in the catalog and admin product list.</div>
+        <div class="body-title mb-10"><%= t("admin.products.product_information") %></div>
+        <div class="text-tiny"><%= t("admin.products.product_information_hint") %></div>
       </div>
 
       <fieldset class="name">
-        <div class="body-title mb-10">Product title <span class="tf-color-1">*</span></div>
-        <%= form.text_field :name, placeholder: "Enter title", required: true %>
+        <div class="body-title mb-10"><%= t("admin.products.product_title") %> <span class="tf-color-1">*</span></div>
+        <%= form.text_field :name, placeholder: t("admin.products.product_title_placeholder"), required: true %>
       </fieldset>
 
       <div class="product-form-two-columns">
         <fieldset class="category">
-          <div class="body-title mb-10">Category <span class="tf-color-1">*</span></div>
+          <div class="body-title mb-10"><%= t("admin.products.category") %> <span class="tf-color-1">*</span></div>
           <div class="select">
-            <%= form.select :category_id, category_options, { prompt: "Choose category" } %>
+            <%= form.select :category_id, category_options, { prompt: t("admin.products.choose_category") } %>
           </div>
         </fieldset>
 
         <fieldset class="price">
-          <div class="body-title mb-10">Price <span class="tf-color-1">*</span></div>
-          <%= form.number_field :price, placeholder: "Price", required: true, step: 0.01, min: 0 %>
+          <div class="body-title mb-10"><%= t("admin.products.price") %> <span class="tf-color-1">*</span></div>
+          <%= form.number_field :price, placeholder: t("admin.products.price"), required: true, step: 0.01, min: 0 %>
         </fieldset>
       </div>
 
       <fieldset class="description">
-        <div class="body-title mb-10">Description</div>
-        <%= form.text_area :description, placeholder: "Describe the product for the storefront", rows: 8 %>
+        <div class="body-title mb-10"><%= t("admin.products.description") %></div>
+        <%= form.text_area :description, placeholder: t("admin.products.description_placeholder"), rows: 8 %>
       </fieldset>
     </div>
   </div>
 
   <div class="product-form-actions">
     <button class="tf-button" type="submit">
-      <i class="icon-save"></i><%= @product.persisted? ? "Update product" : "Create product" %>
+      <i class="icon-save"></i><%= @product.persisted? ? t("admin.products.update") : t("admin.products.create") %>
     </button>
     <% if @product.persisted? %>
       <%= link_to admin_product_path(@product), class: "tf-button style-3" do %>
-        <i class="icon-arrow-left"></i>Cancel
+        <i class="icon-arrow-left"></i><%= t("admin.common.cancel") %>
       <% end %>
     <% else %>
       <%= link_to admin_products_path, class: "tf-button style-3" do %>
-        <i class="icon-arrow-left"></i>Cancel
+        <i class="icon-arrow-left"></i><%= t("admin.common.cancel") %>
       <% end %>
     <% end %>
   </div>

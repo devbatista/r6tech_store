@@ -2,13 +2,13 @@
   <%= render 'layouts/flash' %>
 
   <div class="main-content-wrap">
-    <%= render "admin/settings/header", title: "Store" %>
+    <%= render "admin/settings/header", title: t("admin.settings.store") %>
 
     <%= form_with model: @setting, url: admin_settings_store_path, method: :patch,
                   html: { multipart: true, class: "product-form" } do |form| %>
       <% if @setting.errors.any? %>
         <div class="wg-box product-form-errors mb-30">
-          <div class="body-title">Check the store information</div>
+          <div class="body-title"><%= t("admin.settings.check_store") %></div>
           <ul>
             <% @setting.errors.full_messages.each do |message| %>
               <li><%= message %></li>
@@ -19,36 +19,36 @@
 
       <div class="wg-box mb-20">
         <div>
-          <div class="body-title mb-10">Store profile</div>
-          <div class="text-tiny">Basic information shown across the storefront.</div>
+          <div class="body-title mb-10"><%= t("admin.settings.store_profile") %></div>
+          <div class="text-tiny"><%= t("admin.settings.store_profile_hint") %></div>
         </div>
 
         <fieldset class="name">
-          <div class="body-title mb-10">Store name</div>
-          <%= form.text_field :store_name, placeholder: "Enter store name" %>
+          <div class="body-title mb-10"><%= t("admin.settings.store_name") %></div>
+          <%= form.text_field :store_name, placeholder: t("admin.settings.store_name_placeholder") %>
         </fieldset>
 
         <div class="product-form-two-columns">
           <fieldset>
-            <div class="body-title mb-10">Contact email</div>
+            <div class="body-title mb-10"><%= t("admin.settings.contact_email") %></div>
             <%= form.email_field :contact_email, placeholder: "contact@store.com" %>
           </fieldset>
 
           <fieldset>
-            <div class="body-title mb-10">Contact phone</div>
+            <div class="body-title mb-10"><%= t("admin.settings.contact_phone") %></div>
             <%= form.text_field :contact_phone, placeholder: "+55 11 90000-0000" %>
           </fieldset>
         </div>
 
         <div class="product-form-two-columns">
           <fieldset>
-            <div class="body-title mb-10">Currency</div>
-            <input type="text" value="Brazilian Real (BRL)" readonly>
-            <div class="text-tiny mt-4">The store currency is fixed.</div>
+            <div class="body-title mb-10"><%= t("admin.settings.currency") %></div>
+            <input type="text" value="<%= t("admin.settings.brazilian_real") %>" readonly>
+            <div class="text-tiny mt-4"><%= t("admin.settings.fixed_currency_hint") %></div>
           </fieldset>
 
           <fieldset>
-            <div class="body-title mb-10">Timezone</div>
+            <div class="body-title mb-10"><%= t("admin.settings.timezone") %></div>
             <div class="select">
               <%= form.select :timezone, Setting::TIMEZONES %>
             </div>
@@ -58,8 +58,8 @@
 
       <div class="wg-box mb-20">
         <div>
-          <div class="body-title mb-10">Social links</div>
-          <div class="text-tiny">Optional links displayed in the storefront footer.</div>
+          <div class="body-title mb-10"><%= t("admin.settings.social_links") %></div>
+          <div class="text-tiny"><%= t("admin.settings.social_links_hint") %></div>
         </div>
 
         <fieldset>
@@ -80,14 +80,14 @@
 
       <div class="wg-box mb-20">
         <div>
-          <div class="body-title mb-10">Logo</div>
-          <div class="text-tiny">Recommended a square image (PNG/SVG).</div>
+          <div class="body-title mb-10"><%= t("admin.settings.logo") %></div>
+          <div class="text-tiny"><%= t("admin.settings.logo_hint") %></div>
         </div>
 
         <% if @setting.logo.attached? %>
           <div class="product-form-current-images mb-16">
             <div class="product-form-current-image">
-              <%= image_tag @setting.logo.variant(resize_to_limit: [220, 220]), alt: "Store logo" %>
+              <%= image_tag @setting.logo.variant(resize_to_limit: [220, 220]), alt: t("admin.settings.logo_alt") %>
             </div>
           </div>
         <% end %>
@@ -96,7 +96,7 @@
           <div class="up-load">
             <label class="uploadfile product-form-upload" for="setting_logo">
               <span class="icon"><i class="icon-upload-cloud"></i></span>
-              <div class="text-tiny">Drop a logo here or <span class="text-secondary">browse files</span></div>
+              <div class="text-tiny"><%= t("admin.settings.logo_drop") %> <span class="text-secondary"><%= t("admin.products.browse_files") %></span></div>
               <%= form.file_field :logo, id: "setting_logo", accept: "image/*" %>
             </label>
           </div>
@@ -105,7 +105,7 @@
 
       <div class="product-form-actions">
         <button class="tf-button" type="submit">
-          <i class="icon-save"></i>Save changes
+          <i class="icon-save"></i><%= t("admin.common.save_changes") %>
         </button>
       </div>
     <% end %>

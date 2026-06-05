@@ -8,25 +8,25 @@ class CartItemsController < BaseController
     result = @cart.add_product(product, quantity)
 
     if result
-      redirect_to cart_path(@cart), notice: "Product added to cart."
+      redirect_to cart_path(@cart), notice: t("flash.product_added_to_cart")
     else
-      redirect_to products_path, alert: "Não foi possível adicionar o produto ao carrinho."
+      redirect_to products_path, alert: t("flash.cart_add_failed")
     end
   end
 
   def update
     cart_item = @cart.cart_items.find(params[:id])
     if cart_item.update(quantity: params[:quantity])
-      redirect_to cart_path(@cart), notice: "Updated quantity."
+      redirect_to cart_path(@cart), notice: t("flash.cart_quantity_updated")
     else
-      redirect_to cart_path(@cart), notice: "Unable to update quantity."
+      redirect_to cart_path(@cart), notice: t("flash.cart_quantity_update_failed")
     end
   end
 
   def destroy
     cart_item = @cart.cart_items.find(params[:id])
     cart_item.destroy
-    redirect_to cart_path(@cart), notice: "Item removed from cart."
+    redirect_to cart_path(@cart), notice: t("flash.cart_item_removed")
   end
 
   private

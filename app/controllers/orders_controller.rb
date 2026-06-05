@@ -24,18 +24,18 @@ class OrdersController < BaseController
       end
 
       cart.update(status: :ordered)
-      redirect_to order_path(order), notice: "Order placed successfully."
+      redirect_to order_path(order), notice: t("flash.order_placed")
     else
-      redirect_to cart_path(cart), alert: "Your cart is empty."
+      redirect_to cart_path(cart), alert: t("flash.cart_empty")
     end
   end
 
   def cancel
     if @order.pending?
       @order.update(status: :cancelled)
-      redirect_to orders_path, notice: "Order cancelled successfully."
+      redirect_to orders_path, notice: t("flash.order_cancelled")
     else
-      redirect_to order_path(@order), alert: "This order cannot be cancelled."
+      redirect_to order_path(@order), alert: t("flash.order_cannot_be_cancelled")
     end
   end
 

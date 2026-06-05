@@ -2,29 +2,29 @@
   <%= render 'layouts/flash' %>
 
   <div class="main-content-wrap">
-    <%= render "admin/settings/header", title: "Administrators" %>
+    <%= render "admin/settings/header", title: t("admin.settings.administrators") %>
 
     <div class="wg-box">
       <div class="flex items-center justify-between gap10 flex-wrap">
-        <div class="body-title"><%= pluralize(@administrators.size, "administrator") %></div>
+        <div class="body-title"><%= t("admin.settings.administrator_count", count: @administrators.size) %></div>
         <%= link_to new_admin_settings_administrator_path, class: "tf-button style-1 w208" do %>
-          <i class="icon-plus"></i>Add administrator
+          <i class="icon-plus"></i><%= t("admin.settings.add_administrator") %>
         <% end %>
       </div>
 
       <div class="wg-table table-all-category">
         <ul class="table-title flex gap20 mb-14">
-          <li><div class="body-title">Name</div></li>
-          <li><div class="body-title">Email</div></li>
-          <li><div class="body-title">Phone</div></li>
-          <li><div class="body-title">Action</div></li>
+          <li><div class="body-title"><%= t("admin.settings.name") %></div></li>
+          <li><div class="body-title"><%= t("admin.settings.email") %></div></li>
+          <li><div class="body-title"><%= t("admin.settings.phone") %></div></li>
+          <li><div class="body-title"><%= t("admin.common.action") %></div></li>
         </ul>
         <ul class="flex flex-column">
           <% @administrators.each do |admin| %>
           <li class="wg-product item-row gap20">
             <div class="body-text fw-6">
               <%= admin.name %>
-              <% if admin == current_user %><span class="block-available fw-7">You</span><% end %>
+              <% if admin == current_user %><span class="block-available fw-7"><%= t("admin.settings.you") %></span><% end %>
             </div>
             <div class="body-text text-main-dark mt-4"><%= admin.email %></div>
             <div class="body-text text-main-dark mt-4"><%= admin.phone.presence || "—" %></div>
@@ -37,7 +37,7 @@
               <% unless admin == current_user %>
                 <div class="item trash">
                   <%= link_to admin_settings_administrator_path(admin),
-                              data: { turbo_method: :delete, turbo_confirm: "Remove this administrator?" } do %>
+                              data: { turbo_method: :delete, turbo_confirm: t("admin.settings.remove_administrator_confirmation") } do %>
                     <i class="icon-trash-2"></i>
                   <% end %>
                 </div>

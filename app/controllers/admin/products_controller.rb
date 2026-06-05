@@ -27,7 +27,7 @@ class Admin::ProductsController < Admin::BaseAdminController
     @product = Product.new(product_params)
     if @product.save
       enqueue_ai_suggestions(@product) if @product.needs_ai_suggestions?
-      redirect_to(admin_product_path(@product), notice: "Product created successfully")
+      redirect_to(admin_product_path(@product), notice: t("flash.product_created"))
     else
       render :new, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class Admin::ProductsController < Admin::BaseAdminController
 
   def update
     if @product.update(product_params)
-      redirect_to(admin_product_path(@product), notice: "Product updated successfully")
+      redirect_to(admin_product_path(@product), notice: t("flash.product_updated"))
     else
       render :edit, status: :unprocessable_entity
     end
@@ -45,7 +45,7 @@ class Admin::ProductsController < Admin::BaseAdminController
 
   def destroy
     if @product.destroy
-      redirect_to(admin_products_path, notice: "Product deleted", status: :see_other)
+      redirect_to(admin_products_path, notice: t("flash.product_removed"), status: :see_other)
     else
       redirect_to(admin_products_path, alert: @product.errors.full_messages, status: :see_other)
     end
@@ -53,15 +53,15 @@ class Admin::ProductsController < Admin::BaseAdminController
 
   def generate_ai_suggestions
     enqueue_ai_suggestions(@product, force: true)
-    redirect_to(admin_product_path(@product), notice: "AI suggestions are being generated")
+    redirect_to(admin_product_path(@product), notice: t("flash.ai_suggestions_generating"))
   end
 
   def approve_ai_description
     if @product.ai_description.present?
       @product.update!(description: @product.ai_description, ai_description_status: "approved", ai_error: nil)
-      redirect_to(admin_product_path(@product), notice: "AI description approved")
+      redirect_to(admin_product_path(@product), notice: t("flash.ai_description_approved"))
     else
-      redirect_to(admin_product_path(@product), alert: "No AI description available")
+      redirect_to(admin_product_path(@product), alert: t("flash.ai_description_unavailable"))
     end
   end
 
@@ -72,9 +72,9 @@ class Admin::ProductsController < Admin::BaseAdminController
       @product.images.attach(image.blob)
       @product.ai_generated_images.detach
       @product.update!(ai_image_status: "approved", ai_error: nil)
-      redirect_to(admin_product_path(@product), notice: "AI image approved")
+      redirect_to(admin_product_path(@product), notice: t("flash.ai_image_approved"))
     else
-      redirect_to(admin_product_path(@product), alert: "No AI image available")
+      redirect_to(admin_product_path(@product), alert: t("flash.ai_image_unavailable"))
     end
   end
 

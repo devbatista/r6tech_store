@@ -39,16 +39,16 @@
         <div class="left" style="background: url(<%= asset_path('images-section/bg-login.jpg') %>) center/cover no-repeat;">
           <div class="login-box">
             <div>
-              <h3 style="color: #FFF">Login to account</h3>
+              <h3 style="color: #FFF"><%= t("store.login.title") %></h3>
             </div>
             <%= form_with url: login_path, method: :post, class: "form-login flex flex-column gap22 w-full" do |form| %>
               <fieldset class="email">
-                <div class="body-title mb-10 text-white">Email address <span class="tf-color-1">*</span></div>
-                <%= form.email_field :email, class: "flex-grow", placeholder: "Enter your email address", required: true, tabindex: 0, "aria-required": true %>
+                <div class="body-title mb-10 text-white"><%= t("store.login.email") %> <span class="tf-color-1">*</span></div>
+                <%= form.email_field :email, class: "flex-grow", placeholder: t("store.login.email_placeholder"), required: true, tabindex: 0, "aria-required": true %>
               </fieldset>
               <fieldset class="password">
-                <div class="body-title mb-10 text-white">Password <span class="tf-color-1">*</span></div>
-                <%= form.password_field :password, class: "password-input", placeholder: "Enter your password", required: true, tabindex: 0, "aria-required": true %>
+                <div class="body-title mb-10 text-white"><%= t("store.login.password") %> <span class="tf-color-1">*</span></div>
+                <%= form.password_field :password, class: "password-input", placeholder: t("store.login.password_placeholder"), required: true, tabindex: 0, "aria-required": true %>
                 <span class="show-pass">
                   <i class="icon-eye view"></i>
                   <i class="icon-eye-off hide"></i>
@@ -57,11 +57,11 @@
               <div class="flex justify-between items-center">
                 <div class="flex gap10">
                   <%= form.check_box :remember_me, class: "tf-check", id: "signed" %>
-                  <label class="body-text text-white" for="signed">Keep me signed in</label>
+                  <label class="body-text text-white" for="signed"><%= t("store.login.remember_me") %></label>
                 </div>
-                <a href="#" class="body-text tf-color">Forgot password?</a>
+                <a href="#" class="body-text tf-color"><%= t("store.login.forgot_password") %></a>
               </div>
-              <button type="submit" class="tf-button w-full">Login</button>
+              <button type="submit" class="tf-button w-full"><%= t("store.login.submit") %></button>
             <% end %>
           </div>
         </div>

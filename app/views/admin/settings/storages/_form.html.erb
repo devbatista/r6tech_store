@@ -1,7 +1,7 @@
 <%= form_with model: storage, url: form_url, method: form_method, html: { class: "product-form" } do |form| %>
   <% if storage.errors.any? %>
     <div class="wg-box product-form-errors mb-30">
-      <div class="body-title">Check the storage information</div>
+      <div class="body-title"><%= t("admin.settings.check_storage") %></div>
       <ul>
         <% storage.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -12,19 +12,19 @@
 
   <div class="wg-box mb-20">
     <fieldset>
-      <div class="body-title mb-10">Storage <span class="tf-color-1">*</span></div>
+      <div class="body-title mb-10"><%= t("admin.settings.storage") %> <span class="tf-color-1">*</span></div>
       <div class="select">
-        <%= form.select :value, Storage::VALID_STORAGES, { prompt: "Choose a storage size" }, required: true %>
+        <%= form.select :value, Storage::VALID_STORAGES, { prompt: t("admin.settings.choose_storage_size") }, required: true %>
       </div>
     </fieldset>
   </div>
 
   <div class="product-form-actions">
     <button class="tf-button" type="submit">
-      <i class="icon-save"></i><%= storage.new_record? ? "Create storage" : "Update storage" %>
+      <i class="icon-save"></i><%= storage.new_record? ? t("admin.settings.create_storage") : t("admin.settings.update_storage") %>
     </button>
     <%= link_to admin_settings_storages_path, class: "tf-button style-3" do %>
-      <i class="icon-arrow-left"></i>Cancel
+      <i class="icon-arrow-left"></i><%= t("admin.common.cancel") %>
     <% end %>
   </div>
 <% end %>

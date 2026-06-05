@@ -2,7 +2,7 @@
               scope: :user, html: { class: "product-form" } do |form| %>
   <% if administrator.errors.any? %>
     <div class="wg-box product-form-errors mb-30">
-      <div class="body-title">Check the administrator information</div>
+      <div class="body-title"><%= t("admin.settings.check_administrator") %></div>
       <ul>
         <% administrator.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -13,18 +13,18 @@
 
   <div class="wg-box mb-20">
     <fieldset class="name">
-      <div class="body-title mb-10">Name <span class="tf-color-1">*</span></div>
+      <div class="body-title mb-10"><%= t("admin.settings.name") %> <span class="tf-color-1">*</span></div>
       <%= form.text_field :name, value: administrator.name, required: true %>
     </fieldset>
 
     <div class="product-form-two-columns">
       <fieldset>
-        <div class="body-title mb-10">Email <span class="tf-color-1">*</span></div>
+        <div class="body-title mb-10"><%= t("admin.settings.email") %> <span class="tf-color-1">*</span></div>
         <%= form.email_field :email, value: administrator.email, required: true %>
       </fieldset>
 
       <fieldset>
-        <div class="body-title mb-10">Phone</div>
+        <div class="body-title mb-10"><%= t("admin.settings.phone") %></div>
         <%= form.text_field :phone, value: administrator.phone %>
       </fieldset>
     </div>
@@ -32,17 +32,17 @@
     <div class="product-form-two-columns">
       <fieldset>
         <div class="body-title mb-10">
-          Password <% if administrator.new_record? %><span class="tf-color-1">*</span><% end %>
+          <%= t("admin.settings.password") %> <% if administrator.new_record? %><span class="tf-color-1">*</span><% end %>
         </div>
         <%= form.password_field :password, required: administrator.new_record?, autocomplete: "new-password" %>
         <% unless administrator.new_record? %>
-          <div class="text-tiny mt-4">Leave blank to keep current password.</div>
+          <div class="text-tiny mt-4"><%= t("admin.settings.keep_password_hint") %></div>
         <% end %>
       </fieldset>
 
       <fieldset>
         <div class="body-title mb-10">
-          Confirm password <% if administrator.new_record? %><span class="tf-color-1">*</span><% end %>
+          <%= t("admin.settings.confirm_password") %> <% if administrator.new_record? %><span class="tf-color-1">*</span><% end %>
         </div>
         <%= form.password_field :password_confirmation, required: administrator.new_record?, autocomplete: "new-password" %>
       </fieldset>
@@ -51,10 +51,10 @@
 
   <div class="product-form-actions">
     <button class="tf-button" type="submit">
-      <i class="icon-save"></i><%= administrator.new_record? ? "Create administrator" : "Update administrator" %>
+      <i class="icon-save"></i><%= administrator.new_record? ? t("admin.settings.create_administrator") : t("admin.settings.update_administrator") %>
     </button>
     <%= link_to admin_settings_administrators_path, class: "tf-button style-3" do %>
-      <i class="icon-arrow-left"></i>Cancel
+      <i class="icon-arrow-left"></i><%= t("admin.common.cancel") %>
     <% end %>
   </div>
 <% end %>

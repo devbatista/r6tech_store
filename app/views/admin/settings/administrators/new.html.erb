@@ -2,7 +2,7 @@
   <%= render 'layouts/flash' %>
 
   <div class="main-content-wrap">
-    <%= render "admin/settings/header", title: "Administrators" %>
+    <%= render "admin/settings/header", title: t("admin.settings.administrators") %>
     <%= render "form", administrator: @administrator,
                form_url: admin_settings_administrators_path, form_method: :post %>
   </div>

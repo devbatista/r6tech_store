@@ -6,40 +6,40 @@
       <div class="product-show-title">
         <h3><%= @product.name %></h3>
         <div class="product-show-subtitle">
-          <span><%= @product.category&.name || "Uncategorized" %></span>
+          <span><%= @product.category&.name || t("admin.common.uncategorized") %></span>
           <span>#<%= @product.id[0, 8] %></span>
         </div>
       </div>
 
       <div class="product-show-header-actions">
         <%= link_to edit_admin_product_path(@product), class: "tf-button" do %>
-          <i class="icon-edit-3"></i>Edit
+          <i class="icon-edit-3"></i><%= t("admin.common.edit") %>
         <% end %>
         <%= link_to admin_products_path, class: "tf-button style-3" do %>
-          <i class="icon-arrow-left"></i>Back
+          <i class="icon-arrow-left"></i><%= t("admin.common.back") %>
         <% end %>
         <%= link_to admin_product_path(@product),
                     class: "tf-button style-1 product-show-danger",
-                    data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } do %>
-          <i class="icon-trash-2"></i>Delete
+                    data: { turbo_method: :delete, turbo_confirm: t("admin.common.remove_confirmation") } do %>
+          <i class="icon-trash-2"></i><%= t("admin.common.delete") %>
         <% end %>
       </div>
 
       <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
         <li>
           <%= link_to admin_root_path do %>
-            <div class="text-tiny">Dashboard</div>
+            <div class="text-tiny"><%= t("admin.navigation.dashboard") %></div>
           <% end %>
         </li>
         <li><i class="icon-chevron-right"></i></li>
         <li>
           <%= link_to admin_products_path do %>
-            <div class="text-tiny">Products</div>
+            <div class="text-tiny"><%= t("admin.navigation.products") %></div>
           <% end %>
         </li>
         <li><i class="icon-chevron-right"></i></li>
         <li>
-          <div class="text-tiny">Details</div>
+          <div class="text-tiny"><%= t("admin.common.details") %></div>
         </li>
       </ul>
     </div>
@@ -64,10 +64,10 @@
         <% else %>
           <div class="product-show-empty-image">
             <i class="icon-image"></i>
-            <div class="body-title">No product images</div>
-            <div class="text-tiny">Add images by editing this product.</div>
+            <div class="body-title"><%= t("admin.products.no_images") %></div>
+            <div class="text-tiny"><%= t("admin.products.add_images_hint") %></div>
             <%= link_to edit_admin_product_path(@product), class: "tf-button style-3 product-show-empty-action" do %>
-              <i class="icon-upload-cloud"></i>Add images
+              <i class="icon-upload-cloud"></i><%= t("admin.products.add_images") %>
             <% end %>
           </div>
         <% end %>
@@ -75,32 +75,32 @@
 
       <div class="wg-box product-show-panel">
         <div>
-          <div class="body-title mb-10">Product details</div>
-          <div class="text-tiny">Catalog information</div>
+          <div class="body-title mb-10"><%= t("admin.products.product_details") %></div>
+          <div class="text-tiny"><%= t("admin.products.catalog_information") %></div>
         </div>
 
         <div class="divider"></div>
 
         <div class="product-show-price">
-          <div class="text-tiny">Price</div>
+          <div class="text-tiny"><%= t("admin.products.price") %></div>
           <div><%= number_to_currency(@product.price) %></div>
         </div>
 
         <div class="product-show-details-list">
           <div class="product-show-detail-row">
-            <span>Category</span>
-            <strong><%= @product.category&.name || "Uncategorized" %></strong>
+            <span><%= t("admin.products.category") %></span>
+            <strong><%= @product.category&.name || t("admin.common.uncategorized") %></strong>
           </div>
           <div class="product-show-detail-row">
-            <span>Images</span>
+            <span><%= t("admin.products.images") %></span>
             <strong><%= @product.images.size %></strong>
           </div>
           <div class="product-show-detail-row">
-            <span>Created</span>
+            <span><%= t("admin.common.created") %></span>
             <strong><%= l(@product.created_at, format: :short) %></strong>
           </div>
           <div class="product-show-detail-row">
-            <span>Updated</span>
+            <span><%= t("admin.common.updated") %></span>
             <strong><%= l(@product.updated_at, format: :short) %></strong>
           </div>
         </div>
@@ -109,28 +109,28 @@
 
     <div class="wg-box product-show-description-box mt-30">
       <div>
-        <div class="body-title mb-10">Product description</div>
-        <div class="text-tiny">Storefront copy</div>
+        <div class="body-title mb-10"><%= t("admin.products.product_description") %></div>
+        <div class="text-tiny"><%= t("admin.products.storefront_copy") %></div>
       </div>
       <div class="product-show-description">
-        <%= simple_format(@product.description.presence || "No description registered.") %>
+        <%= simple_format(@product.description.presence || t("admin.common.no_description")) %>
       </div>
     </div>
 
     <div class="wg-box product-show-description-box mt-30">
       <div>
-        <div class="body-title mb-10">AI suggestions</div>
-        <div class="text-tiny">Review generated content before publishing it.</div>
+        <div class="body-title mb-10"><%= t("admin.products.ai_suggestions") %></div>
+        <div class="text-tiny"><%= t("admin.products.ai_review_hint") %></div>
       </div>
 
       <div class="product-show-details-list mt-20">
         <div class="product-show-detail-row">
-          <span>Description status</span>
-          <strong><%= @product.ai_description_status.humanize %></strong>
+          <span><%= t("admin.products.description_status") %></span>
+          <strong><%= translated_ai_status(@product.ai_description_status) %></strong>
         </div>
         <div class="product-show-detail-row">
-          <span>Image status</span>
-          <strong><%= @product.ai_image_status.humanize %></strong>
+          <span><%= t("admin.products.image_status") %></span>
+          <strong><%= translated_ai_status(@product.ai_image_status) %></strong>
         </div>
       </div>
 
@@ -142,26 +142,26 @@
 
       <% if @product.ai_description.present? %>
         <div class="product-show-description mt-20">
-          <div class="body-title mb-10">Suggested description</div>
+          <div class="body-title mb-10"><%= t("admin.products.suggested_description") %></div>
           <%= simple_format(@product.ai_description) %>
           <%= button_to approve_ai_description_admin_product_path(@product),
                         method: :patch,
                         class: "tf-button mt-20" do %>
-            <i class="icon-check"></i>Approve description
+            <i class="icon-check"></i><%= t("admin.products.approve_description") %>
           <% end %>
         </div>
       <% end %>
 
       <% if @product.ai_generated_images.attached? %>
         <div class="mt-20">
-          <div class="body-title mb-10">Suggested image</div>
+          <div class="body-title mb-10"><%= t("admin.products.suggested_image") %></div>
           <div class="product-show-main-image">
             <%= image_tag @product.ai_generated_images.first.variant(resize_to_limit: [900, 900]), alt: @product.name %>
           </div>
           <%= button_to approve_ai_image_admin_product_path(@product),
                         method: :patch,
                         class: "tf-button mt-20" do %>
-            <i class="icon-check"></i>Approve image
+            <i class="icon-check"></i><%= t("admin.products.approve_image") %>
           <% end %>
         </div>
       <% end %>
@@ -170,7 +170,7 @@
         <%= button_to generate_ai_suggestions_admin_product_path(@product),
                       method: :post,
                       class: "tf-button style-3" do %>
-          <i class="icon-refresh-cw"></i>Generate again
+          <i class="icon-refresh-cw"></i><%= t("admin.products.generate_again") %>
         <% end %>
       </div>
     </div>

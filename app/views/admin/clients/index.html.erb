@@ -2,11 +2,11 @@
   <!-- main-content-wrap -->
   <div class="main-content-wrap">
     <div class="flex items-center flex-wrap justify-between gap20 mb-30">
-      <h3>Clients</h3>
+      <h3><%= t("admin.clients.title") %></h3>
       <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
         <li>
           <a href="index.html">
-            <div class="text-tiny">Dashboard</div>
+            <div class="text-tiny"><%= t("admin.navigation.dashboard") %></div>
           </a>
         </li>
         <li>
@@ -14,7 +14,7 @@
         </li>
         <li>
           <a href="#">
-            <div class="text-tiny">Clients</div>
+            <div class="text-tiny"><%= t("admin.navigation.clients") %></div>
           </a>
         </li>
       </ul>
@@ -26,7 +26,7 @@
           <form method="get" class="w-auto">
             <%= hidden_field_tag :query, @query if @query.present? %>
             <div class="show">
-              <div class="text-tiny">Showing</div>
+              <div class="text-tiny"><%= t("views.pagination.showing") %></div>
               <div class="select">
                 <select name="per" onchange="this.form.submit()">
                   <option value="10" <%= 'selected' if params[:per].to_s == '10' %>>10</option>
@@ -34,13 +34,13 @@
                   <option value="30" <%= 'selected' if params[:per].to_s == '30' %>>30</option>
                 </select>
               </div>
-              <div class="text-tiny">entries</div>
+              <div class="text-tiny"><%= t("views.pagination.entries") %></div>
             </div>
           </form>
           <form method="get" class="form-search">
             <%= hidden_field_tag :per, params[:per] if params[:per].present? %>
             <fieldset class="name">
-              <input type="text" placeholder="Search clients..." name="query" tabindex="2" value="<%= @query %>">
+              <input type="text" placeholder="<%= t("admin.clients.search_placeholder") %>" name="query" tabindex="2" value="<%= @query %>">
             </fieldset>
             <div class="button-submit">
               <button class="" type="submit"><i class="icon-search"></i></button>
@@ -51,19 +51,19 @@
       <div class="wg-table table-all-user">
         <ul class="table-title flex gap8 mb-8">
           <li>
-            <div class="body-title">Client</div>
+            <div class="body-title"><%= t("admin.clients.client") %></div>
           </li>
           <li>
-            <div class="body-title">Phone</div>
+            <div class="body-title"><%= t("admin.clients.phone") %></div>
           </li>
           <li>
-            <div class="body-title">Birthdate</div>
+            <div class="body-title"><%= t("admin.clients.birthdate") %></div>
           </li>
           <li>
-            <div class="body-title">Email</div>
+            <div class="body-title"><%= t("admin.clients.email") %></div>
           </li>
           <li>
-            <div class="body-title">Action</div>
+            <div class="body-title"><%= t("admin.common.action") %></div>
           </li>
         </ul>
         <ul class="flex flex-column">
@@ -94,7 +94,7 @@
           <% end %>
           <% else %>
             <li class="wg-product item-row">
-              <div class="body-text">No clients found.</div>
+              <div class="body-text"><%= t("admin.clients.empty") %></div>
               <div></div>
               <div></div>
               <div></div>
@@ -105,7 +105,7 @@
       </div>
       <div class="divider"></div>
       <div class="flex items-center justify-between flex-wrap gap10">
-        <div class="text-tiny">Showing <%= @clients.size %> of <%= @clients.total_count %> entries</div>
+        <div class="text-tiny"><%= t("views.pagination.showing_count", current: @clients.size, total: @clients.total_count) %></div>
         <ul class="wg-pagination">
           <li class="<%= 'disabled' unless @clients.prev_page %>">
             <% if @clients.prev_page %>

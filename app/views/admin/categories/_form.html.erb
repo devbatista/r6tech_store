@@ -1,24 +1,24 @@
 <div class="wg-box">
   <%= form_with(model: [:admin, @category], local: true, class:"form-new-product form-style-1") do |form| %>
     <fieldset class="name">
-      <div class="body-title">Category name <span class="tf-color-1">*</span></div>
-      <%= form.text_field :name, class: "flex-grow", placeholder: "Category name", required: true %>
+      <div class="body-title"><%= t("admin.categories.name") %> <span class="tf-color-1">*</span></div>
+      <%= form.text_field :name, class: "flex-grow", placeholder: t("admin.categories.name"), required: true %>
     </fieldset>
     <fieldset class="category">
-      <div class="body-title">Parent category</div>
+      <div class="body-title"><%= t("admin.categories.parent") %></div>
       <div class="select flex-grow">
         <%= form.collection_select :parent_id, 
                                    Category.where.not(id: @category.id), 
                                    :id, 
                                    :full_path, 
-                                   { prompt: "No parent" }, 
+                                   { prompt: t("admin.categories.no_parent") }, 
                                    class: "" %>
       </div>
     </fieldset>
     <div class="bot">
       <div></div>
-      <button class="tf-button w208" type="submit">Save</button>
-      <%= link_to "Back", admin_categories_path, class: "tf-button w208 back-button" %>
+      <button class="tf-button w208" type="submit"><%= t("admin.common.save") %></button>
+      <%= link_to t("admin.common.back"), admin_categories_path, class: "tf-button w208 back-button" %>
     </div>
   <% end %>
 </div>

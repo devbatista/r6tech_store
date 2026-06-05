@@ -1,7 +1,7 @@
 <%= form_with model: color, url: form_url, method: form_method, html: { class: "product-form" } do |form| %>
   <% if color.errors.any? %>
     <div class="wg-box product-form-errors mb-30">
-      <div class="body-title">Check the color information</div>
+      <div class="body-title"><%= t("admin.settings.check_color") %></div>
       <ul>
         <% color.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -13,12 +13,12 @@
   <div class="wg-box mb-20">
     <div class="product-form-two-columns">
       <fieldset class="name">
-        <div class="body-title mb-10">Name <span class="tf-color-1">*</span></div>
-        <%= form.text_field :name, placeholder: "e.g. Midnight", required: true %>
+        <div class="body-title mb-10"><%= t("admin.settings.name") %> <span class="tf-color-1">*</span></div>
+        <%= form.text_field :name, placeholder: t("admin.settings.color_name_placeholder"), required: true %>
       </fieldset>
 
       <fieldset>
-        <div class="body-title mb-10">Color <span class="tf-color-1">*</span></div>
+        <div class="body-title mb-10"><%= t("admin.settings.color") %> <span class="tf-color-1">*</span></div>
         <div class="flex items-center gap10">
           <%= form.color_field :hex, value: (color.hex.presence || "#000000"),
                                style: "width:56px;height:44px;padding:2px;",
@@ -31,10 +31,10 @@
 
   <div class="product-form-actions">
     <button class="tf-button" type="submit">
-      <i class="icon-save"></i><%= color.new_record? ? "Create color" : "Update color" %>
+      <i class="icon-save"></i><%= color.new_record? ? t("admin.settings.create_color") : t("admin.settings.update_color") %>
     </button>
     <%= link_to admin_settings_colors_path, class: "tf-button style-3" do %>
-      <i class="icon-arrow-left"></i>Cancel
+      <i class="icon-arrow-left"></i><%= t("admin.common.cancel") %>
     <% end %>
   </div>
 <% end %>

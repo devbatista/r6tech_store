@@ -2,7 +2,7 @@
   <%= render 'layouts/flash' %>
 
   <div class="main-content-wrap">
-    <%= render "admin/settings/header", title: "Storages" %>
+    <%= render "admin/settings/header", title: t("admin.settings.storages") %>
     <%= render "form", storage: @storage, form_url: admin_settings_storage_path(@storage), form_method: :patch %>
   </div>
 </div>

@@ -17,9 +17,9 @@ class Admin::OrdersController < Admin::BaseAdminController
 
     if @order.can_transition_to?(new_status)
       @order.update!(status: new_status)
-      redirect_to admin_order_path(@order), notice: "Order status updated to #{new_status.capitalize}."
+      redirect_to admin_order_path(@order), notice: t("flash.order_status_updated", status: helpers.translated_order_status(new_status))
     else
-      redirect_to admin_order_path(@order), alert: "Invalid status transition."
+      redirect_to admin_order_path(@order), alert: t("flash.invalid_status_transition")
     end
   end
 end

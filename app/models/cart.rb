@@ -25,7 +25,7 @@ class Cart < ApplicationRecord
   def remove_product(product)
     item = cart_item.find_by(product: product)
 
-    return { success: false, errors: "Item not found"} if item.nil?
+    return { success: false, errors: I18n.t("flash.cart_item_not_found", default: "Item nao encontrado") } if item.nil?
     item.destroy
   end
 end

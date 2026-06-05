@@ -11,11 +11,10 @@ class SessionsController < BaseController
 
     if user&.valid_password?(params[:password])
       session[:user_id] = user.id
-      p "admin? #{user.admin?}"
       redirect_to admin_root_path and return if user.admin?
-      redirect_to root_path, notice: "Login successful!"
+      redirect_to root_path, notice: t("flash.login_successful")
     else
-      flash.now[:alert] = "Invalid credentials"
+      flash.now[:alert] = t("flash.invalid_credentials")
       render :new, status: :unprocessable_entity
     end
   end
@@ -24,7 +23,7 @@ class SessionsController < BaseController
     path = current_user.admin? ? login_path : root_path
     session[:user_id] = nil
 
-    redirect_to path, notice: "Logout successful!"
+    redirect_to path, notice: t("flash.logout_successful")
   end
 
   private

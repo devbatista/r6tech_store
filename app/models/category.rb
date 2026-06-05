@@ -5,7 +5,7 @@ class Category < ApplicationRecord
   has_many :products, dependent: :nullify
 
   validates :name, presence: true
-  validates :name, uniqueness: { scope: :parent_id, message: "must be unique per parent category" }
+  validates :name, uniqueness: { scope: :parent_id }
 
   validate :cannot_be_own_parent
 
@@ -28,7 +28,7 @@ class Category < ApplicationRecord
 
     def cannot_be_own_parent
       if parent_id.present? && (parent_id == id || descendant_ids.include?(parent_id))
-        errors.add(:parent_id, "can't be itself or a descendant")
+        errors.add(:parent_id, :invalid_hierarchy)
       end
     end
 

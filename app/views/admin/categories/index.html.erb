@@ -3,11 +3,11 @@
   <!-- main-content-wrap -->
   <div class="main-content-wrap">
     <div class="flex items-center flex-wrap justify-between gap20 mb-30">
-      <h3>All category</h3>
+      <h3><%= t("admin.categories.all") %></h3>
       <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
         <li>
           <a href="index.html">
-            <div class="text-tiny">Dashboard</div>
+            <div class="text-tiny"><%= t("admin.navigation.dashboard") %></div>
           </a>
         </li>
         <li>
@@ -15,14 +15,14 @@
         </li>
         <li>
           <a href="#">
-            <div class="text-tiny">Categories</div>
+            <div class="text-tiny"><%= t("admin.navigation.categories") %></div>
           </a>
         </li>
         <li>
           <i class="icon-chevron-right"></i>
         </li>
         <li>
-          <div class="text-tiny">All category</div>
+          <div class="text-tiny"><%= t("admin.categories.all") %></div>
         </li>
       </ul>
     </div>
@@ -33,7 +33,7 @@
           <form method="get" class="w-auto">
             <%= hidden_field_tag :query, @query if @query.present? %>
             <div class="show">
-              <div class="text-tiny">Showing</div>
+              <div class="text-tiny"><%= t("views.pagination.showing") %></div>
               <div class="select">
                 <select name="per" onchange="this.form.submit()">
                   <option value="10" <%= 'selected' if params[:per].to_s == '10' %>>10</option>
@@ -41,13 +41,13 @@
                   <option value="30" <%= 'selected' if params[:per].to_s == '30' %>>30</option>
                 </select>
               </div>
-              <div class="text-tiny">entries</div>
+              <div class="text-tiny"><%= t("views.pagination.entries") %></div>
             </div>
           </form>
           <form method="get" class="form-search">
             <%= hidden_field_tag :per, params[:per] if params[:per].present? %>
             <fieldset class="name">
-              <input type="text" placeholder="Search categories..." name="query" tabindex="2" value="<%= @query %>">
+              <input type="text" placeholder="<%= t("admin.categories.search_placeholder") %>" name="query" tabindex="2" value="<%= @query %>">
             </fieldset>
             <div class="button-submit">
               <button class="" type="submit"><i class="icon-search"></i></button>
@@ -55,19 +55,19 @@
           </form>
         </div>
         <%= link_to new_admin_category_path, class: "tf-button style-1 w208" do %>
-        <i class="icon-plus"></i>Add new
+        <i class="icon-plus"></i><%= t("admin.common.add_new") %>
         <% end %>
       </div>
       <div class="wg-table table-all-category">
         <ul class="table-title flex gap20 mb-14">
           <li>
-            <div class="body-title">Category</div>
+            <div class="body-title"><%= t("admin.categories.category") %></div>
           </li>
           <li>
-            <div class="body-title">Parent</div>
+            <div class="body-title"><%= t("admin.categories.parent") %></div>
           </li>
           <li>
-            <div class="body-title">Action</div>
+            <div class="body-title"><%= t("admin.common.action") %></div>
           </li>
         </ul>
         <ul class="flex flex-column">
@@ -87,7 +87,7 @@
                   <% end %>
                 </div>
                 <div class="item trash">
-                  <%= link_to admin_category_path(category), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } do %>
+                  <%= link_to admin_category_path(category), data: { turbo_method: :delete, turbo_confirm: t("admin.common.remove_confirmation") } do %>
                   <i class="icon-trash-2"></i>
                   <% end %>
                 </div>
@@ -96,7 +96,7 @@
             <% end %>
           <% else %>
             <li class="wg-product item-row gap20">
-              <div class="body-text text-main-dark mt-4">No categories found.</div>
+              <div class="body-text text-main-dark mt-4"><%= t("admin.categories.empty") %></div>
               <div></div>
               <div></div>
             </li>
@@ -105,7 +105,7 @@
       </div>
       <div class="divider"></div>
       <div class="flex items-center justify-between flex-wrap gap10">
-        <div class="text-tiny">Showing <%= @categories.size %> of <%= @categories.total_count %> entries</div>
+        <div class="text-tiny"><%= t("views.pagination.showing_count", current: @categories.size, total: @categories.total_count) %></div>
         <ul class="wg-pagination">
           <li class="<%= 'disabled' unless @categories.prev_page %>">
             <% if @categories.prev_page %>

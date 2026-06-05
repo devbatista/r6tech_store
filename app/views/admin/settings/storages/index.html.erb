@@ -2,20 +2,20 @@
   <%= render 'layouts/flash' %>
 
   <div class="main-content-wrap">
-    <%= render "admin/settings/header", title: "Storages" %>
+    <%= render "admin/settings/header", title: t("admin.settings.storages") %>
 
     <div class="wg-box">
       <div class="flex items-center justify-between gap10 flex-wrap">
-        <div class="body-title"><%= pluralize(@storages.size, "storage option") %></div>
+        <div class="body-title"><%= t("admin.settings.storage_count", count: @storages.size) %></div>
         <%= link_to new_admin_settings_storage_path, class: "tf-button style-1 w208" do %>
-          <i class="icon-plus"></i>Add storage
+          <i class="icon-plus"></i><%= t("admin.settings.add_storage") %>
         <% end %>
       </div>
 
       <div class="wg-table table-all-category">
         <ul class="table-title flex gap20 mb-14">
-          <li><div class="body-title">Storage</div></li>
-          <li><div class="body-title">Action</div></li>
+          <li><div class="body-title"><%= t("admin.settings.storage") %></div></li>
+          <li><div class="body-title"><%= t("admin.common.action") %></div></li>
         </ul>
         <ul class="flex flex-column">
           <% @storages.each do |storage| %>
@@ -29,7 +29,7 @@
               </div>
               <div class="item trash">
                 <%= link_to admin_settings_storage_path(storage),
-                            data: { turbo_method: :delete, turbo_confirm: "Remove this storage option?" } do %>
+                            data: { turbo_method: :delete, turbo_confirm: t("admin.settings.remove_storage_confirmation") } do %>
                   <i class="icon-trash-2"></i>
                 <% end %>
               </div>
@@ -38,7 +38,7 @@
           <% end %>
           <% if @storages.empty? %>
           <li class="wg-product item-row gap20">
-            <div class="body-text text-tiny">No storage options registered yet.</div>
+            <div class="body-text text-tiny"><%= t("admin.settings.no_storages") %></div>
           </li>
           <% end %>
         </ul>

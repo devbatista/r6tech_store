@@ -15,7 +15,7 @@ class ProductsController < BaseController
   def create 
     @product = Product.new(product_params)
     if @product.save
-      redirect_to @product, notice: "Product created successfully."
+      redirect_to @product, notice: t("flash.product_created")
     else
       render :new, status: :unprocessable_entity
     end
@@ -25,7 +25,7 @@ class ProductsController < BaseController
 
   def update
     if @product.update(product_params)
-      redirect_to @product, notice: "Product updated successfully."
+      redirect_to @product, notice: t("flash.product_updated")
     else
       render :edit, status: :unprocessable_entity
     end
@@ -33,7 +33,7 @@ class ProductsController < BaseController
 
   def destroy
     @product.destroy
-    redirect_to products_path, notice: "Product removed successfully."
+    redirect_to products_path, notice: t("flash.product_removed")
   end
 
   private

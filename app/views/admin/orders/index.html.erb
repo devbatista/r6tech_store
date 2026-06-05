@@ -3,22 +3,22 @@
   <!-- main-content-wrap -->
   <div class="main-content-wrap">
       <div class="flex items-center flex-wrap justify-between gap20 mb-30">
-          <h3>Order List</h3>
+          <h3><%= t("admin.orders.list") %></h3>
           <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
               <li>
-                  <%= link_to admin_root_path do %><div class="text-tiny">Dashboard</div><% end %>
+                  <%= link_to admin_root_path do %><div class="text-tiny"><%= t("admin.navigation.dashboard") %></div><% end %>
               </li>
               <li>
                   <i class="icon-chevron-right"></i>
               </li>
               <li>
-                  <a href="#"><div class="text-tiny">Order</div></a>
+                  <a href="#"><div class="text-tiny"><%= t("admin.orders.order") %></div></a>
               </li>
               <li>
                   <i class="icon-chevron-right"></i>
               </li>
               <li>
-                  <div class="text-tiny">Order List</div>
+                  <div class="text-tiny"><%= t("admin.orders.list") %></div>
               </li>
           </ul>
       </div>
@@ -28,7 +28,7 @@
               <div class="wg-filter flex-grow">
                   <form method="get" class="w-auto">
                       <div class="show">
-                          <div class="text-tiny">Showing</div>
+                          <div class="text-tiny"><%= t("views.pagination.showing") %></div>
                           <div class="select">
                               <select name="per" onchange="this.form.submit()">
                                   <option value="10" <%= 'selected' if params[:per].to_s == '10' %>>10</option>
@@ -36,7 +36,7 @@
                                   <option value="30" <%= 'selected' if params[:per].to_s == '30' %>>30</option>
                               </select>
                           </div>
-                          <div class="text-tiny">entries</div>
+                          <div class="text-tiny"><%= t("views.pagination.entries") %></div>
                       </div>
                   </form>
               </div>
@@ -44,25 +44,25 @@
           <div class="wg-table table-all-category">
               <ul class="table-title flex gap20 mb-14">
                   <li>
-                      <div class="body-title">Order</div>
+                      <div class="body-title"><%= t("admin.orders.order") %></div>
                   </li>
                   <li>
-                      <div class="body-title">Customer</div>
+                      <div class="body-title"><%= t("admin.orders.customer") %></div>
                   </li>
                   <li>
-                      <div class="body-title">Items</div>
+                      <div class="body-title"><%= t("admin.orders.items") %></div>
                   </li>
                   <li>
-                      <div class="body-title">Total</div>
+                      <div class="body-title"><%= t("admin.orders.total") %></div>
                   </li>
                   <li>
-                      <div class="body-title">Date</div>
+                      <div class="body-title"><%= t("admin.orders.date") %></div>
                   </li>
                   <li>
-                      <div class="body-title">Status</div>
+                      <div class="body-title"><%= t("admin.orders.status") %></div>
                   </li>
                   <li>
-                      <div class="body-title">Action</div>
+                      <div class="body-title"><%= t("admin.common.action") %></div>
                   </li>
               </ul>
               <ul class="flex flex-column">
@@ -86,7 +86,7 @@
                       <div class="body-text text-main-dark mt-4"><%= number_to_currency(order.total) %></div>
                       <div class="body-text text-main-dark mt-4"><%= l(order.created_at, format: :short) %></div>
                       <div>
-                          <div class="<%= order_status_badge_class(order.status) %> bg-1 fw-7"><%= order.status.capitalize %></div>
+                          <div class="<%= order_status_badge_class(order.status) %> bg-1 fw-7"><%= translated_order_status(order.status) %></div>
                       </div>
                       <div class="list-icon-function">
                           <div class="item eye">
@@ -99,14 +99,14 @@
                   <% end %>
                   <% if @orders.empty? %>
                   <li class="wg-product item-row gap20">
-                      <div class="body-text text-tiny">No orders recorded yet.</div>
+                      <div class="body-text text-tiny"><%= t("admin.orders.empty") %></div>
                   </li>
                   <% end %>
               </ul>
           </div>
           <div class="divider"></div>
           <div class="flex items-center justify-between flex-wrap gap10">
-              <div class="text-tiny">Showing <%= @orders.size %> of <%= @orders.total_count %> entries</div>
+              <div class="text-tiny"><%= t("views.pagination.showing_count", current: @orders.size, total: @orders.total_count) %></div>
               <ul class="wg-pagination">
                   <li class="<%= 'disabled' unless @orders.prev_page %>">
                       <% if @orders.prev_page %>

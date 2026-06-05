@@ -12,13 +12,16 @@ module OrdersHelper
   end
 
   STATUS_ACTION_LABELS = {
-    "paid"      => "Mark as paid",
-    "shipped"   => "Mark as shipped",
-    "delivered" => "Mark as delivered",
-    "cancelled" => "Cancel order"
+    "paid"      => "statuses.order_actions.paid",
+    "shipped"   => "statuses.order_actions.shipped",
+    "delivered" => "statuses.order_actions.delivered",
+    "cancelled" => "statuses.order_actions.cancelled"
   }.freeze
 
   def order_status_action_label(status)
-    STATUS_ACTION_LABELS.fetch(status.to_s, "Set to #{status.to_s.capitalize}")
+    key = STATUS_ACTION_LABELS[status.to_s]
+    return t(key) if key
+
+    t("statuses.order_actions.fallback", status: translated_order_status(status))
   end
 end

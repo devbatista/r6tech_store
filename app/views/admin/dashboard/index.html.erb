@@ -18,7 +18,7 @@
             </div>
             <div>
               <div class="flex gap10 items-center">
-                <div class="body-text mt-2 mb-4">Total Earnings</div>
+                <div class="body-text mt-2 mb-4"><%= t("admin.dashboard.total_earnings") %></div>
                 <div class="box-icon-trending <%= @revenue_growth.negative? ? 'down' : 'up' %>">
                   <i class="icon-trending-<%= @revenue_growth.negative? ? 'down' : 'up' %>"></i>
                   <div class="body-title number"><%= number_with_precision(@revenue_growth.abs, precision: 2) %>%</div>
@@ -29,14 +29,14 @@
           </div>
           <div class="dropdown default">
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="view-all">Weekly<i class="icon-chevron-down"></i></span>
+              <span class="view-all"><%= t("admin.dashboard.weekly") %><i class="icon-chevron-down"></i></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
-                <a href="javascript:void(0);">Monthly</a>
+                <a href="javascript:void(0);"><%= t("admin.dashboard.monthly") %></a>
               </li>
               <li>
-                <a href="javascript:void(0);">Yearly</a>
+                <a href="javascript:void(0);"><%= t("admin.dashboard.yearly") %></a>
               </li>
             </ul>
           </div>
@@ -62,7 +62,7 @@
             </div>
             <div>
               <div class="flex gap15 items-center">
-                <div class="body-text mt-2 mb-4">Orders</div>
+                <div class="body-text mt-2 mb-4"><%= t("admin.dashboard.orders") %></div>
                 <div class="box-icon-trending <%= @orders_growth.negative? ? 'down' : 'up' %>">
                   <i class="icon-trending-<%= @orders_growth.negative? ? 'down' : 'up' %>"></i>
                   <div class="body-title number"><%= number_with_precision(@orders_growth.abs, precision: 2) %>%</div>
@@ -73,14 +73,14 @@
           </div>
           <div class="dropdown default">
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="view-all">Monthly<i class="icon-chevron-down"></i></span>
+              <span class="view-all"><%= t("admin.dashboard.monthly") %><i class="icon-chevron-down"></i></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
-                <a href="javascript:void(0);">Weekly</a>
+                <a href="javascript:void(0);"><%= t("admin.dashboard.weekly") %></a>
               </li>
               <li>
-                <a href="javascript:void(0);">Yearly</a>
+                <a href="javascript:void(0);"><%= t("admin.dashboard.yearly") %></a>
               </li>
             </ul>
           </div>
@@ -107,7 +107,7 @@
             </div>
             <div>
               <div class="flex gap9 items-center">
-                <div class="body-text mt-2 mb-4">Customers</div>
+                <div class="body-text mt-2 mb-4"><%= t("admin.dashboard.customers") %></div>
                 <div class="box-icon-trending <%= @customers_growth.negative? ? 'down' : 'up' %> color-violet">
                   <i class="icon-trending-<%= @customers_growth.negative? ? 'down' : 'up' %>"></i>
                   <div class="body-title number"><%= number_with_precision(@customers_growth.abs, precision: 2) %>%</div>
@@ -118,14 +118,14 @@
           </div>
           <div class="dropdown default">
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="view-all">Yearly<i class="icon-chevron-down"></i></span>
+              <span class="view-all"><%= t("admin.dashboard.yearly") %><i class="icon-chevron-down"></i></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
-                <a href="javascript:void(0);">Monthly</a>
+                <a href="javascript:void(0);"><%= t("admin.dashboard.monthly") %></a>
               </li>
               <li>
-                <a href="javascript:void(0);">Weekly</a>
+                <a href="javascript:void(0);"><%= t("admin.dashboard.weekly") %></a>
               </li>
             </ul>
           </div>
@@ -151,9 +151,9 @@
             </div>
             <div>
               <div class="flex gap10 items-center">
-                <div class="body-text mt-2 mb-4">Products</div>
+                <div class="body-text mt-2 mb-4"><%= t("admin.dashboard.products") %></div>
                 <div class="box-icon-trending up color-blue">
-                  <div class="body-title number">Avg ticket <%= number_to_currency(@average_ticket) %></div>
+                  <div class="body-title number"><%= t("admin.dashboard.average_ticket", value: number_to_currency(@average_ticket)) %></div>
                 </div>
               </div>
               <h4><%= number_with_delimiter(@total_products) %></h4>
@@ -161,14 +161,14 @@
           </div>
           <div class="dropdown default">
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="view-all">Yearly<i class="icon-chevron-down"></i></span>
+              <span class="view-all"><%= t("admin.dashboard.yearly") %><i class="icon-chevron-down"></i></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
-                <a href="javascript:void(0);">Monthly</a>
+                <a href="javascript:void(0);"><%= t("admin.dashboard.monthly") %></a>
               </li>
               <li>
-                <a href="javascript:void(0);">Weekly</a>
+                <a href="javascript:void(0);"><%= t("admin.dashboard.weekly") %></a>
               </li>
             </ul>
           </div>
@@ -183,17 +183,17 @@
       <!-- Revenue -->
       <div class="wg-box">
         <div class="flex items-center justify-between">
-          <h5>Revenue</h5>
+          <h5><%= t("admin.dashboard.revenue") %></h5>
           <div class="dropdown default style-box">
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <a href="product-list.html" class="view-all">Yearly<i class="icon-chevron-down"></i></a>
+              <a href="product-list.html" class="view-all"><%= t("admin.dashboard.yearly") %><i class="icon-chevron-down"></i></a>
             </button>
             <ul class="dropdown-menu">
               <li>
-                <a href="javascript:void(0);">Weekly</a>
+                <a href="javascript:void(0);"><%= t("admin.dashboard.weekly") %></a>
               </li>
               <li>
-                <a href="javascript:void(0);">Monthly</a>
+                <a href="javascript:void(0);"><%= t("admin.dashboard.monthly") %></a>
               </li>
             </ul>
           </div>
@@ -203,7 +203,7 @@
             <div class="mb-1">
               <div class="block-legend">
                 <div class="dot t3"></div>
-                <div class="text-tiny">Revenue</div>
+                <div class="text-tiny"><%= t("admin.dashboard.revenue") %></div>
               </div>
             </div>
             <div class="flex items-center gap12">
@@ -218,7 +218,7 @@
             <div class="mb-1">
               <div class="block-legend">
                 <div class="dot t5"></div>
-                <div class="text-tiny">Order</div>
+                <div class="text-tiny"><%= t("admin.orders.order") %></div>
               </div>
             </div>
             <div class="flex items-center gap12">
@@ -237,17 +237,17 @@
         <!-- top-product -->
         <div class="wg-box w-half">
           <div class="flex items-center justify-between">
-            <h5>Promotional Sales</h5>
+            <h5><%= t("admin.dashboard.promotional_sales") %></h5>
             <div class="dropdown default style-box">
               <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <a href="product-list.html" class="view-all">Weekly<i class="icon-chevron-down"></i></a>
+                <a href="product-list.html" class="view-all"><%= t("admin.dashboard.weekly") %><i class="icon-chevron-down"></i></a>
               </button>
               <ul class="dropdown-menu">
                 <li>
-                  <a href="javascript:void(0);">Yearly</a>
+                  <a href="javascript:void(0);"><%= t("admin.dashboard.yearly") %></a>
                 </li>
                 <li>
-                  <a href="javascript:void(0);">Monthly</a>
+                  <a href="javascript:void(0);"><%= t("admin.dashboard.monthly") %></a>
                 </li>
               </ul>
             </div>
@@ -256,7 +256,7 @@
             <div>
               <div class="mb-1">
                 <div class="block-legend">
-                  <div class="text-tiny">Visitors</div>
+                  <div class="text-tiny"><%= t("admin.dashboard.visitors") %></div>
                 </div>
               </div>
               <div class="flex items-center gap10">
@@ -272,15 +272,15 @@
           <div class="flex gap20">
             <div class="block-legend style-1 w-full">
               <div class="dot t4"></div>
-              <div class="text-tiny">Social Media</div>
+              <div class="text-tiny"><%= t("admin.dashboard.social_media") %></div>
             </div>
             <div class="block-legend style-1 w-full">
               <div class="dot t2"></div>
-              <div class="text-tiny">Website</div>
+              <div class="text-tiny"><%= t("admin.dashboard.website") %></div>
             </div>
             <div class="block-legend style-1 w-full">
               <div class="dot t3"></div>
-              <div class="text-tiny">Store</div>
+              <div class="text-tiny"><%= t("admin.dashboard.store") %></div>
             </div>
           </div>
         </div>
@@ -288,17 +288,17 @@
         <!-- top-countries -->
         <div class="wg-box w-half">
           <div class="flex items-center justify-between">
-            <h5>Top sale</h5>
+            <h5><%= t("admin.dashboard.top_sale") %></h5>
             <div class="dropdown default style-box">
               <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <a href="product-list.html" class="view-all">Weekly<i class="icon-chevron-down"></i></a>
+                <a href="product-list.html" class="view-all"><%= t("admin.dashboard.weekly") %><i class="icon-chevron-down"></i></a>
               </button>
               <ul class="dropdown-menu">
                 <li>
-                  <a href="javascript:void(0);">Yearly</a>
+                  <a href="javascript:void(0);"><%= t("admin.dashboard.yearly") %></a>
                 </li>
                 <li>
-                  <a href="javascript:void(0);">Monthly</a>
+                  <a href="javascript:void(0);"><%= t("admin.dashboard.monthly") %></a>
                 </li>
               </ul>
             </div>
@@ -317,12 +317,12 @@
                   <div class="price text-tiny"><%= number_to_currency(product.price) %></div>
                 </div>
               </div>
-              <div class="sale body-text"><%= number_with_delimiter(product.sold_quantity) %> Sales</div>
+              <div class="sale body-text"><%= t("admin.dashboard.sales", count: number_with_delimiter(product.sold_quantity)) %></div>
             </li>
             <% end %>
             <% if @top_products.empty? %>
             <li class="wg-product">
-              <div class="body-text text-tiny">No sales recorded yet.</div>
+              <div class="body-text text-tiny"><%= t("admin.dashboard.no_sales") %></div>
             </li>
             <% end %>
           </ul>
@@ -333,27 +333,27 @@
     <div class="tf-section-5">
       <div class="wg-box">
         <div class="flex items-center justify-between">
-          <h5>Recent orders</h5>
+          <h5><%= t("admin.dashboard.recent_orders") %></h5>
         </div>
         <div class="wg-table table-recent-orders">
           <ul class="table-title flex gap20 mb-14">
             <li>
-              <div class="body-title text-main-dark">Order</div>
+              <div class="body-title text-main-dark"><%= t("admin.orders.order") %></div>
             </li>
             <li>
-              <div class="body-title text-main-dark">Customer</div>
+              <div class="body-title text-main-dark"><%= t("admin.orders.customer") %></div>
             </li>
             <li>
-              <div class="body-title text-main-dark">Items</div>
+              <div class="body-title text-main-dark"><%= t("admin.orders.items") %></div>
             </li>
             <li>
-              <div class="body-title text-main-dark">Total</div>
+              <div class="body-title text-main-dark"><%= t("admin.orders.total") %></div>
             </li>
             <li>
-              <div class="body-title text-main-dark">Date</div>
+              <div class="body-title text-main-dark"><%= t("admin.orders.date") %></div>
             </li>
             <li>
-              <div class="body-title text-main-dark">Status</div>
+              <div class="body-title text-main-dark"><%= t("admin.orders.status") %></div>
             </li>
           </ul>
           <div class="divider mb-14"></div>
@@ -378,25 +378,25 @@
               <div class="body-text text-main-dark mt-4"><%= number_to_currency(order.total) %></div>
               <div class="body-text text-main-dark mt-4"><%= l(order.created_at, format: :short) %></div>
               <div>
-                <div class="<%= order_status_badge_class(order.status) %> fw-7"><%= order.status.capitalize %></div>
+                <div class="<%= order_status_badge_class(order.status) %> fw-7"><%= translated_order_status(order.status) %></div>
               </div>
             </li>
             <% end %>
             <% if @recent_orders.empty? %>
             <li class="item wg-product gap20">
-              <div class="body-text text-tiny">No orders recorded yet.</div>
+              <div class="body-text text-tiny"><%= t("admin.orders.empty") %></div>
             </li>
             <% end %>
           </ul>
         </div>
         <div class="flex items-center justify-between flex-wrap gap10">
-          <div class="text-tiny">Showing the <%= @recent_orders.size %> most recent orders of <%= number_with_delimiter(@total_orders) %></div>
-          <%= link_to "View all", admin_orders_path, class: "tf-button style-3" %>
+          <div class="text-tiny"><%= t("admin.orders.showing_recent", count: @recent_orders.size, total: number_with_delimiter(@total_orders)) %></div>
+          <%= link_to t("admin.common.view_all"), admin_orders_path, class: "tf-button style-3" %>
         </div>
       </div>
       <div class="wg-box">
         <div class="flex items-center justify-between">
-          <h5>User Location</h5>
+          <h5><%= t("admin.dashboard.user_location") %></h5>
         </div>
         <div class="wrap-usa-vectormap">
           <div id="usa-vectormap"></div>
@@ -422,7 +422,7 @@
               </div>
               <div class="block-legend">
                 <div class="dot t3"></div>
-                <div class="text-tiny text-surface-2">North Carolina <span class="fw-7 text-main-dark">2%</span></div>
+                <div class="text-tiny text-surface-2">Carolina do Norte <span class="fw-7 text-main-dark">2%</span></div>
               </div>
               <div class="block-legend">
                 <div class="dot t3"></div>

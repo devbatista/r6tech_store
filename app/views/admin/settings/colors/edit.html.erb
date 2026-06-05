@@ -2,7 +2,7 @@
   <%= render 'layouts/flash' %>
 
   <div class="main-content-wrap">
-    <%= render "admin/settings/header", title: "Colors" %>
+    <%= render "admin/settings/header", title: t("admin.settings.colors") %>
     <%= render "form", color: @color, form_url: admin_settings_color_path(@color), form_method: :patch %>
   </div>
 </div>
