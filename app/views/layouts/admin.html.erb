@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!--[if IE 8 ]><html class="ie" xmlns="http://www.w3.org/1999/xhtml" xml:lang="pt-BR" lang="pt-BR"> <![endif]-->
+<!--[if IE 8 ]><html class="ie" xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= I18n.locale %>" lang="<%= I18n.locale %>"> <![endif]-->
 <!--[if (gte IE 9)|!(IE)]><!-->
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pt-BR" lang="pt-BR">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= I18n.locale %>" lang="<%= I18n.locale %>">
 <!--<![endif]-->
 
 <!-- filepath: app/views/layouts/admin.html.erb -->
@@ -247,6 +247,21 @@
               <div class="header-grid">
                 <div class="header-item button-dark-light">
                   <i class="icon-moon"></i>
+                </div>
+                <div class="header-item country" title="<%= locale_switch_title %>">
+                  <%= form_with url: request.path, method: :get, local: true, html: { class: "locale-switcher-form" } do %>
+                    <% request.query_parameters.except("locale").each do |key, value| %>
+                      <%= hidden_field_tag key, value %>
+                    <% end %>
+                    <%= select_tag :locale,
+                                   options_for_select([
+                                     [t("admin.common.portuguese"), "pt-BR", { "data-thumbnail": asset_path("country/4.png") }],
+                                     [t("admin.common.english"), "en", { "data-thumbnail": asset_path("country/1.png") }]
+                                   ], I18n.locale.to_s),
+                                   class: "image-select",
+                                   onchange: "this.form.submit()",
+                                   "aria-label": locale_switch_title %>
+                  <% end %>
                 </div>
                 <!-- Campo de notificações no header -->
                 <div class="popup-wrap noti type-header">
