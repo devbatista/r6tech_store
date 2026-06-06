@@ -87,6 +87,10 @@ pt-BR:
       sign_in_to_checkout: "Entre na sua conta para finalizar a compra."
       welcome: "Acesse seus pedidos e finalize suas compras com segurança."
       back: "Voltar para a loja"
+      login: "Entrar"
+      close: "Fechar login"
+      forgot_password: "Esqueceu sua senha?"
+      create_account: "Novo cliente? Crie sua conta ↗"
     footer:
       about: "Tecnologia e acessórios selecionados para facilitar sua rotina."
       shop: "Loja"

@@ -115,6 +115,10 @@ en:
       sign_in_to_checkout: "Sign in to your account to complete the purchase."
       welcome: "Access your orders and complete your purchases securely."
       back: "Back to store"
+      login: "Log in"
+      close: "Close login"
+      forgot_password: "Forgot your password?"
+      create_account: "New customer? Create your account ↗"
     footer:
       about: "Technology and accessories selected to simplify your routine."
       shop: "Store"

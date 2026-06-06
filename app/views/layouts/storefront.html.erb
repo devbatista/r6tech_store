@@ -9,11 +9,15 @@
     <%= javascript_importmap_tags %>
     <%= favicon_link_tag "storefront/product-placeholder.jpg" %>
   </head>
-  <body class="storefront-body">
+  <body class="storefront-body"
+        data-controller="modal"
+        data-modal-open-value="<%= params[:login].present? %>"
+        data-action="keydown.esc@window->modal#close">
     <%= render "storefront/announcement" %>
     <%= render "storefront/header" %>
     <%= render "layouts/flash" %>
     <main><%= yield %></main>
     <%= render "storefront/footer" %>
+    <%= render "storefront/login_modal" unless current_user %>
   </body>
 </html>

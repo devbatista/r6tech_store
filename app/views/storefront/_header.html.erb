@@ -31,7 +31,7 @@
           <span class="header-action__icon">◎</span><span><%= current_user.name.to_s.split.first %></span>
         <% end %>
       <% else %>
-        <%= link_to login_path, class: "header-action" do %>
+        <%= link_to "#login-modal", class: "header-action", data: { action: "modal#open" } do %>
           <span class="header-action__icon">◎</span><span><%= t("storefront.account") %></span>
         <% end %>
       <% end %>

@@ -1,0 +1,20 @@
+<div id="login-modal" class="login-modal" data-modal-target="overlay" data-action="click->modal#closeFromOverlay" aria-hidden="true">
+  <section class="login-modal__dialog" data-modal-target="dialog" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+    <div class="login-modal__header">
+      <h2 id="login-modal-title"><%= t("storefront.auth.login") %></h2>
+      <a href="#" class="login-modal__close" data-action="modal#close" aria-label="<%= t("storefront.auth.close") %>">×</a>
+    </div>
+
+    <%= form_with url: login_path, method: :post, class: "login-modal__form" do |form| %>
+      <%= form.email_field :email, value: params[:email], placeholder: t("store.login.email_placeholder"), required: true, autocomplete: "email", data: { modal_target: "firstInput" } %>
+      <%= form.password_field :password, placeholder: t("store.login.password_placeholder"), required: true, autocomplete: "current-password" %>
+
+      <%= link_to t("storefront.auth.forgot_password"), new_user_password_path, class: "login-modal__link" %>
+
+      <div class="login-modal__actions">
+        <button class="store-button store-button--dark"><%= t("store.login.submit") %></button>
+        <%= link_to t("storefront.auth.create_account"), new_user_registration_path, class: "login-modal__create" %>
+      </div>
+    <% end %>
+  </section>
+</div>

@@ -2,7 +2,9 @@ class SessionsController < BaseController
   before_action :redirect_if_customer_user, only: :new
   before_action :redirect_if_authenticated, only: :new
 
-  def new;end
+  def new
+    redirect_to root_path(anchor: "login-modal")
+  end
 
   def create
     user = User.find_by(email: params[:email])
@@ -15,8 +17,7 @@ class SessionsController < BaseController
       redirect_to admin_root_path and return if user.admin?
       redirect_to(session.delete(:return_to) || root_path, notice: t("flash.login_successful"))
     else
-      flash.now[:alert] = t("flash.invalid_credentials")
-      render :new, status: :unprocessable_entity
+      redirect_to root_path(email: params[:email], anchor: "login-modal"), alert: t("flash.invalid_credentials")
     end
   end
 
