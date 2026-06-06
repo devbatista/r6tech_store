@@ -9,12 +9,16 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "home#index"
   
-  resources :products
+  resources :products, only: [:index, :show]
 
   resources :orders, only: [:index, :show, :create] do
     member do
       patch :cancel
     end
+  end
+
+  resource :cart, only: :show do
+    resources :items, controller: "cart_items", only: [:create, :update, :destroy]
   end
 
   namespace :admin do

@@ -1,13 +1,64 @@
-<!-- filepath: app/views/home/index.html.erb -->
-<h1>Bem-vindo à Virtual Shop!</h1>
+<% content_for :title, "#{storefront_name} | #{t("storefront.home.title")}" %>
 
-<p>Confira nossos produtos:</p>
-
-<ul>
-  <% @products.each do |product| %>
-    <li>
-      <strong><%= link_to product.name, product_path(product) %></strong>
-      - <%= number_to_currency(product.price) %>
-    </li>
+<section class="hero" data-controller="carousel">
+  <% [
+    ["storefront/hero/hero-1.jpg", t("storefront.home.hero_one.title"), t("storefront.home.hero_one.text")],
+    ["storefront/hero/hero-2.jpg", t("storefront.home.hero_two.title"), t("storefront.home.hero_two.text")],
+    ["storefront/hero/hero-3.jpg", t("storefront.home.hero_three.title"), t("storefront.home.hero_three.text")]
+  ].each_with_index do |slide, index| %>
+    <article class="hero__slide <%= "is-active" if index.zero? %>" data-carousel-target="slide">
+      <%= image_tag slide[0], alt: slide[1] %>
+      <div class="store-container hero__content">
+        <p><%= t("storefront.home.eyebrow") %></p>
+        <h1><%= slide[1] %></h1>
+        <span><%= slide[2] %></span>
+        <%= link_to t("storefront.home.shop_now"), products_path, class: "store-button store-button--dark" %>
+      </div>
+    </article>
   <% end %>
-</ul>
+  <div class="hero__dots">
+    <% 3.times do |index| %><button data-action="carousel#show" data-index="<%= index %>" aria-label="<%= index + 1 %>"></button><% end %>
+  </div>
+</section>
+
+<section class="benefits">
+  <div class="store-container benefits__grid">
+    <% %w[shipping support secure returns].each do |benefit| %>
+      <div class="benefit"><b>✓</b><div><strong><%= t("storefront.home.benefits.#{benefit}.title") %></strong><span><%= t("storefront.home.benefits.#{benefit}.text") %></span></div></div>
+    <% end %>
+  </div>
+</section>
+
+<section class="store-section">
+  <div class="store-container">
+    <div class="section-heading"><div><span><%= t("storefront.home.explore") %></span><h2><%= t("storefront.home.categories") %></h2></div><%= link_to t("storefront.view_all"), products_path %></div>
+    <div class="category-grid">
+      <% @categories.each_with_index do |category, index| %>
+        <%= link_to products_path(category_id: category.id), class: "category-card" do %>
+          <%= category_image(category, index) %><strong><%= category.name %></strong><span><%= t("storefront.home.category_products", count: category_product_count(category)) %></span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<section class="store-section store-section--muted">
+  <div class="store-container">
+    <div class="section-heading"><div><span><%= t("storefront.home.new_arrivals") %></span><h2><%= t("storefront.home.featured") %></h2></div><%= link_to t("storefront.view_all"), products_path %></div>
+    <div class="product-grid"><%= render partial: "storefront/product_card", collection: @featured_products, as: :product %></div>
+  </div>
+</section>
+
+<section class="store-section">
+  <div class="store-container editorial-grid">
+    <article><%= image_tag "storefront/banners/banner-1.jpg", alt: "" %><div><h2><%= t("storefront.home.banner_one") %></h2><%= link_to t("storefront.home.shop_now"), products_path %></div></article>
+    <article><%= image_tag "storefront/banners/banner-2.jpg", alt: "" %><div><h2><%= t("storefront.home.banner_two") %></h2><%= link_to t("storefront.home.shop_now"), products_path %></div></article>
+  </div>
+</section>
+
+<section class="store-section">
+  <div class="store-container">
+    <div class="section-heading"><div><span><%= t("storefront.home.popular") %></span><h2><%= t("storefront.home.best_sellers") %></h2></div></div>
+    <div class="product-grid"><%= render partial: "storefront/product_card", collection: @best_sellers, as: :product %></div>
+  </div>
+</section>

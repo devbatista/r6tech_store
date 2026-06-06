@@ -17,7 +17,7 @@ RSpec.describe OrderItem, type: :model do
     it "não permite preço negativo" do
       order_item = OrderItem.new(order: order, product: product, quantity: 1, price: -1)
       expect(order_item).not_to be_valid
-      expect(order_item.errors[:price]).to include("must be greater than or equal to 0")
+      expect(order_item.errors[:price]).to include(I18n.t("errors.messages.greater_than_or_equal_to", count: 0))
     end
   end
 end

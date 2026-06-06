@@ -1,0 +1,29 @@
+<% content_for :title, "#{t("storefront.cart.title")} | #{storefront_name}" %>
+<section class="page-heading"><div class="store-container"><h1><%= t("storefront.cart.title") %></h1></div></section>
+<section class="store-section"><div class="store-container">
+  <% if @cart.cart_items.any? %>
+    <div class="cart-layout">
+      <div class="cart-items">
+        <% @cart.cart_items.includes(product: { images_attachments: :blob }).each do |item| %>
+          <article class="cart-item">
+            <%= link_to product_path(item.product), class: "cart-item__image" do %><%= product_image(item.product) %><% end %>
+            <div><span><%= item.product.category&.name %></span><h3><%= link_to item.product.name, product_path(item.product) %></h3><strong><%= number_to_currency(item.product.price) %></strong></div>
+            <%= form_with url: cart_item_path(item), method: :patch, class: "cart-item__quantity" do |form| %><%= form.number_field :quantity, value: item.quantity, min: 1, onchange: "this.form.requestSubmit()" %><% end %>
+            <strong><%= number_to_currency(item.product.price * item.quantity) %></strong>
+            <%= button_to "×", cart_item_path(item), method: :delete, class: "cart-item__remove", title: t("storefront.cart.remove") %>
+          </article>
+        <% end %>
+      </div>
+      <aside class="cart-summary">
+        <h2><%= t("storefront.cart.summary") %></h2>
+        <p><span><%= t("storefront.cart.subtotal") %></span><strong><%= number_to_currency(@cart.total_value) %></strong></p>
+        <p><span><%= t("storefront.cart.shipping") %></span><strong><%= @cart.shipping_cost(@setting).zero? ? t("storefront.cart.free_shipping") : number_to_currency(@cart.shipping_cost(@setting)) %></strong></p>
+        <div class="cart-summary__total"><span><%= t("storefront.cart.total") %></span><strong><%= number_to_currency(@cart.total_with_shipping(@setting)) %></strong></div>
+        <%= button_to t("storefront.cart.checkout"), orders_path, class: "store-button store-button--dark store-button--full" %>
+        <%= link_to t("storefront.cart.continue"), products_path, class: "cart-summary__continue" %>
+      </aside>
+    </div>
+  <% else %>
+    <div class="empty-state"><h2><%= t("storefront.cart.empty") %></h2><p><%= t("storefront.cart.empty_text") %></p><%= link_to t("storefront.cart.continue"), products_path, class: "store-button store-button--dark" %></div>
+  <% end %>
+</div></section>

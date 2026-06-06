@@ -1,6 +1,4 @@
 class SessionsController < BaseController
-  layout false
-
   before_action :redirect_if_customer_user, only: :new
   before_action :redirect_if_authenticated, only: :new
 
@@ -10,9 +8,12 @@ class SessionsController < BaseController
     user = User.find_by(email: params[:email])
 
     if user&.valid_password?(params[:password])
+      guest_cart = Cart.find_by(id: session[:cart_id], user_id: nil, status: :active)
       session[:user_id] = user.id
+      CartMerger.new(user: user, guest_cart: guest_cart).call if user.customer?
+      session.delete(:cart_id)
       redirect_to admin_root_path and return if user.admin?
-      redirect_to root_path, notice: t("flash.login_successful")
+      redirect_to(session.delete(:return_to) || root_path, notice: t("flash.login_successful"))
     else
       flash.now[:alert] = t("flash.invalid_credentials")
       render :new, status: :unprocessable_entity

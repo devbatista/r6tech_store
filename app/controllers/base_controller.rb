@@ -1,7 +1,10 @@
 class BaseController < ApplicationController
+  include CurrentCart
+
   before_action :renew_session_if_user_was_removed
 
   helper_method :current_user
+  layout "storefront"
 
   private
 

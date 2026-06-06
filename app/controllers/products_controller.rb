@@ -1,39 +1,23 @@
 class ProductsController < BaseController
-  before_action :authorize_admin!, only: [:new, :create, :edit, :update, :destroy]
-  before_action :set_product, only: [:show, :edit, :update, :destroy]
+  before_action :set_product, only: :show
 
   def index
-    @products = Product.all
+    @query = params[:query].to_s.strip
+    @category = Category.find_by(id: params[:category_id])
+    @categories = Category.roots.includes(:subcategories)
+
+    products = Product.with_attached_images.includes(:category)
+    products = search(products) if @query.present?
+    products = products.where(category_id: [@category.id, *@category.descendant_ids]) if @category
+    @products = sort(products).page(params[:page]).per(12)
   end
 
-  def show;end
-
-  def new
-    @product = Product.new
-  end
-
-  def create 
-    @product = Product.new(product_params)
-    if @product.save
-      redirect_to @product, notice: t("flash.product_created")
-    else
-      render :new, status: :unprocessable_entity
-    end
-  end
-
-  def edit;end
-
-  def update
-    if @product.update(product_params)
-      redirect_to @product, notice: t("flash.product_updated")
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
-  def destroy
-    @product.destroy
-    redirect_to products_path, notice: t("flash.product_removed")
+  def show
+    @related_products = Product
+      .with_attached_images
+      .where(category_id: @product.category_id)
+      .where.not(id: @product.id)
+      .limit(4)
   end
 
   private
@@ -42,7 +26,20 @@ class ProductsController < BaseController
       @product = Product.find(params[:id])
     end
 
-    def product_params
-      params.require(:product).permit(:name, :description, :price)
+    def search(products)
+      term = "%#{ActiveRecord::Base.sanitize_sql_like(@query)}%"
+      products.left_joins(:category).where(
+        "products.name ILIKE :term OR products.description ILIKE :term OR categories.name ILIKE :term",
+        term: term
+      )
+    end
+
+    def sort(products)
+      case params[:sort]
+      when "name_asc" then products.order(name: :asc)
+      when "price_asc" then products.order(price: :asc)
+      when "price_desc" then products.order(price: :desc)
+      else products.order(created_at: :desc)
+      end
     end
 end

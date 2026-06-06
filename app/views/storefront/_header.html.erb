@@ -1,0 +1,45 @@
+<header class="store-header" data-controller="menu">
+  <div class="store-container store-header__main">
+    <button class="icon-button store-header__menu" type="button" data-action="menu#toggle" aria-label="<%= t("storefront.menu") %>">
+      <span></span><span></span><span></span>
+    </button>
+
+    <%= link_to root_path, class: "store-brand" do %>
+      <% if storefront_setting.logo.attached? %>
+        <%= image_tag storefront_setting.logo, alt: storefront_name %>
+      <% else %>
+        <strong><%= storefront_name %></strong>
+      <% end %>
+    <% end %>
+
+    <nav class="store-nav" data-menu-target="panel">
+      <%= link_to t("storefront.nav.home"), root_path %>
+      <%= link_to t("storefront.nav.products"), products_path %>
+      <% Category.roots.limit(4).each do |category| %>
+        <%= link_to category.name, products_path(category_id: category.id) %>
+      <% end %>
+    </nav>
+
+    <div class="store-header__actions">
+      <%= form_with url: products_path, method: :get, class: "header-search" do |form| %>
+        <%= form.search_field :query, value: params[:query], placeholder: t("storefront.search_placeholder"), aria: { label: t("storefront.search") } %>
+        <button type="submit" aria-label="<%= t("storefront.search") %>">⌕</button>
+      <% end %>
+
+      <% if current_user %>
+        <%= link_to current_user.admin? ? admin_root_path : orders_path, class: "header-action" do %>
+          <span class="header-action__icon">◎</span><span><%= current_user.name.to_s.split.first %></span>
+        <% end %>
+      <% else %>
+        <%= link_to login_path, class: "header-action" do %>
+          <span class="header-action__icon">◎</span><span><%= t("storefront.account") %></span>
+        <% end %>
+      <% end %>
+
+      <%= link_to cart_path, class: "header-action header-cart" do %>
+        <span class="header-action__icon">▢</span><span><%= t("storefront.cart.title") %></span>
+        <b><%= cart_item_count %></b>
+      <% end %>
+    </div>
+  </div>
+</header>

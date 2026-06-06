@@ -29,6 +29,97 @@
 
 en:
   hello: "Hello world"
+  storefront:
+    announcement: "Free shipping on selected orders. Shop technology securely."
+    menu: "Open menu"
+    search: "Search"
+    search_placeholder: "Search products..."
+    account: "My account"
+    view_all: "View all"
+    nav:
+      home: "Home"
+      products: "Products"
+    home:
+      title: "Technology and accessories"
+      eyebrow: "Technology for every day"
+      shop_now: "Shop now"
+      hero_one:
+        title: "Accessories that keep up with you"
+        text: "Protection, power and connectivity selected for your devices."
+      hero_two:
+        title: "Complete your setup"
+        text: "Find the right products to work, create and enjoy every moment."
+      hero_three:
+        title: "Smart design. Simple use."
+        text: "Functional technology with a finish that suits you."
+      explore: "Explore the store"
+      categories: "Shop by category"
+      category_products:
+        one: "1 product"
+        other: "%{count} products"
+      new_arrivals: "New arrivals"
+      featured: "Featured products"
+      popular: "Popular choices"
+      best_sellers: "Best sellers"
+      banner_one: "Power for all your devices"
+      banner_two: "Protection with design and personality"
+      benefits:
+        shipping:
+          title: "Reliable delivery"
+          text: "Track your order"
+        support:
+          title: "Specialized support"
+          text: "Help when you need it"
+        secure:
+          title: "Secure purchase"
+          text: "Your data protected"
+        returns:
+          title: "Shop with confidence"
+          text: "Simple and transparent process"
+    catalog:
+      title: "All products"
+      eyebrow: "Catalog"
+      categories: "Categories"
+      all: "All categories"
+      newest: "Newest"
+      name: "Name: A-Z"
+      price_low: "Lowest price"
+      price_high: "Highest price"
+      empty: "No products found"
+      clear: "Clear filters"
+    product:
+      quantity: "Quantity"
+      no_description: "This product does not have a description yet."
+      secure: "Secure purchase"
+      shipping: "Tracked delivery"
+      related: "You may also like"
+    cart:
+      title: "Cart"
+      add: "Add to cart"
+      remove: "Remove product"
+      summary: "Order summary"
+      subtotal: "Subtotal"
+      shipping: "Shipping"
+      free_shipping: "Free"
+      total: "Total"
+      checkout: "Checkout"
+      continue: "Continue shopping"
+      empty: "Your cart is empty"
+      empty_text: "Explore the catalog and add products to continue."
+    orders:
+      title: "My orders"
+      order: "Order details"
+      items: "Items"
+      back: "Back to orders"
+    auth:
+      sign_in_to_checkout: "Sign in to your account to complete the purchase."
+      welcome: "Access your orders and complete your purchases securely."
+      back: "Back to store"
+    footer:
+      about: "Technology and accessories selected to simplify your routine."
+      shop: "Store"
+      account: "Account"
+      language: "Language and payments"
   number:
     currency:
       format:

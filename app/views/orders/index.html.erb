@@ -1,0 +1,7 @@
+<% content_for :title, "#{t("storefront.orders.title")} | #{storefront_name}" %>
+<section class="page-heading"><div class="store-container"><h1><%= t("storefront.orders.title") %></h1></div></section>
+<section class="store-section"><div class="store-container order-list">
+  <% @orders.order(created_at: :desc).each do |order| %>
+    <%= link_to order_path(order), class: "order-row" do %><span>#<%= order.id.to_s.first(8) %></span><span><%= l(order.created_at, format: :short) %></span><span><%= translated_order_status(order.status) %></span><strong><%= number_to_currency(order.total) %></strong><% end %>
+  <% end %>
+</div></section>

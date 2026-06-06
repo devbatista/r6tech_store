@@ -31,7 +31,7 @@ RSpec.describe Product, type: :model do
     it "is invalid without a category" do
       product = Product.new(name: "No Category", price: 10, category: nil)
       expect(product.valid?).to(be_falsey)
-      expect(product.errors[:category]).to(include("must exist"))
+      expect(product.errors[:category]).to(include(I18n.t("errors.messages.required")))
     end
   end
 end

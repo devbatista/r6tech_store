@@ -1,37 +1,35 @@
 class CartItemsController < BaseController
-  before_action :authenticate_user!
+  before_action :set_cart_item, only: [:update, :destroy]
   
   def create
     product = Product.find(params[:product_id])
-    quantity = params[:quantity].to_i
+    quantity = [params.fetch(:quantity, 1).to_i, 1].max
 
-    result = @cart.add_product(product, quantity)
+    result = current_cart.add_product(product, quantity)
 
     if result
-      redirect_to cart_path(@cart), notice: t("flash.product_added_to_cart")
+      redirect_to cart_path, notice: t("flash.product_added_to_cart"), status: :see_other
     else
       redirect_to products_path, alert: t("flash.cart_add_failed")
     end
   end
 
   def update
-    cart_item = @cart.cart_items.find(params[:id])
-    if cart_item.update(quantity: params[:quantity])
-      redirect_to cart_path(@cart), notice: t("flash.cart_quantity_updated")
+    if @cart_item.update(quantity: params[:quantity])
+      redirect_to cart_path, notice: t("flash.cart_quantity_updated"), status: :see_other
     else
-      redirect_to cart_path(@cart), notice: t("flash.cart_quantity_update_failed")
+      redirect_to cart_path, alert: t("flash.cart_quantity_update_failed"), status: :see_other
     end
   end
 
   def destroy
-    cart_item = @cart.cart_items.find(params[:id])
-    cart_item.destroy
-    redirect_to cart_path(@cart), notice: t("flash.cart_item_removed")
+    @cart_item.destroy
+    redirect_to cart_path, notice: t("flash.cart_item_removed"), status: :see_other
   end
 
   private
 
-    def set_cart
-      @cart = current_user.carts.find_by(status: :active)
+    def set_cart_item
+      @cart_item = current_cart.cart_items.find(params[:id])
     end
 end

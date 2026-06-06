@@ -1,5 +1,5 @@
 class Cart < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, optional: true
   has_many :cart_items, dependent: :destroy
   
   enum :status, {
@@ -15,10 +15,23 @@ class Cart < ApplicationRecord
     cart_items.includes(:product).sum { |item| item.quantity * item.product.price }
   end
 
+  def shipping_cost(setting = Setting.instance)
+    threshold = setting.free_shipping_threshold
+    return 0 if threshold.present? && total_value >= threshold
+
+    setting.shipping_fee || 0
+  end
+
+  def total_with_shipping(setting = Setting.instance)
+    total_value + shipping_cost(setting)
+  end
+
   def add_product(product, quantity = 1)
+    return false if quantity.to_i <= 0
+
     cart_item = cart_items.find_or_initialize_by(product: product)
     cart_item.quantity ||= 0
-    cart_item.quantity += quantity
+    cart_item.quantity += quantity.to_i
     cart_item.save
   end
 

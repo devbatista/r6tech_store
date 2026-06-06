@@ -70,9 +70,9 @@ RSpec.describe Admin::ProductsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("iPhone 15")
       expect(response.body).to include("Phones")
-      expect(response.body).to include("No product images")
-      expect(response.body).to include("Add images")
-      expect(response.body).to include("Edit")
+      expect(response.body).to include(I18n.t("admin.products.no_images"))
+      expect(response.body).to include(I18n.t("admin.products.add_images"))
+      expect(response.body).to include(I18n.t("admin.common.edit"))
     end
   end
 
@@ -248,11 +248,11 @@ RSpec.describe Admin::ProductsController, type: :controller do
       get :show, params: { id: product.id }
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("AI suggestions")
+      expect(response.body).to include(I18n.t("admin.products.ai_suggestions"))
       expect(response.body).to include("Descricao sugerida.")
-      expect(response.body).to include("Approve description")
+      expect(response.body).to include(I18n.t("admin.products.approve_description"))
       expect(response.body).to include("Provider unavailable")
-      expect(response.body).to include("Generate again")
+      expect(response.body).to include(I18n.t("admin.products.generate_again"))
     end
   end
 end

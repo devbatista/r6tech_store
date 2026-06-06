@@ -1,0 +1,6 @@
+<% content_for :title, "#{t("storefront.orders.order")} | #{storefront_name}" %>
+<section class="page-heading"><div class="store-container"><span>#<%= @order.id.to_s.first(8) %></span><h1><%= t("storefront.orders.order") %></h1></div></section>
+<section class="store-section"><div class="store-container order-detail">
+  <div><h2><%= t("storefront.orders.items") %></h2><% @order.order_items.includes(:product).each do |item| %><div class="order-item"><span><%= item.quantity %>× <%= item.product.name %></span><strong><%= number_to_currency(item.price * item.quantity) %></strong></div><% end %></div>
+  <aside class="cart-summary"><h2><%= translated_order_status(@order.status) %></h2><div class="cart-summary__total"><span><%= t("storefront.cart.total") %></span><strong><%= number_to_currency(@order.total) %></strong></div><%= link_to t("storefront.orders.back"), orders_path, class: "store-button store-button--dark store-button--full" %></aside>
+</div></section>

@@ -1,6 +1,98 @@
 pt-BR:
   hello: "Ola mundo"
 
+  storefront:
+    announcement: "Frete grátis para compras selecionadas. Compre tecnologia com segurança."
+    menu: "Abrir menu"
+    search: "Buscar"
+    search_placeholder: "Buscar produtos..."
+    account: "Minha conta"
+    view_all: "Ver todos"
+    nav:
+      home: "Início"
+      products: "Produtos"
+    home:
+      title: "Tecnologia e acessórios"
+      eyebrow: "Tecnologia para o seu dia"
+      shop_now: "Comprar agora"
+      hero_one:
+        title: "Acessórios que acompanham seu ritmo"
+        text: "Proteção, energia e conectividade em uma seleção feita para seus dispositivos."
+      hero_two:
+        title: "Seu setup, mais completo"
+        text: "Encontre os produtos certos para trabalhar, criar e aproveitar cada momento."
+      hero_three:
+        title: "Design inteligente. Uso simples."
+        text: "Tecnologia funcional com acabamento que combina com você."
+      explore: "Explore a loja"
+      categories: "Compre por categoria"
+      category_products:
+        one: "1 produto"
+        other: "%{count} produtos"
+      new_arrivals: "Novidades"
+      featured: "Produtos em destaque"
+      popular: "Escolhas populares"
+      best_sellers: "Mais vendidos"
+      banner_one: "Energia para todos os seus dispositivos"
+      banner_two: "Proteção com design e personalidade"
+      benefits:
+        shipping:
+          title: "Entrega confiável"
+          text: "Acompanhe seu pedido"
+        support:
+          title: "Suporte especializado"
+          text: "Atendimento quando precisar"
+        secure:
+          title: "Compra segura"
+          text: "Seus dados protegidos"
+        returns:
+          title: "Compra tranquila"
+          text: "Processo simples e transparente"
+    catalog:
+      title: "Todos os produtos"
+      eyebrow: "Catálogo"
+      categories: "Categorias"
+      all: "Todas as categorias"
+      newest: "Mais recentes"
+      name: "Nome: A-Z"
+      price_low: "Menor preço"
+      price_high: "Maior preço"
+      empty: "Nenhum produto encontrado"
+      clear: "Limpar filtros"
+    product:
+      quantity: "Quantidade"
+      no_description: "Este produto ainda não possui descrição."
+      secure: "Compra segura"
+      shipping: "Entrega acompanhada"
+      related: "Você também pode gostar"
+    cart:
+      title: "Carrinho"
+      add: "Adicionar ao carrinho"
+      remove: "Remover produto"
+      summary: "Resumo da compra"
+      subtotal: "Subtotal"
+      shipping: "Frete"
+      free_shipping: "Grátis"
+      total: "Total"
+      checkout: "Finalizar compra"
+      continue: "Continuar comprando"
+      empty: "Seu carrinho está vazio"
+      empty_text: "Explore o catálogo e adicione produtos para continuar."
+    orders:
+      title: "Meus pedidos"
+      order: "Detalhes do pedido"
+      items: "Itens"
+      back: "Voltar aos pedidos"
+    auth:
+      sign_in_to_checkout: "Entre na sua conta para finalizar a compra."
+      welcome: "Acesse seus pedidos e finalize suas compras com segurança."
+      back: "Voltar para a loja"
+    footer:
+      about: "Tecnologia e acessórios selecionados para facilitar sua rotina."
+      shop: "Loja"
+      account: "Conta"
+      language: "Idioma e pagamentos"
+
   date:
     formats:
       default: "%d/%m/%Y"

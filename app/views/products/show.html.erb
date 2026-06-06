@@ -1,0 +1,23 @@
+<% content_for :title, "#{@product.name} | #{storefront_name}" %>
+<section class="store-section"><div class="store-container product-detail">
+  <div class="product-gallery">
+    <% if @product.images.attached? %>
+      <% @product.images.each do |image| %><%= image_tag image, alt: @product.name %><% end %>
+    <% else %>
+      <%= image_tag "storefront/product-placeholder.jpg", alt: @product.name %>
+    <% end %>
+  </div>
+  <div class="product-info">
+    <%= link_to @product.category.name, products_path(category_id: @product.category_id), class: "product-info__category" %>
+    <h1><%= @product.name %></h1>
+    <strong class="product-info__price"><%= number_to_currency(@product.price) %></strong>
+    <p><%= @product.description.presence || t("storefront.product.no_description") %></p>
+    <%= form_with url: cart_items_path, class: "add-form" do |form| %>
+      <div><label><%= t("storefront.product.quantity") %></label><%= form.number_field :quantity, value: 1, min: 1 %></div>
+      <%= form.hidden_field :product_id, value: @product.id %>
+      <button class="store-button store-button--dark"><%= t("storefront.cart.add") %></button>
+    <% end %>
+    <div class="product-assurances"><span>✓ <%= t("storefront.product.secure") %></span><span>✓ <%= t("storefront.product.shipping") %></span></div>
+  </div>
+</div></section>
+<% if @related_products.any? %><section class="store-section store-section--muted"><div class="store-container"><div class="section-heading"><h2><%= t("storefront.product.related") %></h2></div><div class="product-grid"><%= render partial: "storefront/product_card", collection: @related_products, as: :product %></div></div></section><% end %>

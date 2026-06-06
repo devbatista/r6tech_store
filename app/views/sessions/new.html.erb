@@ -1,83 +1,17 @@
-<!DOCTYPE html>
-<!--[if IE 8 ]><html class="ie" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!-->
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
-<!--<![endif]-->
-
-<head>
-  <meta charset="utf-8">
-  <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
-  <title>R6tech Store</title>
-  <%= csrf_meta_tags %>
-  <meta name="author" content="Rafael Batista">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-  <!-- Rails asset helpers -->
-  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
-  <%= stylesheet_link_tag "css/animate.min", 
-                          "css/animation", 
-                          "css/bootstrap", 
-                          "css/bootstrap-select.min", 
-                          "css/styles", 
-                          "font/fonts", 
-                          "icon/style", 
-                          media: "all" %>
-                          
-  <%= favicon_link_tag "favicon.png" %>
-  <link rel="apple-touch-icon-precomposed" href="<%= asset_path('favicon.png') %>">
-  <%= javascript_importmap_tags %>
-</head>
-
-<body class="body">
-  <%= image_tag "images-section/bg-login.jpg", style: "display:none" %>
-
-  <!-- #wrapper -->
-  <div id="wrapper">
-    <!-- #page -->
-    <div id="page" class="">
-      <div class="login-page">
-        <div class="left" style="background: url(<%= asset_path('images-section/bg-login.jpg') %>) center/cover no-repeat;">
-          <div class="login-box">
-            <div>
-              <h3 style="color: #FFF"><%= t("store.login.title") %></h3>
-            </div>
-            <%= form_with url: login_path, method: :post, class: "form-login flex flex-column gap22 w-full" do |form| %>
-              <fieldset class="email">
-                <div class="body-title mb-10 text-white"><%= t("store.login.email") %> <span class="tf-color-1">*</span></div>
-                <%= form.email_field :email, class: "flex-grow", placeholder: t("store.login.email_placeholder"), required: true, tabindex: 0, "aria-required": true %>
-              </fieldset>
-              <fieldset class="password">
-                <div class="body-title mb-10 text-white"><%= t("store.login.password") %> <span class="tf-color-1">*</span></div>
-                <%= form.password_field :password, class: "password-input", placeholder: t("store.login.password_placeholder"), required: true, tabindex: 0, "aria-required": true %>
-                <span class="show-pass">
-                  <i class="icon-eye view"></i>
-                  <i class="icon-eye-off hide"></i>
-                </span>
-              </fieldset>
-              <div class="flex justify-between items-center">
-                <div class="flex gap10">
-                  <%= form.check_box :remember_me, class: "tf-check", id: "signed" %>
-                  <label class="body-text text-white" for="signed"><%= t("store.login.remember_me") %></label>
-                </div>
-                <a href="#" class="body-text tf-color"><%= t("store.login.forgot_password") %></a>
-              </div>
-              <button type="submit" class="tf-button w-full"><%= t("store.login.submit") %></button>
-            <% end %>
-          </div>
-        </div>
-        <div class="right">
-          <%= image_tag "images-section/Sign in.jpg", alt: "" %>
-        </div>
-      </div>
+<% content_for :title, "#{t("store.login.title")} | #{storefront_name}" %>
+<section class="auth-page">
+  <div class="auth-page__media"><%= image_tag "storefront/hero/hero-2.jpg", alt: "" %></div>
+  <div class="auth-page__content">
+    <div class="auth-box">
+      <span><%= storefront_name %></span>
+      <h1><%= t("store.login.title") %></h1>
+      <p><%= t("storefront.auth.welcome") %></p>
+      <%= form_with url: login_path, method: :post, class: "auth-form" do |form| %>
+        <label><%= t("store.login.email") %><%= form.email_field :email, placeholder: t("store.login.email_placeholder"), required: true, autofocus: true %></label>
+        <label><%= t("store.login.password") %><%= form.password_field :password, placeholder: t("store.login.password_placeholder"), required: true %></label>
+        <button class="store-button store-button--dark store-button--full"><%= t("store.login.submit") %></button>
+      <% end %>
+      <%= link_to t("storefront.auth.back"), root_path, class: "auth-box__back" %>
     </div>
-    <!-- /#page -->
   </div>
-  <!-- /#wrapper -->
-
-  <!-- Javascript -->
-  <%= javascript_include_tag "jquery.min" %>
-  <%= javascript_include_tag "theme-settings", defer: true %>
-
-</body>
-
-</html>
+</section>

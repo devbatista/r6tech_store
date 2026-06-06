@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <title><%= content_for?(:title) ? yield(:title) : storefront_name %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "storefront/storefront", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <%= favicon_link_tag "storefront/product-placeholder.jpg" %>
+  </head>
+  <body class="storefront-body">
+    <%= render "storefront/announcement" %>
+    <%= render "storefront/header" %>
+    <%= render "layouts/flash" %>
+    <main><%= yield %></main>
+    <%= render "storefront/footer" %>
+  </body>
+</html>

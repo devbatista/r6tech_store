@@ -1,5 +1,5 @@
 class OrdersController < BaseController
-  before_action :authenticate_user!
+  before_action :require_customer!
   before_action :set_order, only: [:show, :cancel]
 
   def index
@@ -9,24 +9,27 @@ class OrdersController < BaseController
   def show;end
 
   def create
-    cart = current_user.carts.find_by(status: :active)
+    cart = current_cart
     
     if cart && cart.cart_items.any?
-      total = cart.cart_items.sum { |item| item.product.price * item.quantity }
-      order = current_user.order.create(status: :pending, total: total)
-      
-      cart.cart_items.each do |item|
-        order.order_items.create(
-          product: item.product,
-          quantity: item.quantity,
-          price: item.product.price
-        )
-      end
+      order = Order.transaction do
+        total = cart.total_with_shipping
+        created_order = current_user.orders.create!(status: :pending, total: total)
 
-      cart.update(status: :ordered)
+        cart.cart_items.each do |item|
+          created_order.order_items.create!(
+            product: item.product,
+            quantity: item.quantity,
+            price: item.product.price
+          )
+        end
+
+        cart.update!(status: :ordered)
+        created_order
+      end
       redirect_to order_path(order), notice: t("flash.order_placed")
     else
-      redirect_to cart_path(cart), alert: t("flash.cart_empty")
+      redirect_to cart_path, alert: t("flash.cart_empty")
     end
   end
 
@@ -40,6 +43,13 @@ class OrdersController < BaseController
   end
 
   private
+
+    def require_customer!
+      return if current_user&.customer?
+
+      session[:return_to] = cart_path
+      redirect_to login_path, alert: t("store.auth.sign_in_to_checkout")
+    end
 
     def set_order
       @order = current_user.orders.find(params[:id])

@@ -1,5 +1,6 @@
 //= link_tree ../images
 //= link_directory ../stylesheets .css
+//= link storefront/storefront.css
 //= link css/animation.css
 //= link css/animate.min.css
 //= link css/swiper-bundle.min.css

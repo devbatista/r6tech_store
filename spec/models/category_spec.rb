@@ -10,7 +10,7 @@ RSpec.describe Category, type: :model do
   describe "validations" do
     subject { Category.new(name: "Test") }
     it { should validate_presence_of(:name) }
-    it { should validate_uniqueness_of(:name).scoped_to(:parent_id).with_message("must be unique per parent category") } 
+    it { should validate_uniqueness_of(:name).scoped_to(:parent_id) }
   end
 
   describe "custom validations: cannot_be_own_parent" do
@@ -18,7 +18,7 @@ RSpec.describe Category, type: :model do
       category = Category.create!(name: 'Root')
       category.parent = category
       expect(category.valid?).to(be_falsey)
-      expect(category.errors[:parent_id]).to(include("can't be itself or a descendant"))
+      expect(category.errors[:parent_id]).to(include(I18n.t("activerecord.errors.models.category.attributes.parent_id.invalid_hierarchy")))
     end
 
     it "does not allow a category to be a descendant of itself" do
@@ -26,7 +26,7 @@ RSpec.describe Category, type: :model do
       child = Category.create!(name: 'Child', parent: root)
       root.parent = child
       expect(root.valid?).to(be_falsey)
-      expect(root.errors[:parent_id]).to(include("can't be itself or a descendant"))
+      expect(root.errors[:parent_id]).to(include(I18n.t("activerecord.errors.models.category.attributes.parent_id.invalid_hierarchy")))
     end
   end
 

@@ -1,0 +1,33 @@
+<footer class="store-footer">
+  <div class="store-container store-footer__grid">
+    <div>
+      <h3><%= storefront_name %></h3>
+      <p><%= t("storefront.footer.about") %></p>
+      <% if storefront_setting.contact_phone.present? %><p><%= storefront_setting.contact_phone %></p><% end %>
+      <% if storefront_setting.contact_email.present? %><p><%= storefront_setting.contact_email %></p><% end %>
+    </div>
+    <div>
+      <h4><%= t("storefront.footer.shop") %></h4>
+      <%= link_to t("storefront.nav.products"), products_path %>
+      <% Category.roots.limit(4).each do |category| %>
+        <%= link_to category.name, products_path(category_id: category.id) %>
+      <% end %>
+    </div>
+    <div>
+      <h4><%= t("storefront.footer.account") %></h4>
+      <%= link_to t("storefront.cart.title"), cart_path %>
+      <%= link_to t("storefront.orders.title"), orders_path if current_user&.customer? %>
+      <%= link_to t("storefront.account"), login_path unless current_user %>
+    </div>
+    <div>
+      <h4><%= t("storefront.footer.language") %></h4>
+      <%= form_with url: request.path, method: :get, class: "locale-form" do %>
+        <%= select_tag :locale, options_for_select([["Português", "pt-BR"], ["English", "en"]], I18n.locale.to_s), onchange: "this.form.submit()" %>
+      <% end %>
+      <div class="payment-list">
+        <% 1.upto(4) do |index| %><%= image_tag "storefront/payments/payment-#{index}.png", alt: "" %><% end %>
+      </div>
+    </div>
+  </div>
+  <div class="store-container store-footer__bottom">© <%= Time.current.year %> <%= storefront_name %></div>
+</footer>

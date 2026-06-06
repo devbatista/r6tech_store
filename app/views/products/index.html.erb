@@ -1,0 +1,23 @@
+<% content_for :title, "#{t("storefront.catalog.title")} | #{storefront_name}" %>
+<section class="page-heading"><div class="store-container"><span><%= t("storefront.catalog.eyebrow") %></span><h1><%= @category&.name || t("storefront.catalog.title") %></h1></div></section>
+<section class="store-section"><div class="store-container catalog-layout">
+  <aside class="catalog-sidebar">
+    <h3><%= t("storefront.catalog.categories") %></h3>
+    <%= link_to t("storefront.catalog.all"), products_path(query: @query, sort: params[:sort]), class: @category ? nil : "is-active" %>
+    <% @categories.each do |category| %><%= link_to category.name, products_path(active_category_params(category)), class: ("is-active" if @category == category) %><% end %>
+  </aside>
+  <div>
+    <%= form_with url: products_path, method: :get, class: "catalog-toolbar" do |form| %>
+      <%= form.hidden_field :category_id, value: @category&.id %>
+      <%= form.search_field :query, value: @query, placeholder: t("storefront.search_placeholder") %>
+      <%= form.select :sort, options_for_select([[t("storefront.catalog.newest"), "newest"], [t("storefront.catalog.name"), "name_asc"], [t("storefront.catalog.price_low"), "price_asc"], [t("storefront.catalog.price_high"), "price_desc"]], params[:sort]), {}, onchange: "this.form.submit()" %>
+      <button class="store-button store-button--dark"><%= t("storefront.search") %></button>
+    <% end %>
+    <% if @products.any? %>
+      <div class="product-grid"><%= render partial: "storefront/product_card", collection: @products, as: :product %></div>
+      <div class="pagination-wrap"><%= paginate @products %></div>
+    <% else %>
+      <div class="empty-state"><h2><%= t("storefront.catalog.empty") %></h2><%= link_to t("storefront.catalog.clear"), products_path, class: "store-button store-button--dark" %></div>
+    <% end %>
+  </div>
+</div></section>
