@@ -1,0 +1,25 @@
+<div class="account-address-form">
+  <div class="account-addresses__header">
+    <h2><%= t(address.persisted? ? "storefront.account_page.edit_address" : "storefront.account_page.add_address") %></h2>
+    <%= link_to t("storefront.account_page.cancel"), account_path(anchor: "addresses"), data: { turbo_frame: "account_addresses_content", turbo_action: "advance" } %>
+  </div>
+
+  <%= form_with model: address, class: "account-address-form__grid", data: { controller: "cep" } do |form| %>
+    <label><%= t("storefront.account_page.address_fields.label") %><%= form.text_field :label, required: true %></label>
+    <label><%= t("storefront.account_page.address_fields.recipient") %><%= form.text_field :recipient, required: true %></label>
+    <label>
+      <%= t("storefront.account_page.address_fields.zip_code") %>
+      <%= form.text_field :zip_code, required: true, maxlength: 9, inputmode: "numeric", autocomplete: "postal-code", data: { cep_target: "zipCode", action: "input->cep#schedule" } %>
+      <small class="account-address-form__status" data-cep-target="status" data-loading="<%= t("storefront.account_page.cep.loading") %>" data-success="<%= t("storefront.account_page.cep.success") %>" data-error="<%= t("storefront.account_page.cep.error") %>"></small>
+    </label>
+    <label class="is-wide"><%= t("storefront.account_page.address_fields.street") %><%= form.text_field :street, required: true, data: { cep_target: "street" } %><%= form.hidden_field :street, disabled: true, data: { cep_target: "streetHidden" } %></label>
+    <label><%= t("storefront.account_page.address_fields.number") %><%= form.text_field :number %></label>
+    <label><%= t("storefront.account_page.address_fields.complement") %><%= form.text_field :complement %></label>
+    <label><%= t("storefront.account_page.address_fields.neighborhood") %><%= form.text_field :neighborhood, data: { cep_target: "neighborhood" } %><%= form.hidden_field :neighborhood, disabled: true, data: { cep_target: "neighborhoodHidden" } %></label>
+    <label><%= t("storefront.account_page.address_fields.city") %><%= form.text_field :city, required: true, data: { cep_target: "city" } %><%= form.hidden_field :city, disabled: true, data: { cep_target: "cityHidden" } %></label>
+    <label><%= t("storefront.account_page.address_fields.state") %><%= form.text_field :state, required: true, data: { cep_target: "state" } %><%= form.hidden_field :state, disabled: true, data: { cep_target: "stateHidden" } %></label>
+    <label><%= t("storefront.account_page.address_fields.country") %><%= form.text_field :country, data: { cep_target: "country" } %><%= form.hidden_field :country, disabled: true, data: { cep_target: "countryHidden" } %></label>
+    <label class="account-address-form__default"><%= form.check_box :default %><%= t("storefront.account_page.address_fields.default") %></label>
+    <div class="account-address-form__actions"><%= form.submit t("storefront.account_page.save_address"), class: "store-button store-button--dark" %></div>
+  <% end %>
+</div>

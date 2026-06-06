@@ -27,7 +27,7 @@
       <% end %>
 
       <% if current_user %>
-        <%= link_to current_user.admin? ? admin_root_path : orders_path, class: "header-action" do %>
+        <%= link_to current_user.admin? ? admin_root_path : account_path, class: "header-action" do %>
           <span class="header-action__icon">◎</span><span><%= current_user.name.to_s.split.first %></span>
         <% end %>
       <% else %>

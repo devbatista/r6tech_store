@@ -1,0 +1,26 @@
+<div class="account-addresses__header">
+  <h2><%= t("storefront.account_page.addresses") %></h2>
+  <%= link_to t("storefront.account_page.add_address"), account_path(new_address: 1, anchor: "addresses"), class: "account-addresses__add", data: { turbo_frame: "account_addresses_content", turbo_action: "advance" } %>
+</div>
+
+<% if addresses.any? %>
+  <div class="account-addresses">
+    <% addresses.each do |address| %>
+      <article class="account-address">
+        <h3><%= address.default? ? t("storefront.account_page.default_address") : address.label.presence || t("storefront.account_page.address") %></h3>
+        <address>
+          <strong><%= address.recipient %></strong>
+          <span><%= [address.street, address.number, address.complement].compact_blank.join(", ") %></span>
+          <span><%= [address.neighborhood, address.city, address.state].compact_blank.join(" - ") %></span>
+          <span><%= [address.zip_code, address.country].compact_blank.join(" · ") %></span>
+        </address>
+        <div class="account-address__actions">
+          <%= link_to t("storefront.account_page.edit"), account_path(address_id: address.id, anchor: "addresses"), class: "account-address__edit", data: { turbo_frame: "account_addresses_content", turbo_action: "advance" } %>
+          <%= button_to t("storefront.account_page.delete"), address_path(address), method: :delete, class: "account-address__delete", form: { data: { turbo_confirm: t("storefront.account_page.delete_address_confirmation"), turbo_frame: "account_addresses_content" } } %>
+        </div>
+      </article>
+    <% end %>
+  </div>
+<% else %>
+  <p class="account-empty"><%= t("storefront.account_page.no_addresses") %></p>
+<% end %>

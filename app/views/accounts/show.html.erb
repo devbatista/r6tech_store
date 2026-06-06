@@ -1,0 +1,80 @@
+<% content_for :title, "#{t("storefront.account_page.title")} | #{storefront_name}" %>
+
+<section class="page-heading account-heading">
+  <div class="store-container">
+    <h1><%= t("storefront.account_page.title") %></h1>
+  </div>
+</section>
+
+<section class="store-section account-section">
+  <div class="store-container account-layout" data-controller="account-tabs">
+    <nav class="account-nav" role="tablist" aria-label="<%= t("storefront.account_page.navigation") %>">
+      <%= link_to t("storefront.account_page.dashboard"), "#dashboard", class: "is-active", role: "tab", aria: { selected: true, controls: "dashboard" }, data: { account_tabs_target: "tab", account_tab: "dashboard", action: "account-tabs#select" } %>
+      <%= link_to t("storefront.account_page.orders"), "#orders", role: "tab", aria: { selected: false, controls: "orders" }, data: { account_tabs_target: "tab", account_tab: "orders", action: "account-tabs#select" } %>
+      <%= link_to t("storefront.account_page.addresses"), "#addresses", role: "tab", aria: { selected: false, controls: "addresses" }, data: { account_tabs_target: "tab", account_tab: "addresses", action: "account-tabs#select" } %>
+      <%= link_to t("storefront.account_page.details"), "#details", role: "tab", aria: { selected: false, controls: "details" }, data: { account_tabs_target: "tab", account_tab: "details", action: "account-tabs#select" } %>
+      <%= button_to t("storefront.account_page.logout"), logout_path, method: :delete, class: "account-nav__logout" %>
+    </nav>
+
+    <div class="account-content">
+      <section id="dashboard" class="account-panel is-active" role="tabpanel" data-account-tabs-target="panel" data-account-panel="dashboard">
+        <h2><%= t("storefront.account_page.greeting", name: current_user.name.to_s.split.first) %></h2>
+        <p><%= t("storefront.account_page.introduction_html", orders_link: link_to(t("storefront.account_page.recent_orders"), "#orders", data: { account_tab: "orders", action: "account-tabs#select" }), details_link: link_to(t("storefront.account_page.account_details"), "#details", data: { account_tab: "details", action: "account-tabs#select" })) %></p>
+      </section>
+
+      <section id="orders" class="account-panel" role="tabpanel" data-account-tabs-target="panel" data-account-panel="orders" hidden>
+        <%= turbo_frame_tag "account_orders_content", data: { account_tabs_target: "ordersFrame" } do %>
+          <% if @selected_order %>
+            <%= render "accounts/order_detail", order: @selected_order %>
+          <% elsif @orders.any? %>
+            <div class="account-orders">
+              <table>
+                <thead>
+                  <tr>
+                    <th><%= t("storefront.account_page.order_table.order") %></th>
+                    <th><%= t("storefront.account_page.order_table.date") %></th>
+                    <th><%= t("storefront.account_page.order_table.status") %></th>
+                    <th><%= t("storefront.account_page.order_table.total") %></th>
+                    <th><%= t("storefront.account_page.order_table.actions") %></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @orders.each do |order| %>
+                    <% item_count = order.order_items.sum(&:quantity) %>
+                    <tr>
+                      <td data-label="<%= t("storefront.account_page.order_table.order") %>"><strong>#<%= order.id.to_s.first(8) %></strong></td>
+                      <td data-label="<%= t("storefront.account_page.order_table.date") %>"><%= l(order.created_at, format: :short) %></td>
+                      <td data-label="<%= t("storefront.account_page.order_table.status") %>"><%= translated_order_status(order.status) %></td>
+                      <td data-label="<%= t("storefront.account_page.order_table.total") %>"><%= t("storefront.account_page.order_table.total_with_items", total: number_to_currency(order.total), count: item_count) %></td>
+                      <td data-label="<%= t("storefront.account_page.order_table.actions") %>"><%= link_to t("storefront.account_page.order_table.view"), account_path(order_id: order.id, anchor: "orders"), class: "account-order__view", data: { turbo_frame: "account_orders_content", turbo_action: "advance" } %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <p class="account-empty"><%= t("storefront.account_page.no_orders") %></p>
+          <% end %>
+        <% end %>
+      </section>
+
+      <section id="addresses" class="account-panel" role="tabpanel" data-account-tabs-target="panel" data-account-panel="addresses" hidden>
+        <%= turbo_frame_tag "account_addresses_content", data: { account_tabs_target: "addressesFrame" } do %>
+          <% if @selected_address %>
+            <%= render "accounts/address_form", address: @selected_address %>
+          <% else %>
+            <%= render "accounts/address_list", addresses: @addresses %>
+          <% end %>
+        <% end %>
+      </section>
+
+      <section id="details" class="account-panel" role="tabpanel" data-account-tabs-target="panel" data-account-panel="details" hidden>
+        <h2><%= t("storefront.account_page.details") %></h2>
+        <dl class="account-details">
+          <div><dt><%= t("storefront.account_page.name") %></dt><dd><%= current_user.name %></dd></div>
+          <div><dt><%= t("storefront.account_page.email") %></dt><dd><%= current_user.email %></dd></div>
+        </dl>
+      </section>
+    </div>
+  </div>
+</section>

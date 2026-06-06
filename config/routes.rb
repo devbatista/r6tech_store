@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   root "home#index"
   
   resources :products, only: [:index, :show]
+  resource :account, only: :show
+  resources :addresses, only: [:create, :update, :destroy]
 
   resources :orders, only: [:index, :show, :create] do
     member do

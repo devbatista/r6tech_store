@@ -12,6 +12,16 @@ module ApplicationHelper
     t("statuses.orders.#{status}", default: status.to_s.humanize)
   end
 
+  def order_progress_steps(order)
+    return [%w[placed complete], %w[cancelled complete]] if order.cancelled?
+
+    statuses = %w[pending paid shipped delivered]
+    current_index = statuses.index(order.status) || 0
+    statuses.each_with_index.map do |status, index|
+      [status == "pending" ? "placed" : status, index <= current_index ? "complete" : "pending"]
+    end
+  end
+
   def translated_ai_status(status)
     t("statuses.ai.#{status}", default: status.to_s.humanize)
   end

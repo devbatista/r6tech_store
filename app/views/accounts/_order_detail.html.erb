@@ -1,0 +1,41 @@
+<article class="account-order-detail">
+  <header class="account-order-detail__header">
+    <div>
+      <span class="account-order-detail__status"><%= translated_order_status(order.status) %></span>
+      <h2><%= t("storefront.account_page.order_detail.number", number: order.id.to_s.first(8)) %></h2>
+    </div>
+    <%= link_to t("storefront.account_page.order_detail.back"), account_path(anchor: "orders"), class: "account-order-detail__back", data: { turbo_frame: "account_orders_content", turbo_action: "advance" } %>
+  </header>
+
+  <div class="account-order-detail__summary">
+    <div><span><%= t("storefront.account_page.order_detail.date") %></span><strong><%= l(order.created_at, format: :long) %></strong></div>
+    <div><span><%= t("storefront.account_page.order_detail.items") %></span><strong><%= order.order_items.sum(&:quantity) %></strong></div>
+    <div><span><%= t("storefront.account_page.order_detail.total") %></span><strong><%= number_to_currency(order.total) %></strong></div>
+    <div><span><%= t("storefront.account_page.order_detail.address") %></span><strong><%= order.shipping_address_line.presence || order.shipping_address&.full_line || t("storefront.account_page.order_detail.no_address") %></strong></div>
+  </div>
+
+  <div class="account-order-detail__section">
+    <h3><%= t("storefront.account_page.order_detail.item_details") %></h3>
+    <div class="account-order-products">
+      <% order.order_items.each do |item| %>
+        <div class="account-order-product">
+          <%= product_image(item.product) %>
+          <div><strong><%= item.product.name %></strong><span><%= t("storefront.account_page.order_detail.quantity", count: item.quantity) %></span></div>
+          <strong><%= number_to_currency(item.price * item.quantity) %></strong>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="account-order-detail__section">
+    <h3><%= t("storefront.account_page.order_detail.history") %></h3>
+    <ol class="account-order-timeline">
+      <% order_progress_steps(order).each do |step, state| %>
+        <li class="is-<%= state %>">
+          <strong><%= t("storefront.account_page.order_detail.steps.#{step}") %></strong>
+          <span><%= t("storefront.account_page.order_detail.step_states.#{state}") %></span>
+        </li>
+      <% end %>
+    </ol>
+  </div>
+</article>

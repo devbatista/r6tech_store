@@ -16,6 +16,7 @@
     <div>
       <h4><%= t("storefront.footer.account") %></h4>
       <%= link_to t("storefront.cart.title"), cart_path %>
+      <%= link_to t("storefront.account"), account_path if current_user&.customer? %>
       <%= link_to t("storefront.orders.title"), orders_path if current_user&.customer? %>
       <%= link_to t("storefront.account"), login_path unless current_user %>
     </div>
