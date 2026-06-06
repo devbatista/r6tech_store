@@ -337,6 +337,8 @@ pt-BR:
       storages: "Armazenamentos"
       storages_hint: "Marque as capacidades disponíveis e informe o preço de cada uma."
       storage_price: "Preço"
+      price_from: "A partir de"
+      price_from_variations: "O preço é definido pelas variações de armazenamento."
       no_colors: "Nenhuma cor cadastrada."
       manage_colors: "Gerenciar cores"
       no_storages: "Nenhum armazenamento cadastrado."

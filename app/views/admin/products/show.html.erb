@@ -78,7 +78,7 @@
         <div class="divider"></div>
 
         <div class="product-show-price">
-          <div class="text-tiny"><%= t("admin.products.price") %></div>
+          <div class="text-tiny"><%= @product.product_storages.any? ? t("admin.products.price_from") : t("admin.products.price") %></div>
           <div><%= number_to_currency(@product.price) %></div>
         </div>
 

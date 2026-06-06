@@ -25,6 +25,8 @@ class Admin::ProductsController < Admin::BaseAdminController
 
   def create
     @product = Product.new(product_params)
+    assign_base_price(@product)
+
     if @product.save
       sync_product_storages(@product)
       enqueue_ai_suggestions(@product) if @product.needs_ai_suggestions?
@@ -37,7 +39,10 @@ class Admin::ProductsController < Admin::BaseAdminController
   def edit;end
 
   def update
-    if @product.update(product_params)
+    @product.assign_attributes(product_params)
+    assign_base_price(@product)
+
+    if @product.save
       sync_product_storages(@product)
       redirect_to(admin_product_path(@product), notice: t("flash.product_updated"))
     else
@@ -88,6 +93,22 @@ class Admin::ProductsController < Admin::BaseAdminController
 
     def product_params
       params.require(:product).permit(:name, :description, :price, :category_id, images: [], color_ids: [])
+    end
+
+    # When the product has storage variations, its base price is derived from the
+    # cheapest variation (the catalog "a partir de" price). Without variations the
+    # admin sets the base price directly.
+    def assign_base_price(product)
+      base = derived_base_price
+      product.price = base if base
+    end
+
+    def derived_base_price
+      prices = params.fetch(:product_storages, {}).values.filter_map do |attrs|
+        attrs[:price].to_d if attrs[:enabled] == "1" && attrs[:price].present?
+      end
+
+      prices.min
     end
 
     # Storages carry a per-product price, so they can't ride along in product_params.

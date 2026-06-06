@@ -1,4 +1,4 @@
-<%= form_with model: [:admin, @product], local: true, html: { multipart: true, class: "product-form" } do |form| %>
+<%= form_with model: [:admin, @product], local: true, html: { multipart: true, class: "product-form" }, data: { controller: "product-price-mode" } do |form| %>
   <% if @product.errors.any? %>
     <div class="wg-box product-form-errors mb-30">
       <div class="body-title"><%= t("admin.products.form_errors") %></div>
@@ -72,8 +72,9 @@
         </fieldset>
 
         <fieldset class="price">
-          <div class="body-title mb-10"><%= t("admin.products.price") %> <span class="tf-color-1">*</span></div>
-          <%= form.number_field :price, placeholder: t("admin.products.price"), required: true, step: 0.01, min: 0 %>
+          <div class="body-title mb-10"><%= t("admin.products.price") %> <span class="tf-color-1" data-product-price-mode-target="requiredMark">*</span></div>
+          <%= form.number_field :price, placeholder: t("admin.products.price"), required: true, step: 0.01, min: 0, data: { product_price_mode_target: "input" } %>
+          <div class="text-tiny mt-2" data-product-price-mode-target="note" hidden><%= t("admin.products.price_from_variations") %></div>
         </fieldset>
       </div>
 
@@ -116,7 +117,7 @@
             <% existing = @product.product_storages.detect { |ps| ps.storage_id == storage.id } %>
             <div class="option-storage">
               <label class="option-storage__toggle" for="storage_enabled_<%= storage.id %>">
-                <%= check_box_tag "product_storages[#{storage.id}][enabled]", "1", existing.present?, id: "storage_enabled_#{storage.id}", class: "option-check-input" %>
+                <%= check_box_tag "product_storages[#{storage.id}][enabled]", "1", existing.present?, id: "storage_enabled_#{storage.id}", class: "option-check-input", data: { product_price_mode_target: "storage", action: "change->product-price-mode#refresh" } %>
                 <span class="option-check-box"></span>
                 <span class="option-storage__value"><%= storage.value %></span>
               </label>

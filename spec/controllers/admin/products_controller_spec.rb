@@ -230,6 +230,46 @@ RSpec.describe Admin::ProductsController, type: :controller do
       expect(product.product_storages.find_by(storage: s512).price).to eq(9000)
     end
 
+    it "derives the base price from the cheapest variation when storages exist" do
+      post :create, params: {
+        product: { name: "iPhone 15 Pro Max", category_id: category.id },
+        product_storages: {
+          s256.id => { enabled: "1", price: "11999" },
+          s512.id => { enabled: "1", price: "10499" }
+        }
+      }
+
+      product = Product.order(:created_at).last
+      expect(product.price).to eq(10_499)
+    end
+
+    it "keeps the base price for products without variations" do
+      post :create, params: {
+        product: { name: "AirPods Pro 2", price: 2500, category_id: category.id },
+        product_storages: {}
+      }
+
+      product = Product.order(:created_at).last
+      expect(product.price).to eq(2500)
+      expect(product.product_storages).to be_empty
+    end
+
+    it "re-derives the base price when variation prices change on update" do
+      product = Product.create!(name: "iPhone 15", price: 10_499, category: category)
+      ProductStorage.create!(product: product, storage: s256, price: 10_499)
+
+      patch :update, params: {
+        id: product.id,
+        product: { name: "iPhone 15", category_id: category.id },
+        product_storages: {
+          s256.id => { enabled: "1", price: "9999" },
+          s512.id => { enabled: "1", price: "12999" }
+        }
+      }
+
+      expect(product.reload.price).to eq(9_999)
+    end
+
     it "renders the options section with colors and storages on the edit form" do
       black; white; s256; s512
       product = Product.create!(name: "iPhone 15", price: 7000, category: category)

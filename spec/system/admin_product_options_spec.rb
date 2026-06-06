@@ -56,4 +56,18 @@ RSpec.describe "Admin product options", type: :system do
 
     page.save_screenshot("tmp/admin_options.png")
   end
+
+  it "hides the base price field once a storage variation is enabled" do
+    login_as_admin
+    visit new_admin_product_path
+
+    # a product with no variations shows the editable base price
+    expect(page).to have_field("product[price]")
+
+    # enabling a storage switches pricing to the variations
+    check "storage_enabled_#{@s256.id}", allow_label_click: true
+
+    expect(page).to have_no_field("product[price]")
+    expect(page).to have_content(I18n.t("admin.products.price_from_variations"))
+  end
 end
