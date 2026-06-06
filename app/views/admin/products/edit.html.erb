@@ -6,15 +6,11 @@
       <h3><%= t("admin.products.edit") %></h3>
       <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
         <li>
-          <%= link_to admin_root_path do %>
-            <div class="text-tiny"><%= t("admin.navigation.dashboard") %></div>
-          <% end %>
+          <%= link_to admin_dashboard_path do %><div class="text-tiny"><%= t("admin.navigation.dashboard") %></div><% end %>
         </li>
         <li><i class="icon-chevron-right"></i></li>
         <li>
-          <%= link_to admin_products_path do %>
-            <div class="text-tiny"><%= t("admin.navigation.products") %></div>
-          <% end %>
+          <%= link_to admin_products_path do %><div class="text-tiny"><%= t("admin.navigation.products") %></div><% end %>
         </li>
         <li><i class="icon-chevron-right"></i></li>
         <li>

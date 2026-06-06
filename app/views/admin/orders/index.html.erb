@@ -6,13 +6,13 @@
           <h3><%= t("admin.orders.list") %></h3>
           <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
               <li>
-                  <%= link_to admin_root_path do %><div class="text-tiny"><%= t("admin.navigation.dashboard") %></div><% end %>
+                  <%= link_to admin_dashboard_path do %><div class="text-tiny"><%= t("admin.navigation.dashboard") %></div><% end %>
               </li>
               <li>
                   <i class="icon-chevron-right"></i>
               </li>
               <li>
-                  <a href="#"><div class="text-tiny"><%= t("admin.orders.order") %></div></a>
+                  <%= link_to admin_orders_path do %><div class="text-tiny"><%= t("admin.orders.order") %></div><% end %>
               </li>
               <li>
                   <i class="icon-chevron-right"></i>

@@ -6,17 +6,13 @@
       <h3><%= t("admin.products.all") %></h3>
       <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
         <li>
-          <a href="index.html">
-            <div class="text-tiny"><%= t("admin.navigation.dashboard") %></div>
-          </a>
+          <%= link_to admin_dashboard_path do %><div class="text-tiny"><%= t("admin.navigation.dashboard") %></div><% end %> 
         </li>
         <li>
           <i class="icon-chevron-right"></i>
         </li>
         <li>
-          <a href="#">
-            <div class="text-tiny"><%= t("admin.products.product") %></div>
-          </a>
+          <%= link_to admin_products_path do %><div class="text-tiny"><%= t("admin.products.product") %></div><% end %>
         </li>
         <li>
           <i class="icon-chevron-right"></i>
