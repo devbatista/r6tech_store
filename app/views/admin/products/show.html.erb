@@ -103,6 +103,30 @@
       </div>
     </div>
 
+    <% if @product.options? %>
+      <div class="wg-box product-show-description-box mt-30">
+        <div class="body-title mb-10"><%= t("admin.products.options") %></div>
+        <div class="product-show-details-list mt-20">
+          <% if @product.colors.any? %>
+            <div class="product-show-detail-row">
+              <span><%= t("admin.products.colors") %></span>
+              <div class="product-show-options-colors">
+                <% @product.colors.order(:name).each do |color| %>
+                  <span class="option-swatch" style="background: <%= color.hex %>" title="<%= color.name %>"></span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+          <% @product.product_storages.includes(:storage).sort_by(&:price).each do |ps| %>
+            <div class="product-show-detail-row">
+              <span><%= ps.storage.value %></span>
+              <strong><%= number_to_currency(ps.price) %></strong>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
     <div class="wg-box product-show-description-box mt-30">
       <div>
         <div class="body-title mb-10"><%= t("admin.products.product_description") %></div>

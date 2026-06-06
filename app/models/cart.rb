@@ -12,7 +12,7 @@ class Cart < ApplicationRecord
   validates :status, presence: true
 
   def total_value
-    cart_items.includes(:product).sum { |item| item.quantity * item.product.price }
+    cart_items.includes(:product, :storage).sum(&:total_price)
   end
 
   def shipping_cost(setting = Setting.instance)
@@ -26,10 +26,10 @@ class Cart < ApplicationRecord
     total_value + shipping_cost(setting)
   end
 
-  def add_product(product, quantity = 1)
+  def add_product(product, quantity = 1, color: nil, storage: nil)
     return false if quantity.to_i <= 0
 
-    cart_item = cart_items.find_or_initialize_by(product: product)
+    cart_item = cart_items.find_or_initialize_by(product: product, color: color, storage: storage)
     cart_item.quantity ||= 0
     cart_item.quantity += quantity.to_i
     cart_item.save

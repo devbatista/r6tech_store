@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "cart_drawer_content" do %>
+  <%= render "carts/contents", cart: current_cart, setting: Setting.instance %>
+<% end %>
+<%= turbo_stream.replace "cart_count" do %>
+  <b id="cart_count"><%= cart_item_count %></b>
+<% end %>
+<%= turbo_stream.action "open_cart", "cart-drawer" %>

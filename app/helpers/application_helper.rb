@@ -42,6 +42,13 @@ module ApplicationHelper
     end
   end
 
+  # Human-readable label for a chosen variant, e.g. "Titanium black · 512GB".
+  # Returns nil when the item has no color/storage selection.
+  def variant_label(item)
+    parts = [item.color&.name, item.storage&.value].compact
+    parts.join(" · ").presence
+  end
+
   def category_image(category, index = 0)
     image_tag CATEGORY_IMAGES[index % CATEGORY_IMAGES.length], alt: category.name
   end

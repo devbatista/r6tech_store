@@ -36,9 +36,9 @@
         <% end %>
       <% end %>
 
-      <%= link_to cart_path, class: "header-action header-cart" do %>
+      <%= link_to cart_path, class: "header-action header-cart", data: { action: "cart#open" } do %>
         <span class="header-action__icon">▢</span><span><%= t("storefront.cart.title") %></span>
-        <b><%= cart_item_count %></b>
+        <b id="cart_count"><%= cart_item_count %></b>
       <% end %>
     </div>
   </div>

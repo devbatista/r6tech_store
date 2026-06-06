@@ -84,6 +84,54 @@
     </div>
   </div>
 
+  <div class="wg-box product-form-options">
+    <div>
+      <div class="body-title mb-10"><%= t("admin.products.options") %></div>
+      <div class="text-tiny"><%= t("admin.products.options_hint") %></div>
+    </div>
+
+    <fieldset class="product-form-option-group">
+      <div class="body-title mb-10"><%= t("admin.products.colors") %></div>
+      <% if color_options.any? %>
+        <div class="option-color-grid">
+          <%= form.collection_check_boxes :color_ids, color_options, :id, :name do |b| %>
+            <%= b.label(class: "option-color") do %>
+              <%= b.check_box %>
+              <span class="option-color__swatch" style="--swatch: <%= b.object.hex %>"></span>
+              <span class="option-color__name"><%= b.object.name %></span>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-tiny"><%= t("admin.products.no_colors") %> <%= link_to t("admin.products.manage_colors"), admin_settings_colors_path %></div>
+      <% end %>
+    </fieldset>
+
+    <fieldset class="product-form-option-group">
+      <div class="body-title mb-10"><%= t("admin.products.storages") %></div>
+      <div class="text-tiny mb-16"><%= t("admin.products.storages_hint") %></div>
+      <% if storage_options.any? %>
+        <div class="option-storage-list">
+          <% Storage.all.each do |storage| %>
+            <% existing = @product.product_storages.detect { |ps| ps.storage_id == storage.id } %>
+            <div class="option-storage">
+              <label class="option-storage__toggle" for="storage_enabled_<%= storage.id %>">
+                <%= check_box_tag "product_storages[#{storage.id}][enabled]", "1", existing.present?, id: "storage_enabled_#{storage.id}", class: "option-check-input" %>
+                <span class="option-check-box"></span>
+                <span class="option-storage__value"><%= storage.value %></span>
+              </label>
+              <div class="option-storage__price">
+                <%= number_field_tag "product_storages[#{storage.id}][price]", existing&.price, step: 0.01, min: 0, placeholder: t("admin.products.storage_price"), aria: { label: "#{t("admin.products.storage_price")} - #{storage.value}" } %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-tiny"><%= t("admin.products.no_storages") %> <%= link_to t("admin.products.manage_storages"), admin_settings_storages_path %></div>
+      <% end %>
+    </fieldset>
+  </div>
+
   <div class="product-form-actions">
     <button class="tf-button" type="submit">
       <i class="icon-save"></i><%= @product.persisted? ? t("admin.products.update") : t("admin.products.create") %>

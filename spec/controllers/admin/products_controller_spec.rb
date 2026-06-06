@@ -166,6 +166,84 @@ RSpec.describe Admin::ProductsController, type: :controller do
     end
   end
 
+  describe "managing color and storage options" do
+    let(:admin) do
+      User.create!(name: "Admin", email: "admin-options-#{SecureRandom.uuid}@example.com",
+                   password: "password123", role: :admin)
+    end
+    let(:category) { Category.create!(name: "Phones #{SecureRandom.uuid}") }
+    let(:black) { Color.create!(name: "Titanium black", hex: "#4b4b4b") }
+    let(:white) { Color.create!(name: "Titanium white", hex: "#f2f1ee") }
+    let(:s256) { Storage.create!(value: "256GB") }
+    let(:s512) { Storage.create!(value: "512GB") }
+
+    before { session[:user_id] = admin.id }
+
+    it "creates a product with chosen colors and storage prices" do
+      post :create, params: {
+        product: {
+          name: "iPhone 15 Pro Max", description: "Titanium", price: 10_499,
+          category_id: category.id, color_ids: [black.id, white.id]
+        },
+        product_storages: {
+          s256.id => { enabled: "1", price: "10499" },
+          s512.id => { enabled: "1", price: "11999" }
+        }
+      }
+
+      product = Product.order(:created_at).last
+      expect(product.colors).to match_array([black, white])
+      expect(product.product_storages.find_by(storage: s256).price).to eq(10_499)
+      expect(product.product_storages.find_by(storage: s512).price).to eq(11_999)
+    end
+
+    it "ignores storages that are not enabled" do
+      post :create, params: {
+        product: { name: "iPhone 15", price: 7000, category_id: category.id },
+        product_storages: {
+          s256.id => { enabled: "1", price: "7000" },
+          s512.id => { enabled: "0", price: "8000" }
+        }
+      }
+
+      product = Product.order(:created_at).last
+      expect(product.storages).to eq([s256])
+    end
+
+    it "adds, reprices and removes storages on update" do
+      product = Product.create!(name: "iPhone 15", price: 7000, category: category)
+      ProductColor.create!(product: product, color: black)
+      ProductStorage.create!(product: product, storage: s256, price: 7000)
+
+      patch :update, params: {
+        id: product.id,
+        product: { name: "iPhone 15", price: 7000, category_id: category.id, color_ids: [white.id] },
+        product_storages: {
+          s256.id => { enabled: "0", price: "7000" },   # remove
+          s512.id => { enabled: "1", price: "9000" }    # add
+        }
+      }
+
+      product.reload
+      expect(product.colors).to eq([white])
+      expect(product.storages).to eq([s512])
+      expect(product.product_storages.find_by(storage: s512).price).to eq(9000)
+    end
+
+    it "renders the options section with colors and storages on the edit form" do
+      black; white; s256; s512
+      product = Product.create!(name: "iPhone 15", price: 7000, category: category)
+
+      get :edit, params: { id: product.id }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t("admin.products.options"))
+      expect(response.body).to include("Titanium black")
+      expect(response.body).to include("256GB")
+      expect(response.body).to include("product_storages[#{s512.id}][price]")
+    end
+  end
+
   describe "PATCH #approve_ai_description" do
     it "copies the suggested description to the product description" do
       admin = User.create!(

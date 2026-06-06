@@ -5,6 +5,7 @@
 //= link css/animate.min.css
 //= link css/swiper-bundle.min.css
 //= link css/styles.css
+//= link admin_options.css
 //= link css/bootstrap.css
 //= link css/bootstrap-select.min.css
 //= link font/fonts.css

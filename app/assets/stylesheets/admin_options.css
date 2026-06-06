@@ -1,0 +1,164 @@
+/* Admin product variation options: color chips + storage cards with custom checkboxes.
+   Kept as a standalone stylesheet because the theme's scss/css/styles.css is a prebuilt
+   static file that is not recompiled by the asset pipeline. Uses the theme CSS variables. */
+
+.option-color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.option-color {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 8px 16px 8px 9px;
+  border: 1.5px solid var(--Stroke);
+  border-radius: 999px;
+  color: var(--Main-Dark);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+
+.option-color input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.option-color:hover {
+  border-color: var(--Secondary);
+}
+
+.option-color:has(input:checked) {
+  border-color: var(--Secondary);
+  background: rgba(255, 116, 51, .08);
+}
+
+.option-color:has(input:focus-visible) {
+  box-shadow: 0 0 0 3px rgba(255, 116, 51, .25);
+}
+
+.option-color__swatch {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18);
+  transition: box-shadow .2s ease;
+}
+
+.option-color:has(input:checked) .option-color__swatch {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18), 0 0 0 2px var(--White), 0 0 0 4px var(--Secondary);
+}
+
+/* Custom checkbox: hide the native input and draw a box with a check mark. */
+.option-check-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.option-check-box {
+  position: relative;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--Surface);
+  border-radius: 6px;
+  background: var(--White);
+  transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+
+.option-check-box::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 11px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  opacity: 0;
+  transform: rotate(45deg);
+  transition: opacity .2s ease;
+}
+
+.option-check-input:checked + .option-check-box {
+  border-color: var(--Secondary);
+  background: var(--Secondary);
+}
+
+.option-check-input:checked + .option-check-box::after {
+  opacity: 1;
+}
+
+.option-check-input:focus-visible + .option-check-box {
+  box-shadow: 0 0 0 3px rgba(255, 116, 51, .3);
+}
+
+/* Storage cards: toggle + price */
+.option-storage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-storage {
+  display: grid;
+  grid-template-columns: minmax(130px, 220px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  padding: 12px 18px;
+  border: 1.5px solid var(--Stroke);
+  border-radius: 12px;
+  transition: border-color .2s ease, background-color .2s ease;
+}
+
+.option-storage:has(.option-check-input:checked) {
+  border-color: var(--Secondary);
+  background: rgba(255, 116, 51, .05);
+}
+
+.option-storage__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: var(--Main-Dark);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.option-storage__price input {
+  width: 100%;
+}
+
+/* Selected options on the product show page */
+.product-show-options-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.product-show-options-colors .option-swatch {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18);
+}
+
+@media (max-width: 600px) {
+  .option-storage {
+    grid-template-columns: 1fr;
+  }
+}

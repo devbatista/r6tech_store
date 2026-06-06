@@ -7,16 +7,58 @@
       <%= image_tag "storefront/product-placeholder.jpg", alt: @product.name %>
     <% end %>
   </div>
-  <div class="product-info">
+  <div class="product-info" data-controller="product-options">
     <%= link_to @product.category.name, products_path(category_id: @product.category_id), class: "product-info__category" %>
     <h1><%= @product.name %></h1>
-    <strong class="product-info__price"><%= number_to_currency(@product.price) %></strong>
+    <strong class="product-info__price" data-product-options-target="price"><%= number_to_currency(@product.from_price) %></strong>
     <p><%= @product.description.presence || t("storefront.product.no_description") %></p>
+
     <%= form_with url: cart_items_path, class: "add-form" do |form| %>
-      <div><label><%= t("storefront.product.quantity") %></label><%= form.number_field :quantity, value: 1, min: 1 %></div>
-      <%= form.hidden_field :product_id, value: @product.id %>
-      <button class="store-button store-button--dark"><%= t("storefront.cart.add") %></button>
+      <% product_colors = @product.colors.order(:name).to_a %>
+      <% if product_colors.any? %>
+        <fieldset class="option-group">
+          <legend class="option-group__label">
+            <%= t("storefront.product.color") %>:
+            <span data-product-options-target="colorName"><%= product_colors.first.name %></span>
+          </legend>
+          <div class="option-swatches">
+            <% product_colors.each_with_index do |color, index| %>
+              <label class="swatch" title="<%= color.name %>">
+                <%= radio_button_tag "color_id", color.id, index.zero?, required: true,
+                      data: { action: "product-options#selectColor", "color-name": color.name } %>
+                <span class="swatch__dot" style="background: <%= color.hex %>"></span>
+              </label>
+            <% end %>
+          </div>
+        </fieldset>
+      <% end %>
+
+      <% if @product.product_storages.any? %>
+        <fieldset class="option-group">
+          <legend class="option-group__label"><%= t("storefront.product.storage") %></legend>
+          <div class="option-storages">
+            <% @product.product_storages.includes(:storage).sort_by(&:price).each_with_index do |ps, index| %>
+              <label class="storage-pill">
+                <%= radio_button_tag "storage_id", ps.storage_id, index.zero?, required: true,
+                      data: { action: "product-options#selectStorage", price: ps.price.to_s } %>
+                <span class="storage-pill__value"><%= ps.storage.value %></span>
+                <span class="storage-pill__price"><%= number_to_currency(ps.price) %></span>
+              </label>
+            <% end %>
+          </div>
+        </fieldset>
+      <% end %>
+
+      <div class="add-form__buy">
+        <div class="add-form__quantity">
+          <label><%= t("storefront.product.quantity") %></label>
+          <%= form.number_field :quantity, value: 1, min: 1 %>
+        </div>
+        <%= form.hidden_field :product_id, value: @product.id %>
+        <button class="store-button store-button--dark"><%= t("storefront.cart.add") %></button>
+      </div>
     <% end %>
+
     <div class="product-assurances"><span>✓ <%= t("storefront.product.secure") %></span><span>✓ <%= t("storefront.product.shipping") %></span></div>
   </div>
 </div></section>

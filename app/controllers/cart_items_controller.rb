@@ -4,32 +4,59 @@ class CartItemsController < BaseController
   def create
     product = Product.find(params[:product_id])
     quantity = [params.fetch(:quantity, 1).to_i, 1].max
+    color = product.colors.find_by(id: params[:color_id])
+    storage = product.storages.find_by(id: params[:storage_id])
 
-    result = current_cart.add_product(product, quantity)
+    if missing_required_options?(product, color, storage)
+      return redirect_to product_path(product), alert: t("flash.select_options"), status: :see_other
+    end
 
-    if result
-      redirect_to cart_path, notice: t("flash.product_added_to_cart"), status: :see_other
-    else
-      redirect_to products_path, alert: t("flash.cart_add_failed")
+    result = current_cart.add_product(product, quantity, color: color, storage: storage)
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html do
+        if result
+          redirect_to cart_path, notice: t("flash.product_added_to_cart"), status: :see_other
+        else
+          redirect_to products_path, alert: t("flash.cart_add_failed")
+        end
+      end
     end
   end
 
   def update
-    if @cart_item.update(quantity: params[:quantity])
-      redirect_to cart_path, notice: t("flash.cart_quantity_updated"), status: :see_other
-    else
-      redirect_to cart_path, alert: t("flash.cart_quantity_update_failed"), status: :see_other
+    updated = @cart_item.update(quantity: params[:quantity])
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html do
+        if updated
+          redirect_to cart_path, notice: t("flash.cart_quantity_updated"), status: :see_other
+        else
+          redirect_to cart_path, alert: t("flash.cart_quantity_update_failed"), status: :see_other
+        end
+      end
     end
   end
 
   def destroy
     @cart_item.destroy
-    redirect_to cart_path, notice: t("flash.cart_item_removed"), status: :see_other
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to cart_path, notice: t("flash.cart_item_removed"), status: :see_other }
+    end
   end
 
   private
 
     def set_cart_item
       @cart_item = current_cart.cart_items.find(params[:id])
+    end
+
+    def missing_required_options?(product, color, storage)
+      (product.product_colors.any? && color.nil?) ||
+        (product.product_storages.any? && storage.nil?)
     end
 end

@@ -104,4 +104,25 @@ Product.create!(
   category: Category.find_by(name: "Iphone")
 )
 
+# iPhone 15 Pro Max — with selectable color and storage options.
+iphone_15_pro_max = Product.find_or_create_by!(name: "iPhone 15 Pro Max") do |product|
+  product.description = "Apple iPhone 15 Pro Max em titânio, com chip A17 Pro, tela Super Retina XDR de 6,7\" e câmera de 48MP."
+  product.price = 10_499
+  product.category = Category.find_by(name: "Iphone 15 Pro Max")
+end
+
+["Titanium black", "Titanium white", "Titanium natural", "Titanium desert"].each do |color_name|
+  color = Color.find_by(name: color_name)
+  ProductColor.find_or_create_by!(product: iphone_15_pro_max, color: color) if color
+end
+
+{ "256GB" => 10_499, "512GB" => 11_999, "1TB" => 13_499 }.each do |value, price|
+  storage = Storage.find_by(value: value)
+  next unless storage
+
+  ProductStorage.find_or_create_by!(product: iphone_15_pro_max, storage: storage) do |ps|
+    ps.price = price
+  end
+end
+
 puts "Products created successfully"

@@ -172,6 +172,9 @@ en:
       secure: "Secure purchase"
       shipping: "Tracked delivery"
       related: "You may also like"
+      color: "Color"
+      storage: "Storage"
+      choose_options: "Choose options"
     cart:
       title: "Cart"
       add: "Add to cart"
@@ -185,6 +188,13 @@ en:
       continue: "Continue shopping"
       empty: "Your cart is empty"
       empty_text: "Explore the catalog and add products to continue."
+      close: "Close cart"
+      decrease: "Decrease quantity"
+      increase: "Increase quantity"
+      view_cart: "View cart"
+      taxes_note: "Taxes and shipping calculated at checkout."
+      free_shipping_progress_html: "Buy <strong>%{amount}</strong> more to enjoy <strong>free shipping</strong>"
+      free_shipping_unlocked: "You've unlocked free shipping! 🎉"
     orders:
       title: "My orders"
       order: "Order details"
@@ -219,3 +229,4 @@ en:
     address_deleted: "Address deleted."
     account_updated: "Account updated."
     password_updated: "Password updated."
+    select_options: "Select the color and storage before adding to the cart."

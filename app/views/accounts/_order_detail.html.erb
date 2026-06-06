@@ -20,7 +20,7 @@
       <% order.order_items.each do |item| %>
         <div class="account-order-product">
           <%= product_image(item.product) %>
-          <div><strong><%= item.product.name %></strong><span><%= t("storefront.account_page.order_detail.quantity", count: item.quantity) %></span></div>
+          <div><strong><%= item.product.name %></strong><% if variant_label(item) %><span><%= variant_label(item) %></span><% end %><span><%= t("storefront.account_page.order_detail.quantity", count: item.quantity) %></span></div>
           <strong><%= number_to_currency(item.price * item.quantity) %></strong>
         </div>
       <% end %>

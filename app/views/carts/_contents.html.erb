@@ -1,0 +1,51 @@
+<div id="cart_drawer_content" class="cart-drawer__content">
+  <% if cart.cart_items.any? %>
+    <% threshold = setting.free_shipping_threshold %>
+    <% if threshold.present? && threshold.positive? %>
+      <% remaining = threshold - cart.total_value %>
+      <div class="cart-drawer__shipping">
+        <% if remaining.positive? %>
+          <p><%= t("storefront.cart.free_shipping_progress_html", amount: number_to_currency(remaining)) %></p>
+        <% else %>
+          <p><%= t("storefront.cart.free_shipping_unlocked") %></p>
+        <% end %>
+        <div class="cart-drawer__progress"><span style="width: <%= [(cart.total_value / threshold * 100), 100].min.round %>%"></span></div>
+      </div>
+    <% end %>
+
+    <ul class="cart-drawer__items">
+      <% cart.cart_items.includes(:color, :storage, product: { images_attachments: :blob }).each do |item| %>
+        <li class="cart-drawer-item">
+          <%= link_to product_path(item.product), class: "cart-drawer-item__image" do %><%= product_image(item.product) %><% end %>
+          <div class="cart-drawer-item__info">
+            <%= link_to item.product.name, product_path(item.product), class: "cart-drawer-item__name" %>
+            <% if variant_label(item) %><span class="cart-drawer-item__variant"><%= variant_label(item) %></span><% end %>
+            <span class="cart-drawer-item__price"><%= number_to_currency(item.unit_price) %></span>
+            <div class="cart-drawer-item__actions">
+              <div class="cart-drawer-item__qty">
+                <%= button_to "−", cart_item_path(item), method: :patch, params: { quantity: item.quantity - 1 }, disabled: item.quantity <= 1, aria: { label: t("storefront.cart.decrease") } %>
+                <span><%= item.quantity %></span>
+                <%= button_to "+", cart_item_path(item), method: :patch, params: { quantity: item.quantity + 1 }, aria: { label: t("storefront.cart.increase") } %>
+              </div>
+              <%= button_to t("storefront.cart.remove"), cart_item_path(item), method: :delete, class: "cart-drawer-item__remove" %>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+
+    <footer class="cart-drawer__foot">
+      <div class="cart-drawer__subtotal"><span><%= t("storefront.cart.subtotal") %></span><strong><%= number_to_currency(cart.total_value) %></strong></div>
+      <p class="cart-drawer__note"><%= t("storefront.cart.taxes_note") %></p>
+      <div class="cart-drawer__buttons">
+        <%= link_to t("storefront.cart.view_cart"), cart_path, class: "store-button" %>
+        <%= button_to t("storefront.cart.checkout"), orders_path, class: "store-button store-button--dark" %>
+      </div>
+    </footer>
+  <% else %>
+    <div class="cart-drawer__empty">
+      <p><%= t("storefront.cart.empty") %></p>
+      <%= link_to t("storefront.cart.continue"), products_path, class: "store-button store-button--dark" %>
+    </div>
+  <% end %>
+</div>

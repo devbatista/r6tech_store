@@ -26,6 +26,7 @@ class Admin::ProductsController < Admin::BaseAdminController
   def create
     @product = Product.new(product_params)
     if @product.save
+      sync_product_storages(@product)
       enqueue_ai_suggestions(@product) if @product.needs_ai_suggestions?
       redirect_to(admin_product_path(@product), notice: t("flash.product_created"))
     else
@@ -37,6 +38,7 @@ class Admin::ProductsController < Admin::BaseAdminController
 
   def update
     if @product.update(product_params)
+      sync_product_storages(@product)
       redirect_to(admin_product_path(@product), notice: t("flash.product_updated"))
     else
       render :edit, status: :unprocessable_entity
@@ -85,7 +87,21 @@ class Admin::ProductsController < Admin::BaseAdminController
     end
 
     def product_params
-      params.require(:product).permit(:name, :description, :price, :category_id, images: [])
+      params.require(:product).permit(:name, :description, :price, :category_id, images: [], color_ids: [])
+    end
+
+    # Storages carry a per-product price, so they can't ride along in product_params.
+    # Each submitted row is "enabled" + "price"; we upsert enabled ones and drop the rest.
+    def sync_product_storages(product)
+      submitted = params.fetch(:product_storages, {})
+
+      submitted.each do |storage_id, attrs|
+        if attrs[:enabled] == "1" && attrs[:price].present?
+          product.product_storages.find_or_initialize_by(storage_id: storage_id).update(price: attrs[:price])
+        else
+          product.product_storages.find_by(storage_id: storage_id)&.destroy
+        end
+      end
     end
 
     def enqueue_ai_suggestions(product, force: false)

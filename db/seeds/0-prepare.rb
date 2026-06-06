@@ -1,7 +1,11 @@
 puts "Clearing old data..."
 
+CartItem.delete_all
+Cart.delete_all
 OrderItem.delete_all
 Order.delete_all
+ProductStorage.delete_all
+ProductColor.delete_all
 Product.delete_all
 Category.delete_all
 Storage.delete_all

@@ -4,12 +4,12 @@
   <% if @cart.cart_items.any? %>
     <div class="cart-layout">
       <div class="cart-items">
-        <% @cart.cart_items.includes(product: { images_attachments: :blob }).each do |item| %>
+        <% @cart.cart_items.includes(:color, :storage, product: { images_attachments: :blob }).each do |item| %>
           <article class="cart-item">
             <%= link_to product_path(item.product), class: "cart-item__image" do %><%= product_image(item.product) %><% end %>
-            <div><span><%= item.product.category&.name %></span><h3><%= link_to item.product.name, product_path(item.product) %></h3><strong><%= number_to_currency(item.product.price) %></strong></div>
+            <div><span><%= item.product.category&.name %></span><h3><%= link_to item.product.name, product_path(item.product) %></h3><% if variant_label(item) %><span class="cart-item__variant"><%= variant_label(item) %></span><% end %><strong><%= number_to_currency(item.unit_price) %></strong></div>
             <%= form_with url: cart_item_path(item), method: :patch, class: "cart-item__quantity" do |form| %><%= form.number_field :quantity, value: item.quantity, min: 1, onchange: "this.form.requestSubmit()" %><% end %>
-            <strong><%= number_to_currency(item.product.price * item.quantity) %></strong>
+            <strong><%= number_to_currency(item.total_price) %></strong>
             <%= button_to "×", cart_item_path(item), method: :delete, class: "cart-item__remove", title: t("storefront.cart.remove") %>
           </article>
         <% end %>

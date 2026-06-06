@@ -1,0 +1,9 @@
+<aside id="cart-drawer" class="cart-drawer" data-cart-target="overlay" data-action="click->cart#closeFromOverlay" aria-hidden="true">
+  <section class="cart-drawer__panel" role="dialog" aria-modal="true" aria-label="<%= t("storefront.cart.title") %>">
+    <header class="cart-drawer__head">
+      <h2><%= t("storefront.cart.title") %></h2>
+      <button type="button" class="cart-drawer__close" data-action="cart#close" aria-label="<%= t("storefront.cart.close") %>">×</button>
+    </header>
+    <%= render "carts/contents", cart: current_cart, setting: Setting.instance %>
+  </section>
+</aside>

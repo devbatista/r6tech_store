@@ -20,7 +20,9 @@ class OrdersController < BaseController
           created_order.order_items.create!(
             product: item.product,
             quantity: item.quantity,
-            price: item.product.price
+            price: item.unit_price,
+            color: item.color,
+            storage: item.storage
           )
         end
 

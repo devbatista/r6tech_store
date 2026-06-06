@@ -6,8 +6,12 @@
     <span class="product-card__category"><%= product.category&.name %></span>
     <h3><%= link_to product.name, product_path(product) %></h3>
     <div class="product-card__bottom">
-      <strong><%= number_to_currency(product.price) %></strong>
-      <%= button_to cart_items_path, params: { product_id: product.id, quantity: 1 }, class: "product-card__add", title: t("storefront.cart.add") do %>+<% end %>
+      <strong><%= number_to_currency(product.from_price) %></strong>
+      <% if product.options? %>
+        <%= link_to "→", product_path(product), class: "product-card__add", title: t("storefront.product.choose_options") %>
+      <% else %>
+        <%= button_to cart_items_path, params: { product_id: product.id, quantity: 1 }, class: "product-card__add", title: t("storefront.cart.add") do %>+<% end %>
+      <% end %>
     </div>
   </div>
 </article>
