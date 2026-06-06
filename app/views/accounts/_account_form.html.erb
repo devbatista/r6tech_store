@@ -1,0 +1,23 @@
+<div class="account-profile-form">
+  <h2><%= t("storefront.account_page.details") %></h2>
+
+  <%= form_with model: current_user, url: account_path, method: :patch, class: "account-profile-form__section" do |form| %>
+    <h3><%= t("storefront.account_page.profile_information") %></h3>
+    <div class="account-profile-form__grid">
+      <label><%= t("storefront.account_page.name") %><%= form.text_field :name, required: true, autocomplete: "name" %></label>
+      <label><%= t("storefront.account_page.email") %><%= form.email_field :email, required: true, autocomplete: "email" %></label>
+    </div>
+    <%= form.submit t("storefront.account_page.save_profile"), class: "store-button store-button--dark" %>
+  <% end %>
+
+  <%= form_with model: current_user, url: account_path, method: :patch, class: "account-profile-form__section account-profile-form__section--password" do |form| %>
+    <h3><%= t("storefront.account_page.change_password") %></h3>
+    <p><%= t("storefront.account_page.password_hint") %></p>
+    <div class="account-profile-form__grid">
+      <label><%= t("storefront.account_page.current_password") %><%= form.password_field :current_password, required: true, autocomplete: "current-password" %></label>
+      <label><%= t("storefront.account_page.new_password") %><%= form.password_field :password, required: true, autocomplete: "new-password" %></label>
+      <label><%= t("storefront.account_page.password_confirmation") %><%= form.password_field :password_confirmation, required: true, autocomplete: "new-password" %></label>
+    </div>
+    <%= form.submit t("storefront.account_page.update_password"), class: "store-button store-button--dark" %>
+  <% end %>
+</div>

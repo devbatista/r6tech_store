@@ -210,6 +210,16 @@ body.storefront-body { margin: 0; color: var(--store-ink); background: #fff; fon
 .account-details div { padding: 20px; border: 1px solid var(--store-line); }
 .account-details dt { margin-bottom: 7px; color: var(--store-muted); font-size: 13px; text-transform: uppercase; }
 .account-details dd { margin: 0; overflow-wrap: anywhere; font-weight: 600; }
+.account-profile-form { max-width: 900px; }
+.account-profile-form > h2 { margin-bottom: 30px; }
+.account-profile-form__section { display: grid; justify-items: start; gap: 22px; padding: 28px; border: 1px solid var(--store-line); }
+.account-profile-form__section--password { margin-top: 28px; }
+.account-profile-form__section h3 { margin: 0; font-size: 19px; }
+.account-profile-form__section p { margin: -8px 0 0; color: var(--store-muted); font-size: 13px; }
+.account-profile-form__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; width: 100%; }
+.account-profile-form__grid label { display: grid; gap: 8px; color: var(--store-muted); font-size: 13px; font-weight: 700; }
+.account-profile-form__grid input { width: 100%; min-height: 52px; padding: 10px 14px; border: 1px solid var(--store-line); font: inherit; }
+.account-profile-form__grid input:focus { border-color: #111; outline: 0; }
 @keyframes account-panel-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 .modal-open { overflow: hidden; }
 .login-modal { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 28px; background: rgba(0, 0, 0, .5); opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility .2s ease; }
@@ -302,10 +312,12 @@ body.storefront-body { margin: 0; color: var(--store-ink); background: #fff; fon
   .account-order-product { grid-template-columns: 60px 1fr; }
   .account-order-product img { width: 60px; height: 60px; }
   .account-order-product > strong { grid-column: 2; }
-  .account-details, .account-addresses, .account-address-form__grid { grid-template-columns: 1fr; }
+  .account-details, .account-addresses, .account-address-form__grid, .account-profile-form__grid { grid-template-columns: 1fr; }
   .account-addresses__header { align-items: flex-start; flex-direction: column; }
   .account-addresses__add { width: 100%; }
   .account-address-form__grid .is-wide { grid-column: auto; }
   .account-address-form__actions .store-button { width: 100%; }
+  .account-profile-form__section { padding: 20px; }
+  .account-profile-form__section .store-button { width: 100%; }
   .store-footer__grid { gap: 32px; }
 }

@@ -69,11 +69,7 @@
       </section>
 
       <section id="details" class="account-panel" role="tabpanel" data-account-tabs-target="panel" data-account-panel="details" hidden>
-        <h2><%= t("storefront.account_page.details") %></h2>
-        <dl class="account-details">
-          <div><dt><%= t("storefront.account_page.name") %></dt><dd><%= current_user.name %></dd></div>
-          <div><dt><%= t("storefront.account_page.email") %></dt><dd><%= current_user.email %></dd></div>
-        </dl>
+        <%= render "accounts/account_form" %>
       </section>
     </div>
   </div>

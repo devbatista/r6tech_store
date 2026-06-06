@@ -39,4 +39,29 @@ RSpec.describe AccountsController, type: :controller do
     expect(response.body).to include("account_addresses_content")
     expect(response.body).to include("account-address-form")
   end
+
+  it "updates the customer's name and email" do
+    session[:user_id] = user.id
+
+    patch :update, params: { user: { name: "Updated Customer", email: "updated-customer@example.com" } }
+
+    expect(user.reload).to have_attributes(name: "Updated Customer", email: "updated-customer@example.com")
+    expect(response).to redirect_to(account_path(anchor: "details"))
+  end
+
+  it "updates the customer's password with the current password" do
+    session[:user_id] = user.id
+
+    patch :update, params: { user: { current_password: "password", password: "new-password", password_confirmation: "new-password" } }
+
+    expect(user.reload.valid_password?("new-password")).to be(true)
+  end
+
+  it "does not update the password with an invalid current password" do
+    session[:user_id] = user.id
+
+    patch :update, params: { user: { current_password: "wrong", password: "new-password", password_confirmation: "new-password" } }
+
+    expect(user.reload.valid_password?("password")).to be(true)
+  end
 end
