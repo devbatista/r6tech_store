@@ -50,5 +50,20 @@ RSpec.describe ProductAiSuggestionSweepJob, type: :job do
         described_class.new.perform
       }.not_to change(ProductAiSuggestionJob.jobs, :size)
     end
+
+    it "does not automatically retry failed products" do
+      category = Category.create!(name: "Phones #{SecureRandom.uuid}")
+      Product.create!(
+        name: "iPhone 15",
+        price: 4999.90,
+        category: category,
+        ai_description_status: "failed",
+        ai_image_status: "failed"
+      )
+
+      expect {
+        described_class.new.perform
+      }.not_to change(ProductAiSuggestionJob.jobs, :size)
+    end
   end
 end

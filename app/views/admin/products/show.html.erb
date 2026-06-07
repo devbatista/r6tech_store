@@ -12,7 +12,7 @@
       </div>
 
       <div class="product-show-header-actions">
-        <%= link_to edit_admin_product_path(@product), class: "tf-button" do %>
+        <%= link_to edit_admin_product_path(@product), class: "tf-button product-show-primary-action" do %>
           <i class="icon-edit-3"></i><%= t("admin.common.edit") %>
         <% end %>
         <%= link_to admin_products_path, class: "tf-button style-3" do %>
@@ -170,11 +170,20 @@
         <div class="product-show-description mt-20">
           <div class="body-title mb-10"><%= t("admin.products.suggested_description") %></div>
           <%= simple_format(@product.ai_description) %>
-          <%= button_to approve_ai_description_admin_product_path(@product),
-                        method: :patch,
-                        class: "tf-button mt-20" do %>
-            <i class="icon-check"></i><%= t("admin.products.approve_description") %>
-          <% end %>
+          <div class="product-show-ai-actions product-show-ai-actions--description">
+            <%= button_to approve_ai_description_admin_product_path(@product),
+                          method: :patch,
+                          class: "tf-button product-show-approve-action",
+                          form: { class: "product-show-ai-action-form" } do %>
+              <i class="icon-check"></i><%= t("admin.products.approve_description") %>
+            <% end %>
+            <%= button_to generate_ai_suggestions_admin_product_path(@product),
+                          method: :post,
+                          class: "tf-button style-3 product-show-regenerate-action",
+                          form: { class: "product-show-ai-action-form" } do %>
+              <i class="icon-refresh-cw"></i><%= t("admin.products.generate_again") %>
+            <% end %>
+          </div>
         </div>
       <% end %>
 
@@ -184,21 +193,29 @@
           <div class="product-show-main-image">
             <%= image_tag @product.ai_generated_images.first.variant(resize_to_limit: [900, 900]), alt: @product.name %>
           </div>
-          <%= button_to approve_ai_image_admin_product_path(@product),
-                        method: :patch,
-                        class: "tf-button mt-20" do %>
-            <i class="icon-check"></i><%= t("admin.products.approve_image") %>
-          <% end %>
+          <div class="product-show-ai-actions mt-20">
+            <%= button_to approve_ai_image_admin_product_path(@product),
+                          method: :patch,
+                          class: "tf-button product-show-approve-action" do %>
+              <i class="icon-check"></i><%= t("admin.products.approve_image") %>
+            <% end %>
+          </div>
         </div>
       <% end %>
 
-      <div class="product-form-actions mt-20">
-        <%= button_to generate_ai_suggestions_admin_product_path(@product),
-                      method: :post,
-                      class: "tf-button style-3" do %>
-          <i class="icon-refresh-cw"></i><%= t("admin.products.generate_again") %>
-        <% end %>
-      </div>
+      <% unless @product.ai_description.present? %>
+        <div class="product-show-ai-footer mt-20">
+          <div class="product-show-ai-footer__text">
+            <strong><%= t("admin.products.generate_again") %></strong>
+            <span><%= t("admin.products.ai_review_hint") %></span>
+          </div>
+          <%= button_to generate_ai_suggestions_admin_product_path(@product),
+                        method: :post,
+                        class: "tf-button style-3 product-show-regenerate-action" do %>
+            <i class="icon-refresh-cw"></i><%= t("admin.products.generate_again") %>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

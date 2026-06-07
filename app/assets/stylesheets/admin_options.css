@@ -157,8 +157,122 @@
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18);
 }
 
+.product-show-header-actions {
+  align-items: center;
+}
+
+.product-show-primary-action {
+  min-width: 104px;
+}
+
+.product-show-danger {
+  min-width: 104px;
+}
+
+.product-show-ai-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--Stroke);
+}
+
+.product-show-ai-actions--description {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.product-show-ai-actions--description form {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.product-show-ai-actions--description .tf-button {
+  white-space: nowrap;
+}
+
+.product-show-ai-actions form,
+.product-show-ai-footer form {
+  margin: 0;
+}
+
+.product-show-ai-actions form {
+  display: flex;
+}
+
+.product-show-approve-action {
+  min-width: 160px;
+}
+
+.product-show-ai-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 20px;
+  border: 1px solid var(--Stroke);
+  border-radius: 12px;
+  background: var(--Surface-3);
+}
+
+.product-show-ai-footer__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.product-show-ai-footer__text strong {
+  color: var(--Main-Dark);
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.product-show-ai-footer__text span {
+  color: var(--Text);
+  font-size: 13px;
+  line-height: 19px;
+}
+
+.product-show-regenerate-action {
+  min-width: 160px;
+}
+
+@media (max-width: 767px) {
+  .product-show-header-actions {
+    width: 100%;
+  }
+
+  .product-show-ai-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .product-show-ai-footer form,
+  .product-show-ai-footer .tf-button {
+    width: 100%;
+  }
+}
+
 @media (max-width: 600px) {
   .option-storage {
     grid-template-columns: 1fr;
+  }
+
+  .product-show-header-actions .tf-button,
+  .product-show-ai-actions,
+  .product-show-ai-actions form,
+  .product-show-ai-actions .tf-button {
+    width: 100%;
+  }
+
+  .product-show-ai-actions--description {
+    flex-wrap: nowrap;
+    overflow-x: auto;
   }
 }

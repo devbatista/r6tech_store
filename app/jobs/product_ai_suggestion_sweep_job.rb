@@ -18,14 +18,14 @@ class ProductAiSuggestionSweepJob
     def products_missing_description
       Product
         .where(description: [nil, ""])
-        .where(ai_description_status: %w[idle failed])
+        .where(ai_description_status: "idle")
     end
 
     def products_missing_images
       Product
         .left_outer_joins(:images_attachments)
         .where(active_storage_attachments: { id: nil })
-        .where(ai_image_status: %w[idle failed])
+        .where(ai_image_status: "idle")
     end
 
     def queue_product(product)
