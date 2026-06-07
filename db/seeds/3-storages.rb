@@ -1,15 +1,7 @@
 puts "Creating storage"
 
-Storage.create!(
-  value: "256GB"
-)
-
-Storage.create!(
-  value: "512GB"
-)
-
-Storage.create!(
-  value: "1TB"
-)
+Storage::VALID_STORAGES.each do |value|
+  Storage.create!(value: value)
+end
 
 puts "Storages created successfully"

@@ -1,127 +1,162 @@
 puts "Creating products..."
 
-# Macs
-Product.create!(
-  name: "MacBook Air M3",
-  description: "Apple MacBook Air with M3 chip",
-  price: 12000,
-  category: Category.find_by(name: "Macs")
-)
+products = [
+  {
+    name: "iPhone 17 Pro Max", category: "Iphones", description: "Novo.",
+    colors: ["Preto", "Prata", "Azul", "Titânio"],
+    storages: { "256GB" => 9_000, "512GB" => 10_000, "1TB" => 11_000, "2TB" => 12_500 }
+  },
+  {
+    name: "iPhone 17 Pro", category: "Iphones", description: "Novo.",
+    colors: ["Titânio", "Prata", "Azul", "Preto"],
+    storages: { "256GB" => 8_400, "512GB" => 9_500, "1TB" => 10_150 }
+  },
+  {
+    name: "iPhone 17", category: "Iphones", description: "Novo.",
+    colors: ["Preto", "Azul", "Rosa", "Estelar"], storages: { "256GB" => 6_000 }
+  },
+  {
+    name: "iPhone 16 Pro Max", category: "Iphones", description: "Novo.",
+    colors: ["Preto", "Desert"], storages: { "512GB" => 8_500 }
+  },
+  {
+    name: "iPhone 16 Pro", category: "Iphones", description: "Novo.",
+    colors: ["Branco"], storages: { "128GB" => 6_500 }
+  },
+  {
+    name: "iPhone 16", category: "Iphones",
+    description: "Novo. A disponibilidade de cores varia conforme o armazenamento.",
+    colors: ["Verde", "Azul", "Preto", "Branco", "Rosa"],
+    storages: { "128GB" => 5_100, "256GB" => 5_700 }
+  },
+  {
+    name: "iPhone 15 Plus", category: "Iphones", description: "Novo.",
+    colors: ["Titânio natural", "Azul", "Branco", "Preto"], storages: { "128GB" => 4_700 }
+  },
+  {
+    name: "iPhone 15", category: "Iphones", description: "Novo.",
+    colors: ["Titânio natural", "Azul", "Branco", "Preto"], storages: { "128GB" => 4_200 }
+  },
+  {
+    name: "iPhone 14", category: "Iphones", description: "Novo.",
+    colors: ["Vários"], storages: { "128GB" => 3_950 }
+  },
+  {
+    name: "iPhone 13", category: "Iphones", description: "Novo. Consultar disponibilidade.",
+    colors: ["Consultar disponibilidade"], storages: { "128GB" => 3_600 }
+  },
+  {
+    name: "iPhone 12 / 12 Mini", category: "Iphones", description: "Usado. Consultar valor.",
+    colors: ["Roxo", "Azul", "Preto", "Branco", "Verde"],
+    storages: { "64GB" => 0, "128GB" => 0 }
+  },
+  {
+    name: "MacBook Pro M5 Max 14” 36GB", category: "Macs", description: "Novo. Memória: 36GB.",
+    colors: ["Space Black"], storages: { "2TB" => 30_000 }
+  },
+  {
+    name: "MacBook Pro M5 Max 14” 24GB", category: "Macs", description: "Novo. Memória: 24GB.",
+    colors: ["Space Black"], storages: { "2TB" => 25_000 }
+  },
+  {
+    name: "MacBook Pro M5 Pro 14” 24GB", category: "Macs", description: "Novo. Memória: 24GB.",
+    colors: ["Space Black", "Silver"], storages: { "1TB" => 18_000 }
+  },
+  {
+    name: "MacBook Pro M5 14” 16GB", category: "Macs", description: "Novo. Memória: 16GB.",
+    colors: ["Space Black", "Silver"], storages: { "1TB" => 12_500 }
+  },
+  {
+    name: "MacBook Air M5 15” 16GB", category: "Macs", description: "Novo. Memória: 16GB.",
+    colors: ["Azul", "Midnight", "Silver"], storages: { "512GB" => 10_200 }
+  },
+  {
+    name: "MacBook Air M5 13” 16GB", category: "Macs",
+    description: "Novo. Memória: 16GB. A disponibilidade de cores varia conforme o armazenamento.",
+    colors: ["Starlight", "Azul", "Silver", "Midnight"],
+    storages: { "512GB" => 7_800, "1TB" => 9_900 }
+  },
+  {
+    name: "MacBook Pro M4 15” 16GB", category: "Macs", description: "Novo. Memória: 16GB.",
+    colors: ["Space Black"], storages: { "1TB" => 12_000 }
+  },
+  {
+    name: "MacBook Air M4 15” 24GB", category: "Macs", description: "Novo. Memória: 24GB.",
+    colors: ["Azul"], storages: { "512GB" => 11_000 }
+  },
+  {
+    name: "MacBook Air M4 15” 16GB", category: "Macs", description: "Novo. Memória: 16GB.",
+    colors: ["Midnight"], storages: { "512GB" => 8_500 }
+  },
+  {
+    name: "MacBook Air M4 13” 24GB", category: "Macs", description: "Novo. Memória: 24GB.",
+    colors: ["Azul", "Silver", "Midnight"], storages: { "512GB" => 9_900 }
+  },
+  {
+    name: "MacBook Air M4 13” 16GB", category: "Macs", description: "Novo. Memória: 16GB.",
+    colors: ["Sky Blue", "Midnight", "Starlight", "Silver"], storages: { "256GB" => 7_300 }
+  },
+  {
+    name: "iPad Pro M5 11”", category: "Ipads", description: "Novo. Wi-Fi.",
+    colors: ["Silver", "Space Black"], storages: { "256GB" => 6_900 }
+  },
+  {
+    name: "iPad Pro M4 11”", category: "Ipads", description: "Novo. Wi-Fi.",
+    colors: ["Silver"], storages: { "256GB" => 6_500 }
+  },
+  {
+    name: "iPad Air M4 11”", category: "Ipads", description: "Novo. Wi-Fi.",
+    colors: ["Azul", "Purple", "Starlight", "Cinza"], storages: { "128GB" => 4_700 }
+  },
+  {
+    name: "iPad Air M3 11”", category: "Ipads",
+    description: "Novo. Wi-Fi. A disponibilidade de cores varia conforme o armazenamento.",
+    colors: ["Purple", "Azul", "Cinza", "Starlight"],
+    storages: { "128GB" => 4_400, "256GB" => 4_700 }
+  },
+  {
+    name: "iPad A16 11”", category: "Ipads",
+    description: "Novo. Wi-Fi. A disponibilidade de cores varia conforme o armazenamento.",
+    colors: ["Amarelo", "Azul", "Rosa", "Silver"],
+    storages: { "128GB" => 2_800, "256GB" => 4_000 }
+  },
+  {
+    name: "Apple Watch Series 11 46mm", category: "Watches", description: "Novo.",
+    colors: ["Space Grey", "Jet Black", "Rose"], price: 2_700
+  },
+  {
+    name: "Apple Watch Series 11 42mm", category: "Watches", description: "Novo.",
+    colors: ["Space Grey", "Jet Black", "Rose", "Silver"], price: 2_600
+  },
+  {
+    name: "Apple Watch SE3 44mm", category: "Watches", description: "Novo.",
+    colors: ["Preto"], price: 2_400
+  },
+  {
+    name: "Apple Watch SE3 40mm", category: "Watches", description: "Novo.",
+    colors: ["Preto", "Starlight"], price: 2_150
+  },
+  {
+    name: "Apple Watch SE2 44mm", category: "Watches", description: "Novo.",
+    colors: ["Preto"], price: 1_700
+  }
+]
 
-Product.create!(
-  name: "MacBook Pro M3 Pro",
-  description: "Apple MacBook Pro with M3 Pro chip",
-  price: 18000,
-  category: Category.find_by(name: "Macs")
-)
+products.each do |attributes|
+  storages = attributes.fetch(:storages, {})
+  product = Product.create!(
+    name: attributes.fetch(:name),
+    description: attributes.fetch(:description),
+    price: attributes[:price] || storages.values.min,
+    category: Category.find_by!(name: attributes.fetch(:category))
+  )
 
-Product.create!(
-  name: "iMac 24”",
-  description: "Apple iMac 24 inches",
-  price: 15000,
-  category: Category.find_by(name: "Macs")
-)
+  attributes.fetch(:colors).each do |color_name|
+    ProductColor.create!(product: product, color: Color.find_by!(name: color_name))
+  end
 
-# iPads
-Product.create!(
-  name: "iPad Pro 13” M4",
-  description: "New iPad Pro with M4 chip",
-  price: 11000,
-  category: Category.find_by(name: "Ipads")
-)
-
-Product.create!(
-  name: "iPad Air 11”",
-  description: "iPad Air 11 inches",
-  price: 7000,
-  category: Category.find_by(name: "Ipads")
-)
-
-# iPhones
-Product.create!(
-  name: "iPhone 16",
-  description: "Apple iPhone 16",
-  price: 9000,
-  category: Category.find_by(name: "Iphones")
-)
-
-Product.create!(
-  name: "iPhone 16 Pro",
-  description: "Apple iPhone 16 Pro",
-  price: 11000,
-  category: Category.find_by(name: "Iphones")
-)
-
-Product.create!(
-  name: "iPhone 15",
-  description: "Apple iPhone 15",
-  price: 7500,
-  category: Category.find_by(name: "Iphones")
-)
-
-# Watches
-Product.create!(
-  name: "Apple Watch Series 10",
-  description: "Apple Watch Series 10",
-  price: 5000,
-  category: Category.find_by(name: "Watches")
-)
-
-Product.create!(
-  name: "Apple Watch Ultra 2",
-  description: "Apple Watch Ultra 2",
-  price: 8000,
-  category: Category.find_by(name: "Watches")
-)
-
-# AirPods
-Product.create!(
-  name: "AirPods Pro (2nd generation)",
-  description: "Apple AirPods Pro second generation",
-  price: 2500,
-  category: Category.find_by(name: "AirPods")
-)
-
-Product.create!(
-  name: "AirPods Max",
-  description: "Apple AirPods Max",
-  price: 4500,
-  category: Category.find_by(name: "AirPods")
-)
-
-# Accessories
-Product.create!(
-  name: "Case for MacBook",
-  description: "Protective case for MacBook",
-  price: 300,
-  category: Category.find_by(name: "Acessories")
-)
-
-Product.create!(
-  name: "Case for iPhone",
-  description: "Protective case for iPhone",
-  price: 200,
-  category: Category.find_by(name: "Acessories")
-)
-
-# iPhone 15 Pro Max — with selectable color and storage options.
-iphone_15_pro_max = Product.find_or_create_by!(name: "iPhone 15 Pro Max") do |product|
-  product.description = "Apple iPhone 15 Pro Max em titânio, com chip A17 Pro, tela Super Retina XDR de 6,7\" e câmera de 48MP."
-  product.price = 10_499
-  product.category = Category.find_by(name: "Iphones")
-end
-
-["Titanium black", "Titanium white", "Titanium natural", "Titanium desert"].each do |color_name|
-  color = Color.find_by(name: color_name)
-  ProductColor.find_or_create_by!(product: iphone_15_pro_max, color: color) if color
-end
-
-{ "256GB" => 10_499, "512GB" => 11_999, "1TB" => 13_499 }.each do |value, price|
-  storage = Storage.find_by(value: value)
-  next unless storage
-
-  ProductStorage.find_or_create_by!(product: iphone_15_pro_max, storage: storage) do |ps|
-    ps.price = price
+  storages.each do |value, price|
+    ProductStorage.create!(product: product, storage: Storage.find_by!(value: value), price: price)
   end
 end
 
