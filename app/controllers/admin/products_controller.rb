@@ -29,6 +29,7 @@ class Admin::ProductsController < Admin::BaseAdminController
 
     if @product.save
       sync_product_storages(@product)
+      sync_product_variants(@product)
       enqueue_ai_suggestions(@product) if @product.needs_ai_suggestions?
       redirect_to(admin_product_path(@product), notice: t("flash.product_created"))
     else
@@ -44,6 +45,7 @@ class Admin::ProductsController < Admin::BaseAdminController
 
     if @product.save
       sync_product_storages(@product)
+      sync_product_variants(@product)
       redirect_to(admin_product_path(@product), notice: t("flash.product_updated"))
     else
       render :edit, status: :unprocessable_entity
@@ -104,16 +106,22 @@ class Admin::ProductsController < Admin::BaseAdminController
     end
 
     def derived_base_price
-      prices = params.fetch(:product_storages, {}).values.filter_map do |attrs|
+      storage_prices = params.fetch(:product_storages, {}).values.filter_map do |attrs|
         attrs[:price].to_d if attrs[:enabled] == "1" && attrs[:price].present?
       end
 
-      prices.min
+      variant_prices = params.fetch(:product_variants, {}).values.flat_map(&:values).filter_map do |attrs|
+        attrs[:price].to_d if attrs[:enabled] == "1" && attrs[:price].present?
+      end
+
+      (storage_prices + variant_prices).min
     end
 
     # Storages carry a per-product price, so they can't ride along in product_params.
     # Each submitted row is "enabled" + "price"; we upsert enabled ones and drop the rest.
     def sync_product_storages(product)
+      return product.product_storages.destroy_all if submitted_product_variants?
+
       submitted = params.fetch(:product_storages, {})
 
       submitted.each do |storage_id, attrs|
@@ -122,6 +130,32 @@ class Admin::ProductsController < Admin::BaseAdminController
         else
           product.product_storages.find_by(storage_id: storage_id)&.destroy
         end
+      end
+    end
+
+    def sync_product_variants(product)
+      submitted = params.fetch(:product_variants, {})
+      enabled_keys = []
+
+      submitted.each do |memory_id, storages|
+        storages.each do |storage_id, attrs|
+          next unless attrs[:enabled] == "1" && attrs[:price].present?
+
+          enabled_keys << [memory_id, storage_id]
+          product.product_variants
+            .find_or_initialize_by(memory_id: memory_id, storage_id: storage_id)
+            .update!(price: attrs[:price])
+        end
+      end
+
+      product.product_variants.each do |variant|
+        variant.destroy unless enabled_keys.include?([variant.memory_id, variant.storage_id])
+      end
+    end
+
+    def submitted_product_variants?
+      params.fetch(:product_variants, {}).values.any? do |storages|
+        storages.values.any? { |attrs| attrs[:enabled] == "1" && attrs[:price].present? }
       end
     end
 

@@ -36,5 +36,17 @@ RSpec.describe ProductsController, type: :controller do
       expect(response.body).to include(cable.name)
       expect(response.body).to include("storefront/product-placeholder")
     end
+
+    it "renders selectable RAM and storage configurations" do
+      memory = Memory.create!(value: "24GB")
+      storage = Storage.create!(value: "512GB")
+      ProductVariant.create!(product: cable, memory: memory, storage: storage, price: 11_000)
+
+      get :show, params: { id: cable.id }
+
+      expect(response.body).to include("24GB RAM")
+      expect(response.body).to include("512GB")
+      expect(response.body).to include("11.000,00")
+    end
   end
 end

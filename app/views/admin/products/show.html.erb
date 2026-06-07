@@ -78,7 +78,7 @@
         <div class="divider"></div>
 
         <div class="product-show-price">
-          <div class="text-tiny"><%= @product.product_storages.any? ? t("admin.products.price_from") : t("admin.products.price") %></div>
+          <div class="text-tiny"><%= (@product.product_storages.any? || @product.product_variants.any?) ? t("admin.products.price_from") : t("admin.products.price") %></div>
           <div><%= number_to_currency(@product.price) %></div>
         </div>
 
@@ -121,6 +121,12 @@
             <div class="product-show-detail-row">
               <span><%= ps.storage.value %></span>
               <strong><%= number_to_currency(ps.price) %></strong>
+            </div>
+          <% end %>
+          <% @product.product_variants.includes(:memory, :storage).sort_by(&:price).each do |variant| %>
+            <div class="product-show-detail-row">
+              <span><%= variant.memory.value %> RAM · <%= variant.storage.value %></span>
+              <strong><%= number_to_currency(variant.price) %></strong>
             </div>
           <% end %>
         </div>

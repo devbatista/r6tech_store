@@ -9,6 +9,16 @@ RSpec.describe Product, type: :model do
   it { should validate_presence_of(:price) }
   it { should validate_numericality_of(:price).is_greater_than_or_equal_to(0) }
 
+  it "uses the RAM and storage combination price" do
+    category = Category.create!(name: "Macs")
+    product = Product.create!(name: "MacBook Air", price: 7_800, category: category)
+    memory = Memory.create!(value: "16GB")
+    storage = Storage.create!(value: "512GB")
+    ProductVariant.create!(product: product, memory: memory, storage: storage, price: 8_500)
+
+    expect(product.price_for_options(storage: storage, memory: memory)).to eq(8_500)
+  end
+
   it "allows products without a description" do
     category = Category.create!(name: "Books #{SecureRandom.uuid}")
     product = Product.new(name: "Ruby Book", price: 50, category: category, description: nil)

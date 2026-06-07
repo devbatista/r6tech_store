@@ -33,7 +33,21 @@
         </fieldset>
       <% end %>
 
-      <% if @product.product_storages.any? %>
+      <% if @product.product_variants.any? %>
+        <fieldset class="option-group">
+          <legend class="option-group__label"><%= t("storefront.product.configuration") %></legend>
+          <div class="option-storages">
+            <% @product.product_variants.includes(:memory, :storage).sort_by(&:price).each_with_index do |variant, index| %>
+              <label class="storage-pill">
+                <%= radio_button_tag "variant_id", variant.id, index.zero?, required: true,
+                      data: { action: "product-options#selectStorage", price: variant.price.to_s } %>
+                <span class="storage-pill__value"><%= variant.memory.value %> RAM · <%= variant.storage.value %></span>
+                <span class="storage-pill__price"><%= number_to_currency(variant.price) %></span>
+              </label>
+            <% end %>
+          </div>
+        </fieldset>
+      <% elsif @product.product_storages.any? %>
         <fieldset class="option-group">
           <legend class="option-group__label"><%= t("storefront.product.storage") %></legend>
           <div class="option-storages">

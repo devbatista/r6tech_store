@@ -21,4 +21,20 @@ RSpec.describe OrdersController, type: :controller do
     expect(Order.last.total).to eq(40)
     expect(cart.reload).to be_ordered
   end
+
+  it "copies RAM and storage selections to the order item" do
+    memory = Memory.create!(value: "24GB")
+    storage = Storage.create!(value: "512GB")
+    ProductVariant.create!(product: product, memory: memory, storage: storage, price: 11_000)
+    session[:user_id] = user.id
+    cart = user.carts.create!(status: :active)
+    cart.add_product(product, 1, memory: memory, storage: storage)
+
+    post :create
+
+    item = Order.last.order_items.first
+    expect(item.memory).to eq(memory)
+    expect(item.storage).to eq(storage)
+    expect(item.price).to eq(11_000)
+  end
 end

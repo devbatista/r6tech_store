@@ -22,7 +22,8 @@ class OrdersController < BaseController
             quantity: item.quantity,
             price: item.unit_price,
             color: item.color,
-            storage: item.storage
+            storage: item.storage,
+            memory: item.memory
           )
         end
 

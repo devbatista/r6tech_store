@@ -5,13 +5,15 @@ class CartItemsController < BaseController
     product = Product.find(params[:product_id])
     quantity = [params.fetch(:quantity, 1).to_i, 1].max
     color = product.colors.find_by(id: params[:color_id])
-    storage = product.storages.find_by(id: params[:storage_id])
+    variant = product.product_variants.find_by(id: params[:variant_id])
+    storage = variant&.storage || product.storages.find_by(id: params[:storage_id])
+    memory = variant&.memory
 
-    if missing_required_options?(product, color, storage)
+    if missing_required_options?(product, color, storage, memory)
       return redirect_to product_path(product), alert: t("flash.select_options"), status: :see_other
     end
 
-    result = current_cart.add_product(product, quantity, color: color, storage: storage)
+    result = current_cart.add_product(product, quantity, color: color, storage: storage, memory: memory)
 
     respond_to do |format|
       format.turbo_stream
@@ -55,8 +57,9 @@ class CartItemsController < BaseController
       @cart_item = current_cart.cart_items.find(params[:id])
     end
 
-    def missing_required_options?(product, color, storage)
+    def missing_required_options?(product, color, storage, memory)
       (product.product_colors.any? && color.nil?) ||
-        (product.product_storages.any? && storage.nil?)
+        (product.product_storages.any? && storage.nil?) ||
+        (product.product_variants.any? && (storage.nil? || memory.nil?))
     end
 end

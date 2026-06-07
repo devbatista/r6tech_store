@@ -27,4 +27,21 @@ RSpec.describe CartMerger do
 
     expect(cart.cart_items.find_by(product: product).quantity).to eq(3)
   end
+
+  it "preserves RAM and storage selections" do
+    category = Category.create!(name: "Macs")
+    product = Product.create!(name: "MacBook Air", price: 8_500, category: category)
+    memory = Memory.create!(value: "16GB")
+    storage = Storage.create!(value: "512GB")
+    ProductVariant.create!(product: product, memory: memory, storage: storage, price: 8_500)
+    user = User.create!(name: "Customer", email: "mac-customer@example.com", password: "password")
+    guest_cart = Cart.create!(status: :active)
+    guest_cart.add_product(product, 1, memory: memory, storage: storage)
+
+    cart = described_class.new(user: user, guest_cart: guest_cart).call
+
+    item = cart.cart_items.find_by!(product: product)
+    expect(item.memory).to eq(memory)
+    expect(item.storage).to eq(storage)
+  end
 end

@@ -3,12 +3,13 @@ class CartItem < ApplicationRecord
   belongs_to :product
   belongs_to :color, optional: true
   belongs_to :storage, optional: true
+  belongs_to :memory, optional: true
 
   validates :quantity, presence: true, numericality: { only_integer: true, greater_than: 0}
 
   # Price depends on the chosen storage; colors do not change the price.
   def unit_price
-    product.price_for_storage(storage)
+    product.price_for_options(storage: storage, memory: memory)
   end
 
   def total_price

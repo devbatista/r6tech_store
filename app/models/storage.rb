@@ -3,6 +3,7 @@ class Storage < ApplicationRecord
 
   has_many :product_storages, dependent: :destroy
   has_many :products, through: :product_storages
+  has_many :product_variants, dependent: :destroy
 
   validates :value, presence: true, inclusion: { in: VALID_STORAGES }
 end

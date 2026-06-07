@@ -109,6 +109,28 @@
     </fieldset>
 
     <fieldset class="product-form-option-group">
+      <div class="body-title mb-10"><%= t("admin.products.memory_variants") %></div>
+      <div class="text-tiny mb-16"><%= t("admin.products.memory_variants_hint") %></div>
+      <div class="option-storage-list">
+        <% Memory.all.each do |memory| %>
+          <% Storage.all.each do |storage| %>
+            <% existing = @product.product_variants.detect { |variant| variant.memory_id == memory.id && variant.storage_id == storage.id } %>
+            <div class="option-storage">
+              <label class="option-storage__toggle" for="variant_enabled_<%= memory.id %>_<%= storage.id %>">
+                <%= check_box_tag "product_variants[#{memory.id}][#{storage.id}][enabled]", "1", existing.present?, id: "variant_enabled_#{memory.id}_#{storage.id}", class: "option-check-input", data: { product_price_mode_target: "variant", action: "change->product-price-mode#refresh" } %>
+                <span class="option-check-box"></span>
+                <span class="option-storage__value"><%= memory.value %> RAM · <%= storage.value %></span>
+              </label>
+              <div class="option-storage__price">
+                <%= number_field_tag "product_variants[#{memory.id}][#{storage.id}][price]", existing&.price, step: 0.01, min: 0, placeholder: t("admin.products.storage_price"), aria: { label: "#{t("admin.products.storage_price")} - #{memory.value} RAM - #{storage.value}" } %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </fieldset>
+
+    <fieldset class="product-form-option-group">
       <div class="body-title mb-10"><%= t("admin.products.storages") %></div>
       <div class="text-tiny mb-16"><%= t("admin.products.storages_hint") %></div>
       <% if storage_options.any? %>

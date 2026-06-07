@@ -12,6 +12,30 @@ RSpec.describe CartItemsController, type: :controller do
     expect(cart.cart_items.find_by(product: product).quantity).to eq(2)
   end
 
+  it "adds a selected RAM and storage variant with its price" do
+    memory = Memory.create!(value: "16GB")
+    storage = Storage.create!(value: "512GB")
+    variant = ProductVariant.create!(product: product, memory: memory, storage: storage, price: 8_500)
+
+    post :create, params: { product_id: product.id, variant_id: variant.id }
+
+    item = Cart.find(session[:cart_id]).cart_items.find_by!(product: product)
+    expect(item.memory).to eq(memory)
+    expect(item.storage).to eq(storage)
+    expect(item.unit_price).to eq(8_500)
+  end
+
+  it "requires a RAM and storage variant when the product has configurations" do
+    memory = Memory.create!(value: "16GB")
+    storage = Storage.create!(value: "512GB")
+    ProductVariant.create!(product: product, memory: memory, storage: storage, price: 8_500)
+
+    post :create, params: { product_id: product.id }
+
+    expect(response).to redirect_to(product_path(product))
+    expect(CartItem.where(product: product)).to be_empty
+  end
+
   it "updates an item from the current guest cart" do
     cart = Cart.create!(status: :active)
     item = cart.cart_items.create!(product: product, quantity: 1)

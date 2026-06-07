@@ -7,7 +7,7 @@ work = customer.addresses.find_by!(label: "Trabalho")
 iphone = Product.find_by!(name: "iPhone 17 Pro Max")
 ipad = Product.find_by!(name: "iPad Pro M5 11”")
 watch = Product.find_by!(name: "Apple Watch Series 11 46mm")
-macbook = Product.find_by!(name: "MacBook Air M5 13” 16GB")
+macbook = Product.find_by!(name: "MacBook Air M5 13”")
 
 [
   { status: "paid", address: home, items: [[iphone, 1], [ipad, 1]] },
@@ -21,7 +21,15 @@ macbook = Product.find_by!(name: "MacBook Air M5 13” 16GB")
   order.save!
 
   attributes.fetch(:items).each do |product, quantity|
-    OrderItem.create!(order: order, product: product, quantity: quantity, price: product.price)
+    variant = product.product_variants.order(:price).first
+    OrderItem.create!(
+      order: order,
+      product: product,
+      quantity: quantity,
+      price: product.price,
+      memory: variant&.memory,
+      storage: variant&.storage
+    )
   end
 end
 

@@ -1,17 +1,17 @@
 import { Controller } from "@hotwired/stimulus"
 
 // On the admin product form, the base price is only edited for products without
-// storage variations. As soon as a storage is enabled, the price comes from the
-// cheapest variation, so we hide/disable the base price input.
+// storage or RAM/storage variations. As soon as one is enabled, the price comes
+// from the cheapest variation, so we hide/disable the base price input.
 export default class extends Controller {
-  static targets = ["input", "note", "requiredMark", "storage"]
+  static targets = ["input", "note", "requiredMark", "storage", "variant"]
 
   connect() {
     this.refresh()
   }
 
   refresh() {
-    const hasVariations = this.storageTargets.some((checkbox) => checkbox.checked)
+    const hasVariations = [...this.storageTargets, ...this.variantTargets].some((checkbox) => checkbox.checked)
 
     if (this.hasInputTarget) {
       this.inputTarget.hidden = hasVariations

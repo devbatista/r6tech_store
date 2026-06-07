@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_06_130300) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_07_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -65,12 +65,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_06_130300) do
     t.uuid "cart_id", null: false
     t.uuid "color_id"
     t.datetime "created_at", null: false
+    t.uuid "memory_id"
     t.uuid "product_id", null: false
     t.integer "quantity"
     t.uuid "storage_id"
     t.datetime "updated_at", null: false
     t.index ["cart_id"], name: "index_cart_items_on_cart_id"
     t.index ["color_id"], name: "index_cart_items_on_color_id"
+    t.index ["memory_id"], name: "index_cart_items_on_memory_id"
     t.index ["product_id"], name: "index_cart_items_on_product_id"
     t.index ["storage_id"], name: "index_cart_items_on_storage_id"
   end
@@ -96,9 +98,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_06_130300) do
     t.string "name", null: false
   end
 
+  create_table "memories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "value", null: false
+    t.index ["value"], name: "index_memories_on_value", unique: true
+  end
+
   create_table "order_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "color_id"
     t.datetime "created_at", null: false
+    t.uuid "memory_id"
     t.uuid "order_id", null: false
     t.decimal "price"
     t.uuid "product_id", null: false
@@ -106,6 +116,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_06_130300) do
     t.uuid "storage_id"
     t.datetime "updated_at", null: false
     t.index ["color_id"], name: "index_order_items_on_color_id"
+    t.index ["memory_id"], name: "index_order_items_on_memory_id"
     t.index ["order_id"], name: "index_order_items_on_order_id"
     t.index ["product_id"], name: "index_order_items_on_product_id"
     t.index ["storage_id"], name: "index_order_items_on_storage_id"
@@ -150,6 +161,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_06_130300) do
     t.index ["product_id", "storage_id"], name: "index_product_storages_on_product_id_and_storage_id", unique: true
     t.index ["product_id"], name: "index_product_storages_on_product_id"
     t.index ["storage_id"], name: "index_product_storages_on_storage_id"
+  end
+
+  create_table "product_variants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.uuid "memory_id", null: false
+    t.decimal "price", precision: 10, scale: 2, null: false
+    t.uuid "product_id", null: false
+    t.uuid "storage_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["memory_id"], name: "index_product_variants_on_memory_id"
+    t.index ["product_id", "memory_id", "storage_id"], name: "idx_on_product_id_memory_id_storage_id_917f4f929c", unique: true
+    t.index ["product_id"], name: "index_product_variants_on_product_id"
+    t.index ["storage_id"], name: "index_product_variants_on_storage_id"
   end
 
   create_table "products", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -217,11 +241,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_06_130300) do
   add_foreign_key "addresses", "users"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "colors"
+  add_foreign_key "cart_items", "memories"
   add_foreign_key "cart_items", "products"
   add_foreign_key "cart_items", "storages"
   add_foreign_key "carts", "users"
   add_foreign_key "categories", "categories", column: "parent_id"
   add_foreign_key "order_items", "colors"
+  add_foreign_key "order_items", "memories"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "products"
   add_foreign_key "order_items", "storages"
@@ -231,5 +257,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_06_130300) do
   add_foreign_key "product_colors", "products"
   add_foreign_key "product_storages", "products"
   add_foreign_key "product_storages", "storages"
+  add_foreign_key "product_variants", "memories"
+  add_foreign_key "product_variants", "products"
+  add_foreign_key "product_variants", "storages"
   add_foreign_key "products", "categories"
 end

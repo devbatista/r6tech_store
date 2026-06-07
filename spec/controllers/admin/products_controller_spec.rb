@@ -176,6 +176,8 @@ RSpec.describe Admin::ProductsController, type: :controller do
     let(:white) { Color.create!(name: "Titanium white", hex: "#f2f1ee") }
     let(:s256) { Storage.create!(value: "256GB") }
     let(:s512) { Storage.create!(value: "512GB") }
+    let(:m16) { Memory.create!(value: "16GB") }
+    let(:m24) { Memory.create!(value: "24GB") }
 
     before { session[:user_id] = admin.id }
 
@@ -195,6 +197,22 @@ RSpec.describe Admin::ProductsController, type: :controller do
       expect(product.colors).to match_array([black, white])
       expect(product.product_storages.find_by(storage: s256).price).to eq(10_499)
       expect(product.product_storages.find_by(storage: s512).price).to eq(11_999)
+    end
+
+    it "creates a product with RAM and storage combination prices" do
+      post :create, params: {
+        product: { name: "MacBook Air", category_id: category.id },
+        product_variants: {
+          m16.id => { s512.id => { enabled: "1", price: "8500" } },
+          m24.id => { s512.id => { enabled: "1", price: "11000" } }
+        }
+      }
+
+      product = Product.order(:created_at).last
+      expect(product.price).to eq(8_500)
+      expect(product.product_variants.find_by(memory: m16, storage: s512).price).to eq(8_500)
+      expect(product.product_variants.find_by(memory: m24, storage: s512).price).to eq(11_000)
+      expect(product.product_storages).to be_empty
     end
 
     it "ignores storages that are not enabled" do

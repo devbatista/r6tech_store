@@ -4,7 +4,7 @@
   <% if @cart.cart_items.any? %>
     <div class="cart-layout">
       <div class="cart-items">
-        <% @cart.cart_items.includes(:color, :storage, product: { images_attachments: :blob }).each do |item| %>
+        <% @cart.cart_items.includes(:color, :storage, :memory, product: { images_attachments: :blob }).each do |item| %>
           <article class="cart-item">
             <%= link_to product_path(item.product), class: "cart-item__image" do %><%= product_image(item.product) %><% end %>
             <div><span><%= item.product.category&.name %></span><h3><%= link_to item.product.name, product_path(item.product) %></h3><% if variant_label(item) %><span class="cart-item__variant"><%= variant_label(item) %></span><% end %><strong><%= number_to_currency(item.unit_price) %></strong></div>

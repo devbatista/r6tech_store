@@ -8,6 +8,8 @@ class Product < ApplicationRecord
   has_many :colors, through: :product_colors
   has_many :product_storages, dependent: :destroy
   has_many :storages, through: :product_storages
+  has_many :product_variants, dependent: :destroy
+  has_many :memories, -> { distinct }, through: :product_variants
 
   belongs_to :category
 
@@ -26,19 +28,22 @@ class Product < ApplicationRecord
     description.blank? || !images.attached?
   end
 
-  # Whether the product offers selectable color/storage options.
+  # Whether the product offers selectable color, storage, or RAM/storage options.
   def options?
-    product_colors.any? || product_storages.any?
+    product_colors.any? || product_storages.any? || product_variants.any?
   end
 
-  # Lowest available price across storages ("a partir de"); falls back to the
-  # flat price for products without storage options.
+  # Lowest available variation price ("a partir de"); falls back to the flat price.
   def from_price
-    product_storages.minimum(:price) || price
+    product_variants.minimum(:price) || product_storages.minimum(:price) || price
   end
 
-  # Price for a given storage option, falling back to the flat price.
-  def price_for_storage(storage)
+  # Price for a selected RAM/storage combination or simple storage option.
+  def price_for_options(storage:, memory: nil)
+    if product_variants.any?
+      return product_variants.find_by(storage_id: storage&.id, memory_id: memory&.id)&.price || price
+    end
+
     return price if storage.nil?
 
     product_storages.find_by(storage_id: storage.id)&.price || price

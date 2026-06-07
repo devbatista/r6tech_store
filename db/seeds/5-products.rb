@@ -51,50 +51,43 @@ products = [
     storages: { "64GB" => 0, "128GB" => 0 }
   },
   {
-    name: "MacBook Pro M5 Max 14” 36GB", category: "Macs", description: "Novo. Memória: 36GB.",
-    colors: ["Space Black"], storages: { "2TB" => 30_000 }
+    name: "MacBook Pro M5 Max 14”", category: "Macs", description: "Novo.",
+    colors: ["Space Black"],
+    variants: [["24GB", "2TB", 25_000], ["36GB", "2TB", 30_000]]
   },
   {
-    name: "MacBook Pro M5 Max 14” 24GB", category: "Macs", description: "Novo. Memória: 24GB.",
-    colors: ["Space Black"], storages: { "2TB" => 25_000 }
+    name: "MacBook Pro M5 Pro 14”", category: "Macs", description: "Novo.",
+    colors: ["Space Black", "Silver"], variants: [["24GB", "1TB", 18_000]]
   },
   {
-    name: "MacBook Pro M5 Pro 14” 24GB", category: "Macs", description: "Novo. Memória: 24GB.",
-    colors: ["Space Black", "Silver"], storages: { "1TB" => 18_000 }
+    name: "MacBook Pro M5 14”", category: "Macs", description: "Novo.",
+    colors: ["Space Black", "Silver"], variants: [["16GB", "1TB", 12_500]]
   },
   {
-    name: "MacBook Pro M5 14” 16GB", category: "Macs", description: "Novo. Memória: 16GB.",
-    colors: ["Space Black", "Silver"], storages: { "1TB" => 12_500 }
+    name: "MacBook Air M5 15”", category: "Macs", description: "Novo.",
+    colors: ["Azul", "Midnight", "Silver"], variants: [["16GB", "512GB", 10_200]]
   },
   {
-    name: "MacBook Air M5 15” 16GB", category: "Macs", description: "Novo. Memória: 16GB.",
-    colors: ["Azul", "Midnight", "Silver"], storages: { "512GB" => 10_200 }
-  },
-  {
-    name: "MacBook Air M5 13” 16GB", category: "Macs",
-    description: "Novo. Memória: 16GB. A disponibilidade de cores varia conforme o armazenamento.",
+    name: "MacBook Air M5 13”", category: "Macs",
+    description: "Novo. A disponibilidade de cores varia conforme a configuração.",
     colors: ["Starlight", "Azul", "Silver", "Midnight"],
-    storages: { "512GB" => 7_800, "1TB" => 9_900 }
+    variants: [["16GB", "512GB", 7_800], ["16GB", "1TB", 9_900]]
   },
   {
-    name: "MacBook Pro M4 15” 16GB", category: "Macs", description: "Novo. Memória: 16GB.",
-    colors: ["Space Black"], storages: { "1TB" => 12_000 }
+    name: "MacBook Pro M4 15”", category: "Macs", description: "Novo.",
+    colors: ["Space Black"], variants: [["16GB", "1TB", 12_000]]
   },
   {
-    name: "MacBook Air M4 15” 24GB", category: "Macs", description: "Novo. Memória: 24GB.",
-    colors: ["Azul"], storages: { "512GB" => 11_000 }
+    name: "MacBook Air M4 15”", category: "Macs",
+    description: "Novo. A disponibilidade de cores varia conforme a configuração.",
+    colors: ["Azul", "Midnight"],
+    variants: [["16GB", "512GB", 8_500], ["24GB", "512GB", 11_000]]
   },
   {
-    name: "MacBook Air M4 15” 16GB", category: "Macs", description: "Novo. Memória: 16GB.",
-    colors: ["Midnight"], storages: { "512GB" => 8_500 }
-  },
-  {
-    name: "MacBook Air M4 13” 24GB", category: "Macs", description: "Novo. Memória: 24GB.",
-    colors: ["Azul", "Silver", "Midnight"], storages: { "512GB" => 9_900 }
-  },
-  {
-    name: "MacBook Air M4 13” 16GB", category: "Macs", description: "Novo. Memória: 16GB.",
-    colors: ["Sky Blue", "Midnight", "Starlight", "Silver"], storages: { "256GB" => 7_300 }
+    name: "MacBook Air M4 13”", category: "Macs",
+    description: "Novo. A disponibilidade de cores varia conforme a configuração.",
+    colors: ["Azul", "Silver", "Midnight", "Sky Blue", "Starlight"],
+    variants: [["16GB", "256GB", 7_300], ["24GB", "512GB", 9_900]]
   },
   {
     name: "iPad Pro M5 11”", category: "Ipads", description: "Novo. Wi-Fi.",
@@ -144,10 +137,11 @@ products = [
 
 products.each do |attributes|
   storages = attributes.fetch(:storages, {})
+  variants = attributes.fetch(:variants, [])
   product = Product.create!(
     name: attributes.fetch(:name),
     description: attributes.fetch(:description),
-    price: attributes[:price] || storages.values.min,
+    price: attributes[:price] || storages.values.min || variants.map(&:last).min,
     category: Category.find_by!(name: attributes.fetch(:category))
   )
 
@@ -157,6 +151,15 @@ products.each do |attributes|
 
   storages.each do |value, price|
     ProductStorage.create!(product: product, storage: Storage.find_by!(value: value), price: price)
+  end
+
+  variants.each do |memory, storage, price|
+    ProductVariant.create!(
+      product: product,
+      memory: Memory.find_by!(value: memory),
+      storage: Storage.find_by!(value: storage),
+      price: price
+    )
   end
 end
 
