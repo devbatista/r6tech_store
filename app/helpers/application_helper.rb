@@ -34,6 +34,14 @@ module ApplicationHelper
     storefront_setting.store_name.presence || "R6tech Store"
   end
 
+  def storefront_whatsapp_url
+    digits = storefront_setting.contact_phone.to_s.gsub(/\D/, "")
+    return if digits.blank?
+
+    digits = "55#{digits}" if digits.length.in?([10, 11])
+    "https://wa.me/#{digits}"
+  end
+
   def product_image(product, class_name: nil)
     if product.images.attached?
       image_tag product.images.first, alt: product.name, class: class_name

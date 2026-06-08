@@ -301,6 +301,13 @@ body.storefront-body { margin: 0; color: var(--store-ink); background: #fff; fon
 .payment-list { display: flex; gap: 6px; margin-top: 14px; }
 .payment-list img { width: 40px; height: 25px; object-fit: contain; background: #fff; border-radius: 3px; }
 .store-footer__bottom { margin-top: 44px; padding: 22px 0; border-top: 1px solid #303330; color: #aaa; font-size: 12px; }
+.whatsapp-float { position: fixed; right: 32px; bottom: 32px; z-index: 90; display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; color: #fff !important; box-shadow: 0 10px 30px rgba(0, 0, 0, .34); transition: transform .18s ease, box-shadow .18s ease; }
+.whatsapp-float__icon { display: block; width: 100%; height: 100%; overflow: visible; }
+.whatsapp-float__bubble { fill: url("#whatsapp-float-gradient"); stroke: #fff; stroke-width: 7; stroke-linejoin: round; }
+.whatsapp-float__phone { fill: #fff; }
+.whatsapp-float span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.whatsapp-float:hover { transform: translateY(-4px); box-shadow: 0 14px 38px rgba(0, 0, 0, .4); }
+.whatsapp-float:focus-visible { outline: 3px solid rgba(37, 211, 102, .35); outline-offset: 3px; }
 
 @media (max-width: 1100px) {
   .store-header__main { grid-template-columns: auto auto 1fr; gap: 12px; }
@@ -374,4 +381,5 @@ body.storefront-body { margin: 0; color: var(--store-ink); background: #fff; fon
   .account-profile-form__section { padding: 20px; }
   .account-profile-form__section .store-button { width: 100%; }
   .store-footer__grid { gap: 32px; }
+  .whatsapp-float { right: 20px; bottom: 20px; width: 64px; height: 64px; }
 }
