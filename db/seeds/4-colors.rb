@@ -7,7 +7,6 @@ puts "Creating colors"
   "Azul" => "#7896ad",
   "Branco" => "#f5f5f0",
   "Cinza" => "#8e8e93",
-  "Consultar disponibilidade" => "#a7a7a7",
   "Desert" => "#c3aa97",
   "Estelar" => "#f0e4d3",
   "Jet Black" => "#151515",
@@ -25,7 +24,6 @@ puts "Creating colors"
   "Starlight" => "#eee6d8",
   "Titânio" => "#8f8a83",
   "Titânio natural" => "#c8c4bb",
-  "Vários" => "#a7a7a7",
   "Verde" => "#9cbfa7"
 }.each do |name, hex|
   Color.create!(name: name, hex: hex)

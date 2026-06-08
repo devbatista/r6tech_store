@@ -33,15 +33,32 @@ class Product < ApplicationRecord
     product_colors.any? || product_storages.any? || product_variants.any?
   end
 
+  # Whether this product is sold as color + RAM + storage variations.
+  def uses_variants?
+    category&.uses_variants? || product_variants.any?
+  end
+
+  # Colors offered to the customer. For variant products the colors live on the
+  # variations; otherwise they come from the plain color list.
+  def display_colors
+    if product_variants.any?
+      Color.where(id: product_variants.where.not(color_id: nil).select(:color_id).distinct).order(:name)
+    else
+      colors.order(:name)
+    end
+  end
+
   # Lowest available variation price ("a partir de"); falls back to the flat price.
   def from_price
     product_variants.minimum(:price) || product_storages.minimum(:price) || price
   end
 
-  # Price for a selected RAM/storage combination or simple storage option.
-  def price_for_options(storage:, memory: nil)
+  # Price for a selected color/RAM/storage combination or simple storage option.
+  def price_for_options(storage:, memory: nil, color: nil)
     if product_variants.any?
-      return product_variants.find_by(storage_id: storage&.id, memory_id: memory&.id)&.price || price
+      variant = product_variants.find_by(color_id: color&.id, storage_id: storage&.id, memory_id: memory&.id)
+      variant ||= product_variants.find_by(storage_id: storage&.id, memory_id: memory&.id)
+      return variant&.price || price
     end
 
     return price if storage.nil?

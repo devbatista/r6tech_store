@@ -39,11 +39,11 @@ products = [
   },
   {
     name: "iPhone 14", category: "Iphones", description: "Novo.",
-    colors: ["Vários"], storages: { "128GB" => 3_950 }
+    colors: [], storages: { "128GB" => 3_950 }
   },
   {
     name: "iPhone 13", category: "Iphones", description: "Novo. Consultar disponibilidade.",
-    colors: ["Consultar disponibilidade"], storages: { "128GB" => 3_600 }
+    colors: [], storages: { "128GB" => 3_600 }
   },
   {
     name: "iPhone 12 / 12 Mini", category: "Iphones", description: "Usado. Consultar valor.",
@@ -138,6 +138,7 @@ products = [
 products.each do |attributes|
   storages = attributes.fetch(:storages, {})
   variants = attributes.fetch(:variants, [])
+  colors = attributes.fetch(:colors, [])
   product = Product.create!(
     name: attributes.fetch(:name),
     description: attributes.fetch(:description),
@@ -145,21 +146,31 @@ products.each do |attributes|
     category: Category.find_by!(name: attributes.fetch(:category))
   )
 
-  attributes.fetch(:colors).each do |color_name|
-    ProductColor.create!(product: product, color: Color.find_by!(name: color_name))
-  end
+  if variants.any?
+    # Variant products: each color + RAM + storage is its own SKU. Colors live on
+    # the variations, so we build the cartesian product (a nil color means
+    # "consultar disponibilidade").
+    color_records = colors.any? ? colors.map { |name| Color.find_by!(name: name) } : [nil]
 
-  storages.each do |value, price|
-    ProductStorage.create!(product: product, storage: Storage.find_by!(value: value), price: price)
-  end
+    variants.each do |memory, storage, price|
+      color_records.each do |color|
+        ProductVariant.create!(
+          product: product,
+          color: color,
+          memory: Memory.find_by!(value: memory),
+          storage: Storage.find_by!(value: storage),
+          price: price
+        )
+      end
+    end
+  else
+    colors.each do |color_name|
+      ProductColor.create!(product: product, color: Color.find_by!(name: color_name))
+    end
 
-  variants.each do |memory, storage, price|
-    ProductVariant.create!(
-      product: product,
-      memory: Memory.find_by!(value: memory),
-      storage: Storage.find_by!(value: storage),
-      price: price
-    )
+    storages.each do |value, price|
+      ProductStorage.create!(product: product, storage: Storage.find_by!(value: value), price: price)
+    end
   end
 end
 

@@ -1,6 +1,11 @@
 class Category < ApplicationRecord
+  # Categories whose products are sold as RAM + storage variations (each color +
+  # RAM + storage combination is its own SKU). Everything else uses the simpler
+  # color list + storage options. Kept in code on purpose.
+  VARIANT_CATEGORIES = ["Macs"].freeze
+
   belongs_to :parent, class_name: "Category", optional: true, foreign_key: "parent_id"
-  
+
   has_many :subcategories, class_name: "Category", foreign_key: "parent_id", dependent: :destroy
   has_many :products, dependent: :nullify
 
@@ -22,6 +27,11 @@ class Category < ApplicationRecord
 
   def master_parent
     parent.nil? ? self : parent.master_parent
+  end
+
+  # Whether products in this category use RAM + storage variations.
+  def uses_variants?
+    VARIANT_CATEGORIES.include?(master_parent.name)
   end
 
   private

@@ -110,17 +110,16 @@ class Admin::ProductsController < Admin::BaseAdminController
         attrs[:price].to_d if attrs[:enabled] == "1" && attrs[:price].present?
       end
 
-      variant_prices = params.fetch(:product_variants, {}).values.flat_map(&:values).filter_map do |attrs|
-        attrs[:price].to_d if attrs[:enabled] == "1" && attrs[:price].present?
-      end
+      variant_prices = submitted_variant_rows.map { |attrs| attrs[:price].to_d }
 
       (storage_prices + variant_prices).min
     end
 
     # Storages carry a per-product price, so they can't ride along in product_params.
-    # Each submitted row is "enabled" + "price"; we upsert enabled ones and drop the rest.
+    # Variant products don't use simple storages, so we clear them in that case.
+    # Otherwise each submitted row is "enabled" + "price"; upsert enabled, drop rest.
     def sync_product_storages(product)
-      return product.product_storages.destroy_all if submitted_product_variants?
+      return product.product_storages.destroy_all if product.category&.uses_variants?
 
       submitted = params.fetch(:product_storages, {})
 
@@ -133,29 +132,29 @@ class Admin::ProductsController < Admin::BaseAdminController
       end
     end
 
+    # The variation builder submits the full desired set of rows on every save, so
+    # we rebuild from scratch. Each row is color (optional) + RAM + storage + price.
+    # Variant products carry no separate color list (colors live on the variations).
     def sync_product_variants(product)
-      submitted = params.fetch(:product_variants, {})
-      enabled_keys = []
+      return product.product_variants.destroy_all unless product.category&.uses_variants?
 
-      submitted.each do |memory_id, storages|
-        storages.each do |storage_id, attrs|
-          next unless attrs[:enabled] == "1" && attrs[:price].present?
+      product.product_variants.destroy_all
+      product.product_colors.destroy_all
 
-          enabled_keys << [memory_id, storage_id]
-          product.product_variants
-            .find_or_initialize_by(memory_id: memory_id, storage_id: storage_id)
-            .update!(price: attrs[:price])
-        end
-      end
-
-      product.product_variants.each do |variant|
-        variant.destroy unless enabled_keys.include?([variant.memory_id, variant.storage_id])
+      submitted_variant_rows.each do |attrs|
+        product.product_variants.create!(
+          color_id: attrs[:color_id].presence,
+          memory_id: attrs[:memory_id],
+          storage_id: attrs[:storage_id],
+          price: attrs[:price]
+        )
       end
     end
 
-    def submitted_product_variants?
-      params.fetch(:product_variants, {}).values.any? do |storages|
-        storages.values.any? { |attrs| attrs[:enabled] == "1" && attrs[:price].present? }
+    # Valid variation rows submitted by the builder (array of color/RAM/storage/price).
+    def submitted_variant_rows
+      Array(params[:product_variants]).select do |attrs|
+        attrs[:memory_id].present? && attrs[:storage_id].present? && attrs[:price].present?
       end
     end
 

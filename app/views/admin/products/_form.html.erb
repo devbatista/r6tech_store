@@ -1,4 +1,4 @@
-<%= form_with model: [:admin, @product], local: true, html: { multipart: true, class: "product-form" }, data: { controller: "product-price-mode" } do |form| %>
+<%= form_with model: [:admin, @product], local: true, html: { multipart: true, class: "product-form" }, data: { controller: "product-form" } do |form| %>
   <% if @product.errors.any? %>
     <div class="wg-box product-form-errors mb-30">
       <div class="body-title"><%= t("admin.products.form_errors") %></div>
@@ -67,14 +67,17 @@
         <fieldset class="category">
           <div class="body-title mb-10"><%= t("admin.products.category") %> <span class="tf-color-1">*</span></div>
           <div class="select">
-            <%= form.select :category_id, category_options, { prompt: t("admin.products.choose_category") } %>
+            <%= form.select :category_id,
+                            options_for_select(category_options, @product.category_id),
+                            { prompt: t("admin.products.choose_category") },
+                            { data: { product_form_target: "categorySelect", action: "change->product-form#categoryChanged" } } %>
           </div>
         </fieldset>
 
         <fieldset class="price">
-          <div class="body-title mb-10"><%= t("admin.products.price") %> <span class="tf-color-1" data-product-price-mode-target="requiredMark">*</span></div>
-          <%= form.number_field :price, placeholder: t("admin.products.price"), required: true, step: 0.01, min: 0, data: { product_price_mode_target: "input" } %>
-          <div class="text-tiny mt-2" data-product-price-mode-target="note" hidden><%= t("admin.products.price_from_variations") %></div>
+          <div class="body-title mb-10"><%= t("admin.products.price") %> <span class="tf-color-1" data-product-form-target="requiredMark">*</span></div>
+          <%= form.number_field :price, placeholder: t("admin.products.price"), required: true, step: 0.01, min: 0, data: { product_form_target: "input" } %>
+          <div class="text-tiny mt-2" data-product-form-target="note" hidden><%= t("admin.products.price_from_variations") %></div>
         </fieldset>
       </div>
 
@@ -85,7 +88,8 @@
     </div>
   </div>
 
-  <div class="wg-box product-form-options">
+  <%# Simple options: colors + storage capacities. Used by non-variant categories. %>
+  <div class="wg-box product-form-options" data-product-form-target="simpleSection">
     <div>
       <div class="body-title mb-10"><%= t("admin.products.options") %></div>
       <div class="text-tiny"><%= t("admin.products.options_hint") %></div>
@@ -109,28 +113,6 @@
     </fieldset>
 
     <fieldset class="product-form-option-group">
-      <div class="body-title mb-10"><%= t("admin.products.memory_variants") %></div>
-      <div class="text-tiny mb-16"><%= t("admin.products.memory_variants_hint") %></div>
-      <div class="option-storage-list">
-        <% Memory.all.each do |memory| %>
-          <% Storage.all.each do |storage| %>
-            <% existing = @product.product_variants.detect { |variant| variant.memory_id == memory.id && variant.storage_id == storage.id } %>
-            <div class="option-storage">
-              <label class="option-storage__toggle" for="variant_enabled_<%= memory.id %>_<%= storage.id %>">
-                <%= check_box_tag "product_variants[#{memory.id}][#{storage.id}][enabled]", "1", existing.present?, id: "variant_enabled_#{memory.id}_#{storage.id}", class: "option-check-input", data: { product_price_mode_target: "variant", action: "change->product-price-mode#refresh" } %>
-                <span class="option-check-box"></span>
-                <span class="option-storage__value"><%= memory.value %> RAM · <%= storage.value %></span>
-              </label>
-              <div class="option-storage__price">
-                <%= number_field_tag "product_variants[#{memory.id}][#{storage.id}][price]", existing&.price, step: 0.01, min: 0, placeholder: t("admin.products.storage_price"), aria: { label: "#{t("admin.products.storage_price")} - #{memory.value} RAM - #{storage.value}" } %>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-    </fieldset>
-
-    <fieldset class="product-form-option-group">
       <div class="body-title mb-10"><%= t("admin.products.storages") %></div>
       <div class="text-tiny mb-16"><%= t("admin.products.storages_hint") %></div>
       <% if storage_options.any? %>
@@ -139,7 +121,7 @@
             <% existing = @product.product_storages.detect { |ps| ps.storage_id == storage.id } %>
             <div class="option-storage">
               <label class="option-storage__toggle" for="storage_enabled_<%= storage.id %>">
-                <%= check_box_tag "product_storages[#{storage.id}][enabled]", "1", existing.present?, id: "storage_enabled_#{storage.id}", class: "option-check-input", data: { product_price_mode_target: "storage", action: "change->product-price-mode#refresh" } %>
+                <%= check_box_tag "product_storages[#{storage.id}][enabled]", "1", existing.present?, id: "storage_enabled_#{storage.id}", class: "option-check-input", data: { product_form_target: "storage", action: "change->product-form#refreshPrice" } %>
                 <span class="option-check-box"></span>
                 <span class="option-storage__value"><%= storage.value %></span>
               </label>
@@ -153,6 +135,71 @@
         <div class="text-tiny"><%= t("admin.products.no_storages") %> <%= link_to t("admin.products.manage_storages"), admin_settings_storages_path %></div>
       <% end %>
     </fieldset>
+  </div>
+
+  <%# Variation builder: color + RAM + storage + price per row. Used by variant categories. %>
+  <div class="wg-box product-form-options" data-product-form-target="variantSection" hidden>
+    <div>
+      <div class="body-title mb-10"><%= t("admin.products.variations") %></div>
+      <div class="text-tiny"><%= t("admin.products.variations_hint") %></div>
+    </div>
+
+    <div class="variation-builder">
+      <div class="variation-builder__controls">
+        <fieldset class="variation-builder__field">
+          <div class="body-title mb-10"><%= t("admin.products.variation_color") %></div>
+          <div class="select">
+            <select data-product-form-target="variantColor">
+              <option value=""><%= t("admin.products.variation_no_color") %></option>
+              <% color_options.each do |color| %>
+                <option value="<%= color.id %>" data-hex="<%= color.hex %>"><%= color.name %></option>
+              <% end %>
+            </select>
+          </div>
+        </fieldset>
+
+        <fieldset class="variation-builder__field">
+          <div class="body-title mb-10"><%= t("admin.products.variation_memory") %></div>
+          <div class="select">
+            <select data-product-form-target="variantMemory">
+              <%= options_for_select(memory_options) %>
+            </select>
+          </div>
+        </fieldset>
+
+        <fieldset class="variation-builder__field">
+          <div class="body-title mb-10"><%= t("admin.products.variation_storage") %></div>
+          <div class="select">
+            <select data-product-form-target="variantStorage">
+              <%= options_for_select(storage_options) %>
+            </select>
+          </div>
+        </fieldset>
+
+        <fieldset class="variation-builder__field">
+          <div class="body-title mb-10"><%= t("admin.products.variation_price") %></div>
+          <input type="number" step="0.01" min="0" placeholder="<%= t("admin.products.storage_price") %>" data-product-form-target="variantPrice">
+        </fieldset>
+
+        <button type="button" class="tf-button style-3 variation-builder__add" data-action="product-form#addVariation">
+          <i class="icon-plus"></i><%= t("admin.products.add_variation") %>
+        </button>
+      </div>
+
+      <p class="text-tiny variation-builder__error" data-product-form-target="variantError" role="alert" hidden
+         data-incomplete="<%= t("admin.products.variation_incomplete") %>"
+         data-duplicate="<%= t("admin.products.variation_duplicate") %>"
+         data-no-color="<%= t("admin.products.variation_no_color") %>"></p>
+
+      <div class="variation-builder__list" data-product-form-target="variantList">
+        <% @product.product_variants.includes(:color, :memory, :storage).sort_by(&:price).each do |variant| %>
+          <%= render "admin/products/variation_row", variant: variant %>
+        <% end %>
+      </div>
+
+      <p class="text-tiny variation-builder__empty" data-product-form-target="variantEmpty"
+         <%= "hidden" if @product.product_variants.any? %>><%= t("admin.products.no_variations") %></p>
+    </div>
   </div>
 
   <div class="product-form-actions">

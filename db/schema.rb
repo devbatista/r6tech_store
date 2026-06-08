@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_07_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_07_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -164,14 +164,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_07_120000) do
   end
 
   create_table "product_variants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "color_id"
     t.datetime "created_at", null: false
     t.uuid "memory_id", null: false
     t.decimal "price", precision: 10, scale: 2, null: false
     t.uuid "product_id", null: false
     t.uuid "storage_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["color_id"], name: "index_product_variants_on_color_id"
     t.index ["memory_id"], name: "index_product_variants_on_memory_id"
-    t.index ["product_id", "memory_id", "storage_id"], name: "idx_on_product_id_memory_id_storage_id_917f4f929c", unique: true
+    t.index ["product_id", "color_id", "memory_id", "storage_id"], name: "index_product_variants_on_product_color_memory_storage", unique: true
     t.index ["product_id"], name: "index_product_variants_on_product_id"
     t.index ["storage_id"], name: "index_product_variants_on_storage_id"
   end
@@ -257,6 +259,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_07_120000) do
   add_foreign_key "product_colors", "products"
   add_foreign_key "product_storages", "products"
   add_foreign_key "product_storages", "storages"
+  add_foreign_key "product_variants", "colors"
   add_foreign_key "product_variants", "memories"
   add_foreign_key "product_variants", "products"
   add_foreign_key "product_variants", "storages"

@@ -7,9 +7,9 @@ class CartItem < ApplicationRecord
 
   validates :quantity, presence: true, numericality: { only_integer: true, greater_than: 0}
 
-  # Price depends on the chosen storage; colors do not change the price.
+  # Price depends on the chosen variation (color + RAM + storage) or storage.
   def unit_price
-    product.price_for_options(storage: storage, memory: memory)
+    product.price_for_options(storage: storage, memory: memory, color: color)
   end
 
   def total_price

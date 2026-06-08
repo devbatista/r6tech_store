@@ -199,19 +199,22 @@ RSpec.describe Admin::ProductsController, type: :controller do
       expect(product.product_storages.find_by(storage: s512).price).to eq(11_999)
     end
 
-    it "creates a product with RAM and storage combination prices" do
+    it "creates a product with color + RAM + storage variations" do
+      macs = Category.find_or_create_by!(name: "Macs")
+
       post :create, params: {
-        product: { name: "MacBook Air", category_id: category.id },
-        product_variants: {
-          m16.id => { s512.id => { enabled: "1", price: "8500" } },
-          m24.id => { s512.id => { enabled: "1", price: "11000" } }
-        }
+        product: { name: "MacBook Air", category_id: macs.id, price: 0 },
+        product_variants: [
+          { color_id: black.id, memory_id: m16.id, storage_id: s512.id, price: "8500" },
+          { color_id: "",       memory_id: m24.id, storage_id: s512.id, price: "11000" }
+        ]
       }
 
       product = Product.order(:created_at).last
       expect(product.price).to eq(8_500)
-      expect(product.product_variants.find_by(memory: m16, storage: s512).price).to eq(8_500)
-      expect(product.product_variants.find_by(memory: m24, storage: s512).price).to eq(11_000)
+      expect(product.product_variants.find_by(color: black, memory: m16, storage: s512).price).to eq(8_500)
+      expect(product.product_variants.find_by(color: nil, memory: m24, storage: s512).price).to eq(11_000)
+      expect(product.product_colors).to be_empty
       expect(product.product_storages).to be_empty
     end
 

@@ -1,0 +1,24 @@
+<%# Renders one already-added variation. Mirrors the markup built in product_form_controller.js %>
+<div class="variation-row" data-product-form-target="variantRow"
+     data-color-id="<%= variant.color_id %>"
+     data-memory-id="<%= variant.memory_id %>"
+     data-storage-id="<%= variant.storage_id %>">
+  <span class="variation-row__info">
+    <% if variant.color %>
+      <span class="variation-row__swatch" style="--swatch: <%= variant.color.hex %>"></span>
+    <% end %>
+    <span class="variation-row__label">
+      <%= variant.color&.name || t("admin.products.variation_no_color") %> ·
+      <%= variant.memory.value %> RAM · <%= variant.storage.value %>
+    </span>
+    <span class="variation-row__price"><%= number_to_currency(variant.price) %></span>
+  </span>
+  <input type="hidden" name="product_variants[][color_id]" value="<%= variant.color_id %>">
+  <input type="hidden" name="product_variants[][memory_id]" value="<%= variant.memory_id %>">
+  <input type="hidden" name="product_variants[][storage_id]" value="<%= variant.storage_id %>">
+  <input type="hidden" name="product_variants[][price]" value="<%= variant.price %>">
+  <button type="button" class="variation-row__remove" data-action="product-form#removeVariation"
+          aria-label="<%= t("admin.products.remove_variation") %>">
+    <i class="icon-trash-2"></i>
+  </button>
+</div>

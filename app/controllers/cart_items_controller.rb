@@ -4,8 +4,8 @@ class CartItemsController < BaseController
   def create
     product = Product.find(params[:product_id])
     quantity = [params.fetch(:quantity, 1).to_i, 1].max
-    color = product.colors.find_by(id: params[:color_id])
     variant = product.product_variants.find_by(id: params[:variant_id])
+    color = variant&.color || product.colors.find_by(id: params[:color_id])
     storage = variant&.storage || product.storages.find_by(id: params[:storage_id])
     memory = variant&.memory
 
