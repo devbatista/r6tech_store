@@ -2,11 +2,11 @@
 
 <section class="hero" data-controller="carousel">
   <% [
-    ["storefront/hero/hero-1.jpg", t("storefront.home.hero_one.title"), t("storefront.home.hero_one.text")],
-    ["storefront/hero/hero-2.jpg", t("storefront.home.hero_two.title"), t("storefront.home.hero_two.text")],
-    ["storefront/hero/hero-3.jpg", t("storefront.home.hero_three.title"), t("storefront.home.hero_three.text")]
+    ["storefront/hero/hero-1.png", t("storefront.home.hero_one.title"), t("storefront.home.hero_one.text")],
+    ["storefront/hero/hero-2.png", t("storefront.home.hero_two.title"), t("storefront.home.hero_two.text")],
+    ["storefront/hero/hero-3.png", t("storefront.home.hero_three.title"), t("storefront.home.hero_three.text")]
   ].each_with_index do |slide, index| %>
-    <article class="hero__slide <%= "is-active" if index.zero? %>" data-carousel-target="slide">
+    <article class="hero__slide <%= "is-active" if index.zero? %> <%= "hero__slide--light" if index == 1 %> <%= "hero__slide--light-description" if index == 2 %>" data-carousel-target="slide">
       <%= image_tag slide[0], alt: slide[1] %>
       <div class="store-container hero__content">
         <p><%= t("storefront.home.eyebrow") %></p>

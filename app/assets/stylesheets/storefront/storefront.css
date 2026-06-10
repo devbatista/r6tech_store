@@ -43,6 +43,10 @@ body.storefront-body { margin: 0; color: var(--store-ink); background: #fff; fon
 .hero__content p, .section-heading span, .page-heading span { margin: 0 0 10px; color: var(--store-accent); font-size: 12px; font-weight: 700; text-transform: uppercase; }
 .hero__content h1 { max-width: 570px; margin: 0 0 14px; font-family: Manrope, sans-serif; font-size: clamp(42px, 6vw, 76px); line-height: 1.02; }
 .hero__content > span { max-width: 490px; margin-bottom: 28px; color: #414141; font-size: 17px; line-height: 1.6; }
+.hero__slide .hero__content { inset: 50% auto auto max(20px, calc((100% - 1320px) / 2)); width: min(650px, calc(100% - 40px)); min-width: 650px; padding: 28px 34px; border: 1px solid rgba(255, 255, 255, .18); border-radius: 14px; background: rgba(255, 255, 255, .14); box-shadow: 0 18px 45px rgba(0, 0, 0, .18); backdrop-filter: blur(8px); transform: translateY(-50%); }
+.hero__slide--light .hero__content { border-color: rgba(255, 255, 255, .12); background: rgba(0, 0, 0, .14); }
+.hero__slide--light .hero__content h1, .hero__slide--light .hero__content > span { color: #fff; }
+.hero__slide--light-description .hero__content > span { color: #fff; }
 .hero__dots { position: absolute; z-index: 2; bottom: 24px; left: 50%; display: flex; gap: 8px; transform: translateX(-50%); }
 .hero__dots button { width: 10px; height: 10px; padding: 0; border: 1px solid #111; border-radius: 50%; background: #fff; cursor: pointer; }
 .store-button { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; padding: 0 24px; border: 1px solid var(--store-ink); border-radius: var(--store-radius); cursor: pointer; font-weight: 700; }
@@ -397,6 +401,8 @@ body.storefront-body { margin: 0; color: var(--store-ink); background: #fff; fon
   .hero__content { justify-content: flex-end; padding-bottom: 70px; }
   .hero__content h1 { max-width: 85%; font-size: 42px; }
   .hero__content > span { max-width: 80%; font-size: 14px; }
+  .hero__slide .hero__content { inset: auto 14px 54px; width: auto; min-width: 0; padding: 22px; transform: none; }
+  .hero__slide .hero__content h1, .hero__slide .hero__content > span { max-width: 100%; }
   .store-section { padding: 48px 0; }
   .benefits__grid { grid-template-columns: 1fr; gap: 18px; }
   .category-grid { grid-template-columns: repeat(2, 1fr); }
