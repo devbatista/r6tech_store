@@ -85,6 +85,17 @@
         <div class="body-title mb-10"><%= t("admin.products.description") %></div>
         <%= form.text_area :description, placeholder: t("admin.products.description_placeholder"), rows: 8 %>
       </fieldset>
+
+      <fieldset>
+        <div class="body-title mb-10"><%= t("admin.products.shipping_dimensions") %></div>
+        <div class="text-tiny mb-16"><%= t("admin.products.shipping_dimensions_hint") %></div>
+        <div class="product-form-two-columns">
+          <%= form.number_field :weight, step: 0.001, min: 0.001, placeholder: t("admin.products.weight") %>
+          <%= form.number_field :width, step: 0.01, min: 0.01, placeholder: t("admin.products.width") %>
+          <%= form.number_field :height, step: 0.01, min: 0.01, placeholder: t("admin.products.height") %>
+          <%= form.number_field :length, step: 0.01, min: 0.01, placeholder: t("admin.products.length") %>
+        </div>
+      </fieldset>
     </div>
   </div>
 

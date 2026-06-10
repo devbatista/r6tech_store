@@ -15,6 +15,7 @@ class Product < ApplicationRecord
 
   validates :name, presence: true
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :weight, :width, :height, :length, numericality: { greater_than: 0 }, allow_nil: true
   validates :category, presence: true
   validates :ai_description_status, inclusion: { in: AI_STATUSES }
   validates :ai_image_status, inclusion: { in: AI_STATUSES }
@@ -51,6 +52,10 @@ class Product < ApplicationRecord
   # Lowest available variation price ("a partir de"); falls back to the flat price.
   def from_price
     product_variants.minimum(:price) || product_storages.minimum(:price) || price
+  end
+
+  def shipping_dimensions_complete?
+    [weight, width, height, length].all? { |value| value.present? && value.positive? }
   end
 
   # Price for a selected color/RAM/storage combination or simple storage option.

@@ -2,5 +2,17 @@
 <section class="page-heading"><div class="store-container"><span>#<%= @order.id.to_s.first(8) %></span><h1><%= t("storefront.orders.order") %></h1></div></section>
 <section class="store-section"><div class="store-container order-detail">
   <div><h2><%= t("storefront.orders.items") %></h2><% @order.order_items.includes(:product, :color, :storage, :memory).each do |item| %><div class="order-item"><span><%= item.quantity %>× <%= item.product.name %><% if variant_label(item) %> <small>(<%= variant_label(item) %>)</small><% end %></span><strong><%= number_to_currency(item.price * item.quantity) %></strong></div><% end %></div>
-  <aside class="cart-summary"><h2><%= translated_order_status(@order.status) %></h2><div class="cart-summary__total"><span><%= t("storefront.cart.total") %></span><strong><%= number_to_currency(@order.total) %></strong></div><%= link_to t("storefront.orders.back"), orders_path, class: "store-button store-button--dark store-button--full" %></aside>
+  <aside class="cart-summary">
+    <h2><%= translated_order_status(@order.status) %></h2>
+    <% if @order.payment %>
+      <p><span><%= t("storefront.payment.method") %></span><strong><%= t("storefront.payment.methods.#{@order.payment.payment_method}.title") %></strong></p>
+      <p><span><%= t("storefront.payment.status") %></span><strong><%= t("storefront.payment.statuses.#{@order.payment.status}") %></strong></p>
+    <% end %>
+    <p><span><%= t("storefront.cart.shipping") %></span><strong><%= number_to_currency(@order.shipping_cost) %></strong></p>
+    <% if @order.shipping_service.present? %>
+      <p><span><%= t("storefront.shipping.service") %></span><strong><%= [@order.shipping_carrier, @order.shipping_service].compact.join(" - ") %></strong></p>
+    <% end %>
+    <div class="cart-summary__total"><span><%= t("storefront.cart.total") %></span><strong><%= number_to_currency(@order.total) %></strong></div>
+    <%= link_to t("storefront.orders.back"), orders_path, class: "store-button store-button--dark store-button--full" %>
+  </aside>
 </div></section>

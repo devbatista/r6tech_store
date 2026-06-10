@@ -90,6 +90,26 @@
             <span><%= t("admin.orders.created") %></span>
             <strong><%= l(@order.created_at, format: :short) %></strong>
           </div>
+          <% if @order.payment %>
+            <div class="product-show-detail-row">
+              <span><%= t("storefront.payment.method") %></span>
+              <strong><%= t("storefront.payment.methods.#{@order.payment.payment_method}.title") %></strong>
+            </div>
+            <div class="product-show-detail-row">
+              <span><%= t("storefront.payment.status") %></span>
+              <strong><%= t("storefront.payment.statuses.#{@order.payment.status}") %></strong>
+            </div>
+          <% end %>
+          <div class="product-show-detail-row">
+            <span><%= t("storefront.cart.shipping") %></span>
+            <strong><%= number_to_currency(@order.shipping_cost) %></strong>
+          </div>
+          <% if @order.shipping_service.present? %>
+            <div class="product-show-detail-row">
+              <span><%= t("storefront.shipping.service") %></span>
+              <strong><%= [@order.shipping_carrier, @order.shipping_service].compact.join(" - ") %></strong>
+            </div>
+          <% end %>
         </div>
 
         <div class="divider"></div>

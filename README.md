@@ -105,6 +105,29 @@ To run specs:
 docker compose exec web bundle exec rspec
 ```
 
+## Melhor Envio Sandbox
+
+The shipping integration is prepared to quote a cart through the Melhor Envio
+sandbox. Configure these environment variables:
+
+```sh
+MELHOR_ENVIO_BASE_URL=https://sandbox.melhorenvio.com.br
+MELHOR_ENVIO_TOKEN=your-sandbox-token
+MELHOR_ENVIO_ORIGIN_POSTAL_CODE=01001000
+MELHOR_ENVIO_USER_AGENT=r6tech_store (your-email@example.com)
+```
+
+Register weight in kilograms and width, height, and length in centimeters for
+each product. Quotes are requested from the Rails backend:
+
+```ruby
+quotes = Shipping::Quote.call(cart: cart, destination_postal_code: "01310-100")
+```
+
+The token can alternatively be stored in Rails credentials under
+`melhor_envio.token`. To switch to production, use
+`https://melhorenvio.com.br` as `MELHOR_ENVIO_BASE_URL` and a production token.
+
 ## Admin Access
 
 - Default admin user (from seeds):

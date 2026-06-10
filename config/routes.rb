@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       patch :cancel
     end
   end
+  resource :payment, only: [:new, :create]
 
   resource :cart, only: :show do
     resources :items, controller: "cart_items", only: [:create, :update, :destroy]

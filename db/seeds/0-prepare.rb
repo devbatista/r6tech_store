@@ -3,6 +3,7 @@ puts "Clearing old data..."
 CartItem.delete_all
 Cart.delete_all
 OrderItem.delete_all
+Payment.delete_all
 Order.delete_all
 ProductVariant.delete_all
 ProductStorage.delete_all

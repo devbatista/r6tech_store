@@ -30,6 +30,24 @@
 en:
   hello: "Hello world"
   storefront:
+    shipping:
+      title: "Delivery"
+      description: "Choose the address to calculate shipping cost and delivery time."
+      address: "Delivery address"
+      deliver_to: "Deliver to"
+      change_address: "Select another address"
+      manage_addresses: "Manage addresses"
+      no_addresses: "Add an address to calculate shipping."
+      add_address: "Add address"
+      address_required: "Select a delivery address."
+      option_required: "Select a valid shipping option."
+      fixed_service: "Standard delivery"
+      store_carrier: "Store"
+      service: "Delivery service"
+      delivery_days:
+        one: "Estimated delivery in 1 business day"
+        other: "Estimated delivery in %{count} business days"
+      delivery_time_unavailable: "Delivery time provided after confirmation"
     announcement: "Free shipping on selected orders. Shop technology securely."
     menu: "Open menu"
     search: "Search"
@@ -176,6 +194,7 @@ en:
       storage: "Storage"
       choose_options: "Choose options"
     cart:
+      calculated_at_checkout: "Calculated at checkout"
       title: "Cart"
       add: "Add to cart"
       remove: "Remove product"
@@ -200,6 +219,48 @@ en:
       order: "Order details"
       items: "Items"
       back: "Back to orders"
+    payment:
+      title: "Payment"
+      checkout_step: "Checkout"
+      choose_method: "Choose how you want to pay"
+      integration_notice: "No charge will be made at this time. The order will be created awaiting payment and this step is ready for a future payment provider integration."
+      coming_soon: "In preparation"
+      confirm_order: "Confirm order"
+      back_to_cart: "Back to cart"
+      no_methods: "No payment methods are currently available."
+      invalid_method: "select an available payment method."
+      order_created: "Order created. Payment is awaiting processing."
+      method: "Method"
+      status: "Payment"
+      methods:
+        pix:
+          title: "Pix"
+          description: "Instant payment using a QR Code or copy-and-paste code."
+        credit_card:
+          title: "Credit card"
+          description: "Secure card payment once a provider is connected."
+        boleto:
+          title: "Bank slip"
+          description: "Bank slip with a due date defined by the future provider."
+      statuses:
+        awaiting_payment: "Awaiting payment"
+        processing: "Processing"
+        paid: "Paid"
+        failed: "Failed"
+        cancelled: "Cancelled"
+        refunded: "Refunded"
+      card:
+        title: "Card details"
+        security_notice: "The details below are validated only in the browser and are not submitted or stored by the system. Once officially integrated, these fields will be tokenized directly by the provider."
+        holder_name: "Name on card"
+        holder_name_placeholder: "As shown on the card"
+        number: "Card number"
+        expiry: "Expiry date"
+        cvv: "Security code"
+        installments: "Installments"
+        installment_option:
+          one: "1 installment, interest-free"
+          other: "%{count} installments, interest-free"
     auth:
       sign_in_to_checkout: "Sign in to your account to complete the purchase."
       sign_in_to_account: "Sign in to access your account."

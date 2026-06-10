@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_07_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_10_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -125,12 +125,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_07_130000) do
   create_table "orders", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.uuid "shipping_address_id"
+    t.string "shipping_carrier"
     t.string "shipping_city"
     t.string "shipping_complement"
+    t.decimal "shipping_cost", precision: 12, scale: 2, default: "0.0", null: false
     t.string "shipping_country"
+    t.integer "shipping_delivery_days"
     t.string "shipping_neighborhood"
     t.string "shipping_number"
+    t.string "shipping_provider"
     t.string "shipping_recipient"
+    t.string "shipping_service"
+    t.string "shipping_service_id"
     t.string "shipping_state"
     t.string "shipping_street"
     t.string "shipping_zip_code"
@@ -140,6 +146,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_07_130000) do
     t.uuid "user_id", null: false
     t.index ["shipping_address_id"], name: "index_orders_on_shipping_address_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.decimal "amount", precision: 12, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.string "external_reference"
+    t.jsonb "metadata", default: {}, null: false
+    t.uuid "order_id", null: false
+    t.string "payment_method", null: false
+    t.string "provider"
+    t.string "status", default: "awaiting_payment", null: false
+    t.datetime "updated_at", null: false
+    t.index ["external_reference"], name: "index_payments_on_external_reference"
+    t.index ["order_id"], name: "index_payments_on_order_id", unique: true
+    t.index ["status"], name: "index_payments_on_status"
   end
 
   create_table "product_colors", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -186,9 +207,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_07_130000) do
     t.uuid "category_id"
     t.datetime "created_at", null: false
     t.text "description"
+    t.decimal "height", precision: 8, scale: 2
+    t.decimal "length", precision: 8, scale: 2
     t.string "name"
     t.decimal "price"
     t.datetime "updated_at", null: false
+    t.decimal "weight", precision: 8, scale: 3
+    t.decimal "width", precision: 8, scale: 2
     t.index ["category_id"], name: "index_products_on_category_id"
   end
 
@@ -255,6 +280,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_07_130000) do
   add_foreign_key "order_items", "storages"
   add_foreign_key "orders", "addresses", column: "shipping_address_id", on_delete: :nullify
   add_foreign_key "orders", "users"
+  add_foreign_key "payments", "orders"
   add_foreign_key "product_colors", "colors"
   add_foreign_key "product_colors", "products"
   add_foreign_key "product_storages", "products"

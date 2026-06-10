@@ -9,31 +9,7 @@ class OrdersController < BaseController
   def show;end
 
   def create
-    cart = current_cart
-    
-    if cart && cart.cart_items.any?
-      order = Order.transaction do
-        total = cart.total_with_shipping
-        created_order = current_user.orders.create!(status: :pending, total: total)
-
-        cart.cart_items.each do |item|
-          created_order.order_items.create!(
-            product: item.product,
-            quantity: item.quantity,
-            price: item.unit_price,
-            color: item.color,
-            storage: item.storage,
-            memory: item.memory
-          )
-        end
-
-        cart.update!(status: :ordered)
-        created_order
-      end
-      redirect_to order_path(order), notice: t("flash.order_placed")
-    else
-      redirect_to cart_path, alert: t("flash.cart_empty")
-    end
+    redirect_to new_payment_path
   end
 
   def cancel

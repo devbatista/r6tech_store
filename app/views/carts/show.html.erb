@@ -17,9 +17,9 @@
       <aside class="cart-summary">
         <h2><%= t("storefront.cart.summary") %></h2>
         <p><span><%= t("storefront.cart.subtotal") %></span><strong><%= number_to_currency(@cart.total_value) %></strong></p>
-        <p><span><%= t("storefront.cart.shipping") %></span><strong><%= @cart.shipping_cost(@setting).zero? ? t("storefront.cart.free_shipping") : number_to_currency(@cart.shipping_cost(@setting)) %></strong></p>
-        <div class="cart-summary__total"><span><%= t("storefront.cart.total") %></span><strong><%= number_to_currency(@cart.total_with_shipping(@setting)) %></strong></div>
-        <%= button_to t("storefront.cart.checkout"), orders_path, class: "store-button store-button--dark store-button--full" %>
+        <p><span><%= t("storefront.cart.shipping") %></span><strong><%= t("storefront.cart.calculated_at_checkout") %></strong></p>
+        <div class="cart-summary__total"><span><%= t("storefront.cart.total") %></span><strong><%= number_to_currency(@cart.total_value) %></strong></div>
+        <%= link_to t("storefront.cart.checkout"), new_payment_path, class: "store-button store-button--dark store-button--full" %>
         <%= link_to t("storefront.cart.continue"), products_path, class: "cart-summary__continue" %>
       </aside>
     </div>

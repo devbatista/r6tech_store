@@ -35,7 +35,7 @@ RSpec.describe "Cart drawer", type: :system do
     within "#cart-drawer" do
       expect(page).to have_content(product.name)
       expect(page).to have_content("R$ 199,90")
-      expect(page).to have_button(I18n.t("storefront.cart.checkout"))
+      expect(page).to have_link(I18n.t("storefront.cart.checkout"), href: new_payment_path)
     end
     # header badge reflects the new item count
     expect(find("#cart_count")).to have_text("1")

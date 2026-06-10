@@ -94,7 +94,10 @@ class Admin::ProductsController < Admin::BaseAdminController
     end
 
     def product_params
-      params.require(:product).permit(:name, :description, :price, :category_id, images: [], color_ids: [])
+      params.require(:product).permit(
+        :name, :description, :price, :category_id, :weight, :width, :height, :length,
+        images: [], color_ids: []
+      )
     end
 
     # When the product has storage variations, its base price is derived from the

@@ -9,6 +9,16 @@ RSpec.describe Product, type: :model do
   it { should validate_presence_of(:price) }
   it { should validate_numericality_of(:price).is_greater_than_or_equal_to(0) }
 
+  it "reports whether all shipping dimensions are available" do
+    category = Category.create!(name: "Shipping")
+    product = Product.new(name: "Box", price: 50, category: category, weight: 1, width: 10, height: 5, length: 20)
+
+    expect(product).to be_shipping_dimensions_complete
+
+    product.weight = nil
+    expect(product).not_to be_shipping_dimensions_complete
+  end
+
   it "uses the RAM and storage combination price" do
     category = Category.create!(name: "Macs")
     product = Product.create!(name: "MacBook Air", price: 7_800, category: category)

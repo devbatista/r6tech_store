@@ -39,7 +39,7 @@
       <p class="cart-drawer__note"><%= t("storefront.cart.taxes_note") %></p>
       <div class="cart-drawer__buttons">
         <%= link_to t("storefront.cart.view_cart"), cart_path, class: "store-button" %>
-        <%= button_to t("storefront.cart.checkout"), orders_path, class: "store-button store-button--dark" %>
+        <%= link_to t("storefront.cart.checkout"), new_payment_path, class: "store-button store-button--dark" %>
       </div>
     </footer>
   <% else %>

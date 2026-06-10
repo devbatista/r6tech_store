@@ -1,0 +1,213 @@
+<% content_for :title, "#{t("storefront.payment.title")} | #{storefront_name}" %>
+
+<section class="page-heading">
+  <div class="store-container">
+    <span><%= t("storefront.payment.checkout_step") %></span>
+    <h1><%= t("storefront.payment.title") %></h1>
+  </div>
+</section>
+
+<section class="store-section">
+  <div class="store-container checkout-layout"
+       data-controller="payment-form"
+       data-payment-form-subtotal-value="<%= @cart.total_value %>">
+    <div class="payment-panel">
+      <div class="payment-panel__intro">
+        <h2><%= t("storefront.shipping.title") %></h2>
+        <p><%= t("storefront.shipping.description") %></p>
+      </div>
+
+      <% if @addresses.any? %>
+        <div class="checkout-address">
+          <div class="checkout-address__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" stroke="currentColor" stroke-width="1.7"/>
+              <circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </div>
+
+          <div class="checkout-address__content">
+            <div class="checkout-address__heading">
+              <div>
+                <span><%= t("storefront.shipping.deliver_to") %></span>
+                <strong><%= @selected_address&.recipient.presence || current_user.name %></strong>
+              </div>
+              <%= link_to t("storefront.shipping.manage_addresses"), account_path(anchor: "addresses"), class: "checkout-address__manage" %>
+            </div>
+
+            <% if @selected_address %>
+              <address>
+                <%= [@selected_address.street, @selected_address.number, @selected_address.complement].compact_blank.join(", ") %>
+                <small><%= [@selected_address.neighborhood, @selected_address.city, @selected_address.state, @selected_address.zip_code].compact_blank.join(" · ") %></small>
+              </address>
+            <% end %>
+
+            <%= form_with url: new_payment_path, method: :get, class: "checkout-address__form" do |form| %>
+              <label for="address_id"><%= t("storefront.shipping.change_address") %></label>
+              <div class="checkout-address__select">
+                <%= form.select :address_id,
+                                options_from_collection_for_select(@addresses, :id, :full_line, @selected_address&.id),
+                                {},
+                                onchange: "this.form.requestSubmit()" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <div class="checkout-address checkout-address--empty">
+          <div class="checkout-address__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" stroke="currentColor" stroke-width="1.7"/>
+              <circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </div>
+          <div class="checkout-address__content">
+            <strong><%= t("storefront.shipping.no_addresses") %></strong>
+            <%= link_to t("storefront.shipping.add_address"), account_path(new_address: 1, anchor: "addresses"), class: "store-button store-button--dark" %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="payment-panel__intro">
+        <h2><%= t("storefront.payment.choose_method") %></h2>
+        <p><%= t("storefront.payment.integration_notice") %></p>
+      </div>
+
+      <%= form_with model: @payment, url: payment_path, class: "payment-form" do |form| %>
+        <% if @payment.errors.any? %>
+          <div class="payment-form__errors"><%= @payment.errors.full_messages.to_sentence %></div>
+        <% end %>
+
+        <%= form.hidden_field :address_id, value: @selected_address&.id %>
+
+        <% if @shipping_error.present? %>
+          <div class="payment-form__errors"><%= @shipping_error %></div>
+        <% end %>
+
+        <% @shipping_quotes.each_with_index do |quote, index| %>
+          <label class="payment-option">
+            <%= form.radio_button :shipping_service_id, quote[:service_id],
+                                  required: true,
+                                  checked: payment_params_selected_shipping_id == quote[:service_id].to_s || (payment_params_selected_shipping_id.blank? && index.zero?),
+                                  data: {
+                                    payment_form_target: "shipping",
+                                    action: "payment-form#syncShipping",
+                                    price: quote[:price],
+                                    free_label: t("storefront.cart.free_shipping")
+                                  } %>
+            <span class="payment-option__content">
+              <strong><%= [quote[:carrier], quote[:service]].compact.join(" - ") %></strong>
+              <small>
+                <%= quote[:delivery_days].present? ? t("storefront.shipping.delivery_days", count: quote[:delivery_days]) : t("storefront.shipping.delivery_time_unavailable") %>
+              </small>
+            </span>
+            <span class="payment-option__status"><%= quote[:price].zero? ? t("storefront.cart.free_shipping") : number_to_currency(quote[:price]) %></span>
+          </label>
+        <% end %>
+
+        <% @enabled_payment_methods.each do |method| %>
+          <label class="payment-option">
+            <%= form.radio_button :payment_method, method,
+                                  required: true,
+                                  data: { payment_form_target: "method", action: "payment-form#syncMethod" } %>
+            <span class="payment-option__content">
+              <strong><%= t("storefront.payment.methods.#{method}.title") %></strong>
+              <small><%= t("storefront.payment.methods.#{method}.description") %></small>
+            </span>
+            <span class="payment-option__status"><%= t("storefront.payment.coming_soon") %></span>
+          </label>
+        <% end %>
+
+        <fieldset class="payment-card-fields" data-payment-form-target="cardFields" hidden>
+          <legend><%= t("storefront.payment.card.title") %></legend>
+          <p><%= t("storefront.payment.card.security_notice") %></p>
+
+          <div class="payment-card-fields__grid">
+            <label class="is-wide">
+              <span><%= t("storefront.payment.card.holder_name") %></span>
+              <input type="text"
+                     autocomplete="cc-name"
+                     placeholder="<%= t("storefront.payment.card.holder_name_placeholder") %>"
+                     required
+                     disabled
+                     data-payment-form-target="cardInput">
+            </label>
+
+            <label class="is-wide">
+              <span><%= t("storefront.payment.card.number") %></span>
+              <span class="payment-card-fields__number">
+                <input type="text"
+                       inputmode="numeric"
+                       autocomplete="cc-number"
+                       minlength="15"
+                       maxlength="23"
+                       placeholder="0000 0000 0000 0000"
+                       required
+                       disabled
+                       data-payment-form-target="cardInput cardNumber"
+                       data-action="input->payment-form#formatCardNumber">
+                <strong data-payment-form-target="brand"></strong>
+              </span>
+            </label>
+
+            <label>
+              <span><%= t("storefront.payment.card.expiry") %></span>
+              <input type="text"
+                     inputmode="numeric"
+                     autocomplete="cc-exp"
+                     pattern="(0[1-9]|1[0-2])\/[0-9]{2}"
+                     maxlength="5"
+                     placeholder="MM/AA"
+                     required
+                     disabled
+                     data-payment-form-target="cardInput expiry"
+                     data-action="input->payment-form#formatExpiry">
+            </label>
+
+            <label>
+              <span><%= t("storefront.payment.card.cvv") %></span>
+              <input type="password"
+                     inputmode="numeric"
+                     autocomplete="cc-csc"
+                     pattern="[0-9]{3,4}"
+                     maxlength="4"
+                     placeholder="000"
+                     required
+                     disabled
+                     data-payment-form-target="cardInput">
+            </label>
+
+            <label class="is-wide">
+              <span><%= t("storefront.payment.card.installments") %></span>
+              <%= select_tag "payment[installments]",
+                             options_for_select((1..12).map { |number| [t("storefront.payment.card.installment_option", count: number), number] }),
+                             disabled: true,
+                             data: { payment_form_target: "cardInput" } %>
+            </label>
+          </div>
+        </fieldset>
+
+        <% if @enabled_payment_methods.empty? %>
+          <div class="payment-form__errors"><%= t("storefront.payment.no_methods") %></div>
+        <% end %>
+
+        <div class="payment-form__actions">
+          <%= link_to t("storefront.payment.back_to_cart"), cart_path, class: "cart-summary__continue" %>
+          <%= form.submit t("storefront.payment.confirm_order"),
+                          class: "store-button store-button--dark",
+                          disabled: @enabled_payment_methods.empty? || @selected_address.nil? || @shipping_quotes.empty? %>
+        </div>
+      <% end %>
+    </div>
+
+    <aside class="cart-summary">
+      <h2><%= t("storefront.cart.summary") %></h2>
+      <% @cart.cart_items.includes(:product).each do |item| %>
+        <p><span><%= item.quantity %>× <%= item.product.name %></span><strong><%= number_to_currency(item.total_price) %></strong></p>
+      <% end %>
+      <% selected_quote = @shipping_quotes.first %>
+      <p><span><%= t("storefront.cart.shipping") %></span><strong data-payment-form-target="shippingCost"><%= selected_quote ? (selected_quote[:price].zero? ? t("storefront.cart.free_shipping") : number_to_currency(selected_quote[:price])) : "—" %></strong></p>
+      <div class="cart-summary__total"><span><%= t("storefront.cart.total") %></span><strong data-payment-form-target="total"><%= number_to_currency(@cart.total_value + (selected_quote&.dig(:price) || 0)) %></strong></div>
+    </aside>
+  </div>
+</section>

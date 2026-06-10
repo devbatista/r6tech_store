@@ -7,7 +7,7 @@ class Admin::OrdersController < Admin::BaseAdminController
   end
 
   def show
-    @order = Order.includes(order_items: { product: { images_attachments: :blob } })
+    @order = Order.includes(:payment, order_items: { product: { images_attachments: :blob } })
                   .find(params[:id])
   end
 
