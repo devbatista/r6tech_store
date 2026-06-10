@@ -139,6 +139,13 @@ en:
       home: "Home"
       products: "Products"
     home:
+      used_devices:
+        eyebrow: "Pre-owned devices"
+        title: "Looking for a pre-owned device?"
+        text: "Contact our team to see available pre-owned devices, their condition, and prices."
+        cta: "Chat on WhatsApp"
+        whatsapp_message: "Hello! I would like to see the available pre-owned devices."
+        unavailable: "Contact our team to see the available pre-owned devices."
       title: "Technology and accessories"
       eyebrow: "Technology for every day"
       shop_now: "Shop now"

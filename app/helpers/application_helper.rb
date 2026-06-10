@@ -34,12 +34,14 @@ module ApplicationHelper
     storefront_setting.store_name.presence || "R6tech Store"
   end
 
-  def storefront_whatsapp_url
-    digits = storefront_setting.contact_phone.to_s.gsub(/\D/, "")
+  def storefront_whatsapp_url(message: nil)
+    phone = storefront_setting.whatsapp.presence || storefront_setting.contact_phone
+    digits = phone.to_s.gsub(/\D/, "")
     return if digits.blank?
 
     digits = "55#{digits}" if digits.length.in?([10, 11])
-    "https://wa.me/#{digits}"
+    url = "https://wa.me/#{digits}"
+    message.present? ? "#{url}?text=#{ERB::Util.url_encode(message)}" : url
   end
 
   def product_image(product, class_name: nil)

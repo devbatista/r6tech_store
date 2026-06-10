@@ -29,6 +29,30 @@
   </div>
 </section>
 
+<section class="used-devices-section">
+  <div class="store-container used-devices">
+    <div class="used-devices__badge" aria-hidden="true">USADO</div>
+
+    <div class="used-devices__content">
+      <span><%= t("storefront.home.used_devices.eyebrow") %></span>
+      <h2><%= t("storefront.home.used_devices.title") %></h2>
+      <p><%= t("storefront.home.used_devices.text") %></p>
+    </div>
+
+    <% if (used_devices_whatsapp_url = storefront_whatsapp_url(message: t("storefront.home.used_devices.whatsapp_message"))) %>
+      <%= link_to used_devices_whatsapp_url,
+                  class: "used-devices__cta",
+                  target: "_blank",
+                  rel: "noopener noreferrer" do %>
+        <span class="used-devices__cta-mark" aria-hidden="true">W</span>
+        <%= t("storefront.home.used_devices.cta") %>
+      <% end %>
+    <% else %>
+      <p class="used-devices__unavailable"><%= t("storefront.home.used_devices.unavailable") %></p>
+    <% end %>
+  </div>
+</section>
+
 <section class="store-section">
   <div class="store-container">
     <div class="section-heading"><div><span><%= t("storefront.home.explore") %></span><h2><%= t("storefront.home.categories") %></h2></div><%= link_to t("storefront.view_all"), products_path %></div>

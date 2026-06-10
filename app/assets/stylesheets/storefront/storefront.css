@@ -56,6 +56,16 @@ body.storefront-body { margin: 0; color: var(--store-ink); background: #fff; fon
 .benefit b { display: grid; place-items: center; flex: 0 0 36px; height: 36px; border: 1px solid var(--store-line); border-radius: 50%; color: var(--store-green); }
 .benefit strong, .benefit span { display: block; }
 .benefit span { margin-top: 3px; color: var(--store-muted); font-size: 12px; }
+.used-devices-section { padding: 32px 0; background: #f5f6f7; }
+.used-devices { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 26px; align-items: center; padding: 28px 32px; border-radius: var(--store-radius); background: linear-gradient(135deg, #173f31, #0d2c22); color: #fff; box-shadow: 0 18px 40px rgba(13,44,34,.12); }
+.used-devices__badge { display: grid; width: 70px; height: 70px; place-items: center; border: 1px solid rgba(255,255,255,.22); border-radius: 18px; background: rgba(255,255,255,.1); color: #88dbb5; font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+.used-devices__content > span { color: #a8d9c2; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.used-devices__content h2 { max-width: 700px; margin: 6px 0 7px; font: 700 clamp(22px, 2.5vw, 30px)/1.12 Manrope, sans-serif; }
+.used-devices__content p { max-width: 760px; margin: 0; color: #d5e2dc; line-height: 1.55; }
+.used-devices__cta { display: inline-flex; min-height: 50px; align-items: center; justify-content: center; gap: 10px; padding: 0 21px; border-radius: var(--store-radius); background: #25d366; color: #092d18 !important; font-weight: 700; white-space: nowrap; transition: transform .18s ease, background .18s ease; }
+.used-devices__cta-mark { display: grid; width: 22px; height: 22px; place-items: center; border: 2px solid currentColor; border-radius: 50%; font-size: 11px; font-weight: 800; }
+.used-devices__cta:hover { background: #49df80; transform: translateY(-2px); }
+.used-devices__unavailable { margin: 0 !important; font-size: 13px; }
 .store-section { padding: 74px 0; }
 .store-section--muted { background: var(--store-surface); }
 .section-heading { display: flex; align-items: end; justify-content: space-between; margin-bottom: 30px; }
@@ -369,6 +379,8 @@ body.storefront-body { margin: 0; color: var(--store-ink); background: #fff; fon
   .header-search { display: none; }
   .category-grid { grid-template-columns: repeat(3, 1fr); }
   .benefits__grid { grid-template-columns: repeat(2, 1fr); }
+  .used-devices { grid-template-columns: auto minmax(0, 1fr); gap: 18px; padding: 24px; }
+  .used-devices__cta, .used-devices__unavailable { grid-column: 1 / -1; width: 100%; }
   .account-layout { grid-template-columns: 1fr; }
   .account-nav { grid-template-columns: repeat(5, minmax(145px, 1fr)); overflow-x: auto; padding-bottom: 5px; }
   .account-panel { padding-left: 0; }
@@ -439,6 +451,9 @@ body.storefront-body { margin: 0; color: var(--store-ink); background: #fff; fon
   .account-addresses__add { width: 100%; }
   .account-address-form__grid .is-wide { grid-column: auto; }
   .account-address-form__actions .store-button { width: 100%; }
+  .used-devices-section { padding: 24px 0; }
+  .used-devices { grid-template-columns: 1fr; gap: 16px; padding: 22px 20px; }
+  .used-devices__badge { width: 62px; height: 62px; }
   .account-profile-form__section { padding: 20px; }
   .account-profile-form__section .store-button { width: 100%; }
   .store-footer__grid { gap: 32px; }

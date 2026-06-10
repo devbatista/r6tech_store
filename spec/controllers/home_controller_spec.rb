@@ -24,5 +24,15 @@ RSpec.describe HomeController, type: :controller do
       expect(response.body).to include("USB Cable")
       expect(response.body).to include("Accessories")
     end
+
+    it "renders the used devices WhatsApp call to action" do
+      Setting.instance.update!(whatsapp: "(11) 99999-8888", contact_phone: "(11) 11111-2222")
+
+      get :index
+
+      expect(response.body).to include(I18n.t("storefront.home.used_devices.title"))
+      expect(response.body).to include("https://wa.me/5511999998888?text=")
+      expect(response.body).to include("Gostaria%20de%20conhecer%20os%20aparelhos%20usados%20dispon%C3%ADveis")
+    end
   end
 end

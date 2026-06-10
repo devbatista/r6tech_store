@@ -111,6 +111,13 @@ pt-BR:
       home: "Início"
       products: "Produtos"
     home:
+      used_devices:
+        eyebrow: "Aparelhos usados"
+        title: "Procurando um aparelho usado?"
+        text: "Consulte nossa equipe para conhecer os aparelhos usados disponíveis, suas condições e valores."
+        cta: "Conversar pelo WhatsApp"
+        whatsapp_message: "Olá! Gostaria de conhecer os aparelhos usados disponíveis."
+        unavailable: "Entre em contato com nossa equipe para consultar os aparelhos usados disponíveis."
       title: "Tecnologia e acessórios"
       eyebrow: "Tecnologia para o seu dia"
       shop_now: "Comprar agora"
