@@ -316,6 +316,10 @@ body.storefront-body { margin: 0; color: var(--store-ink); background: #fff; fon
 .checkout-address--empty .checkout-address__content { justify-items: start; }
 .checkout-address--empty .store-button { min-height: 46px; padding: 10px 18px; }
 .payment-form { display: grid; gap: 14px; }
+.payment-form__section-heading { margin: 4px 0 2px; }
+.payment-form__section-heading--spaced { margin-top: 24px; padding-top: 28px; border-top: 1px solid var(--store-line); }
+.payment-form__section-heading h2 { margin: 0 0 7px; font-size: 22px; }
+.payment-form__section-heading p { margin: 0; color: var(--store-muted); font-size: 13px; line-height: 1.55; }
 .payment-form__errors { padding: 14px 16px; border: 1px solid #e5aaa6; background: #fff4f3; color: #a1261e; font-size: 14px; }
 .payment-option { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; padding: 20px; border: 1px solid var(--store-line); border-radius: var(--store-radius); cursor: pointer; transition: border-color .18s ease, background .18s ease; }
 .payment-option:has(input:checked) { border-color: var(--store-ink); background: #f7f7f5; }

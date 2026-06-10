@@ -68,11 +68,6 @@
         </div>
       <% end %>
 
-      <div class="payment-panel__intro">
-        <h2><%= t("storefront.payment.choose_method") %></h2>
-        <p><%= t("storefront.payment.integration_notice") %></p>
-      </div>
-
       <%= form_with model: @payment, url: payment_path, class: "payment-form" do |form| %>
         <% if @payment.errors.any? %>
           <div class="payment-form__errors"><%= @payment.errors.full_messages.to_sentence %></div>
@@ -83,6 +78,11 @@
         <% if @shipping_error.present? %>
           <div class="payment-form__errors"><%= @shipping_error %></div>
         <% end %>
+
+        <div class="payment-form__section-heading">
+          <h2><%= t("storefront.shipping.choose_method") %></h2>
+          <p><%= t("storefront.shipping.choose_method_description") %></p>
+        </div>
 
         <% @shipping_quotes.each_with_index do |quote, index| %>
           <label class="payment-option">
@@ -104,6 +104,11 @@
             <span class="payment-option__status"><%= quote[:price].zero? ? t("storefront.cart.free_shipping") : number_to_currency(quote[:price]) %></span>
           </label>
         <% end %>
+
+        <div class="payment-form__section-heading payment-form__section-heading--spaced">
+          <h2><%= t("storefront.payment.choose_method") %></h2>
+          <p><%= t("storefront.payment.integration_notice") %></p>
+        </div>
 
         <% @enabled_payment_methods.each do |method| %>
           <label class="payment-option">

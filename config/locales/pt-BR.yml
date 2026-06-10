@@ -5,6 +5,8 @@ pt-BR:
     shipping:
       title: "Entrega"
       description: "Escolha o endereco para calcular o frete e o prazo de entrega."
+      choose_method: "Forma de entrega"
+      choose_method_description: "Escolha o servico de entrega para este pedido."
       address: "Endereco de entrega"
       deliver_to: "Entregar para"
       change_address: "Selecionar outro endereco"

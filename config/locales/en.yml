@@ -33,6 +33,8 @@ en:
     shipping:
       title: "Delivery"
       description: "Choose the address to calculate shipping cost and delivery time."
+      choose_method: "Delivery method"
+      choose_method_description: "Choose the delivery service for this order."
       address: "Delivery address"
       deliver_to: "Deliver to"
       change_address: "Select another address"
