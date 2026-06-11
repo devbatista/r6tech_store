@@ -1,7 +1,7 @@
 class HomeController < BaseController
   def index
     @setting = Setting.instance
-    @categories = Category.roots.includes(:subcategories).limit(6)
+    @categories = Category.roots.with_attached_image.includes(:subcategories).limit(6)
     @featured_products = Product.with_attached_images.includes(:category).order(created_at: :desc).limit(8)
     @best_sellers = Product
       .with_attached_images

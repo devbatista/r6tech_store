@@ -62,9 +62,6 @@
             <div class="body-title"><%= t("admin.categories.category") %></div>
           </li>
           <li>
-            <div class="body-title"><%= t("admin.categories.parent") %></div>
-          </li>
-          <li>
             <div class="body-title"><%= t("admin.common.action") %></div>
           </li>
         </ul>
@@ -73,11 +70,15 @@
             <% @categories.each do |category| %>
             <li class="wg-product item-row gap20">
               <div class="name">
+                <% if category.image.attached? %>
+                  <div class="image">
+                    <%= image_tag category.image.variant(resize_to_fill: [80, 80]), alt: category.name %>
+                  </div>
+                <% end %>
                 <div class="title line-clamp-2 mb-0">
                   <a href="#" class="body-text"><%= category.name %></a>
                 </div>
               </div>
-              <div class="body-text text-main-dark mt-4"><%= category.parent&.name || '' %></div>
               <div class="list-icon-function">
                 <div class="item edit">
                   <%= link_to edit_admin_category_path(category) do %>
@@ -95,7 +96,6 @@
           <% else %>
             <li class="wg-product item-row gap20">
               <div class="body-text text-main-dark mt-4"><%= t("admin.categories.empty") %></div>
-              <div></div>
               <div></div>
             </li>
           <% end %>

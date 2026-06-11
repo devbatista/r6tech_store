@@ -445,6 +445,12 @@ pt-BR:
       parent: "Categoria superior"
       name: "Nome da categoria"
       no_parent: "Sem categoria superior"
+      image: "Imagem da categoria"
+      image_hint: "Esta imagem será exibida no card da categoria na página inicial."
+      image_drop: "Selecione uma imagem ou"
+      current_image: "Imagem atual"
+      remove_image: "Remover imagem atual"
+      remove_image_hint: "A imagem será removida quando você salvar a categoria."
       search_placeholder: "Buscar categorias..."
       empty: "Nenhuma categoria encontrada."
     clients:

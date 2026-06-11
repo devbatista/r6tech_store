@@ -4,7 +4,7 @@ class Admin::CategoriesController < Admin::BaseAdminController
   def index
     per_page = params[:per].presence || 10
     @query = params[:query].to_s.strip
-    categories = Category.includes(:parent).order(created_at: :desc)
+    categories = Category.with_attached_image.order(created_at: :desc)
     categories = search_categories(categories) if @query.present?
     @categories = categories.page(params[:page]).per(per_page)
   end
@@ -25,7 +25,11 @@ class Admin::CategoriesController < Admin::BaseAdminController
   def edit; end
 
   def update
-    if @category.update(category_params)
+    attributes = category_params
+    remove_image = ActiveModel::Type::Boolean.new.cast(attributes.delete(:remove_image))
+
+    if @category.update(attributes)
+      @category.image.purge if remove_image && attributes[:image].blank?
       redirect_to(admin_categories_path, notice: t("flash.category_updated"))
     else
       render :edit, status: :unprocessable_entity
@@ -47,17 +51,15 @@ class Admin::CategoriesController < Admin::BaseAdminController
     end
 
     def category_params
-      params.require(:category).permit(:name, :parent_id)
+      params.require(:category).permit(:name, :image, :remove_image)
     end
 
     def search_categories(categories)
       term = "%#{ActiveRecord::Base.sanitize_sql_like(@query)}%"
 
-      categories
-        .left_outer_joins(:parent)
-        .where(
-          "categories.name ILIKE :term OR parents_categories.name ILIKE :term OR CAST(categories.id AS text) ILIKE :term",
-          term: term
-        )
+      categories.where(
+        "categories.name ILIKE :term OR CAST(categories.id AS text) ILIKE :term",
+        term: term
+      )
     end
 end

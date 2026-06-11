@@ -4,15 +4,45 @@
       <div class="body-title"><%= t("admin.categories.name") %> <span class="tf-color-1">*</span></div>
       <%= form.text_field :name, class: "flex-grow", placeholder: t("admin.categories.name"), required: true %>
     </fieldset>
-    <fieldset class="category">
-      <div class="body-title"><%= t("admin.categories.parent") %></div>
-      <div class="select flex-grow">
-        <%= form.collection_select :parent_id, 
-                                   Category.where.not(id: @category.id), 
-                                   :id, 
-                                   :full_path, 
-                                   { prompt: t("admin.categories.no_parent") }, 
-                                   class: "" %>
+    <fieldset>
+      <div>
+        <div class="body-title mb-10"><%= t("admin.categories.image") %></div>
+        <div class="text-tiny"><%= t("admin.categories.image_hint") %></div>
+      </div>
+
+      <% if @category.image.attached? %>
+        <div class="category-image-current mb-16">
+          <div class="category-image-current__preview">
+            <%= image_tag @category.image.variant(resize_to_limit: [300, 220]), alt: @category.name %>
+          </div>
+          <div class="category-image-current__details">
+            <strong><%= t("admin.categories.current_image") %></strong>
+            <span><%= @category.image.filename %></span>
+            <label class="category-image-remove">
+              <%= form.check_box :remove_image %>
+              <span>
+                <i class="icon-trash-2"></i>
+                <span>
+                  <strong><%= t("admin.categories.remove_image") %></strong>
+                  <small><%= t("admin.categories.remove_image_hint") %></small>
+                </span>
+              </span>
+            </label>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="upload-image mb-16">
+        <div class="up-load">
+          <label class="uploadfile product-form-upload" for="category_image">
+            <span class="icon"><i class="icon-upload-cloud"></i></span>
+            <div class="text-tiny">
+              <%= t("admin.categories.image_drop") %>
+              <span class="text-secondary"><%= t("admin.products.browse_files") %></span>
+            </div>
+            <%= form.file_field :image, id: "category_image", accept: "image/*" %>
+          </label>
+        </div>
       </div>
     </fieldset>
     <div class="bot">

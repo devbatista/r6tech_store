@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Category, type: :model do
   describe "associations" do
     it { should belong_to(:parent).class_name('Category').optional }
+    it { should have_one_attached(:image) }
     it { should have_many(:products).dependent(:nullify) }
     it { should have_many(:subcategories).class_name('Category').with_foreign_key('parent_id').dependent(:destroy) }
   end

@@ -25,6 +25,20 @@ RSpec.describe HomeController, type: :controller do
       expect(response.body).to include("Accessories")
     end
 
+    it "renders an attached category image" do
+      category = Category.create!(name: "Category with image")
+      category.image.attach(
+        io: File.open(Rails.root.join("spec/fixtures/files/product-image.png")),
+        filename: "category-image.png",
+        content_type: "image/png"
+      )
+
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("category-image.png")
+    end
+
     it "renders the used devices WhatsApp call to action" do
       Setting.instance.update!(whatsapp: "(11) 99999-8888", contact_phone: "(11) 11111-2222")
 

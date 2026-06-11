@@ -5926,6 +5926,82 @@ select option {
   object-fit: cover;
 }
 
+.category-image-current {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 18px;
+  padding: 16px;
+  border: 1px solid var(--Line);
+  border-radius: 12px;
+  background: var(--White);
+}
+.category-image-current__preview {
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--Surface-3);
+}
+.category-image-current__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.category-image-current__details {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+.category-image-current__details > span {
+  overflow: hidden;
+  color: var(--Text-Holder);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.category-image-remove {
+  margin-top: auto;
+  cursor: pointer;
+}
+.category-image-remove > input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.category-image-remove > span {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #FCA5A5;
+  border-radius: 10px;
+  color: #EF4444;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+.category-image-remove > span > i {
+  font-size: 20px;
+}
+.category-image-remove > span > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.category-image-remove small {
+  color: var(--Text-Holder);
+  font-size: 12px;
+  line-height: 18px;
+}
+.category-image-remove:hover > span,
+.category-image-remove > input:checked + span {
+  border-color: #EF4444;
+  color: #FFF;
+  background: #EF4444;
+}
+.category-image-remove > input:checked + span small,
+.category-image-remove:hover > span small {
+  color: rgba(255, 255, 255, .82);
+}
+
 .product-form-two-columns {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
@@ -5989,6 +6065,9 @@ select option {
     line-height: 32px;
   }
   .product-form-two-columns {
+    grid-template-columns: 1fr;
+  }
+  .category-image-current {
     grid-template-columns: 1fr;
   }
   .product-form-actions .tf-button {

@@ -59,7 +59,8 @@ module ApplicationHelper
   end
 
   def category_image(category, index = 0)
-    image_tag CATEGORY_IMAGES[index % CATEGORY_IMAGES.length], alt: category.name
+    image = category.image.attached? ? category.image : CATEGORY_IMAGES[index % CATEGORY_IMAGES.length]
+    image_tag image, alt: category.name
   end
 
   def category_product_count(category)
