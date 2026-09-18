@@ -13,7 +13,7 @@
       <%= link_to t("storefront.account_page.orders"), "#orders", role: "tab", aria: { selected: false, controls: "orders" }, data: { account_tabs_target: "tab", account_tab: "orders", action: "account-tabs#select" } %>
       <%= link_to t("storefront.account_page.addresses"), "#addresses", role: "tab", aria: { selected: false, controls: "addresses" }, data: { account_tabs_target: "tab", account_tab: "addresses", action: "account-tabs#select" } %>
       <%= link_to t("storefront.account_page.details"), "#details", role: "tab", aria: { selected: false, controls: "details" }, data: { account_tabs_target: "tab", account_tab: "details", action: "account-tabs#select" } %>
-      <%= button_to t("storefront.account_page.logout"), logout_path, method: :delete, class: "account-nav__logout" %>
+      <%= button_to t("storefront.account_page.logout"), destroy_user_session_path, method: :delete, class: "account-nav__logout" %>
     </nav>
 
     <div class="account-content">

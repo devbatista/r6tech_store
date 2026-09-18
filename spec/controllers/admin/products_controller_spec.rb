@@ -37,7 +37,7 @@ RSpec.describe Admin::ProductsController, type: :controller do
         category: category
       )
 
-      session[:user_id] = admin.id
+      sign_in admin
 
       get :index, params: { query: "MacBook" }
 
@@ -63,7 +63,7 @@ RSpec.describe Admin::ProductsController, type: :controller do
         category: category
       )
 
-      session[:user_id] = admin.id
+      sign_in admin
 
       get :show, params: { id: product.id }
 
@@ -92,7 +92,7 @@ RSpec.describe Admin::ProductsController, type: :controller do
         category: category
       )
 
-      session[:user_id] = admin.id
+      sign_in admin
 
       patch :update, params: {
         id: product.id,
@@ -120,7 +120,7 @@ RSpec.describe Admin::ProductsController, type: :controller do
         role: :admin
       )
       category = Category.create!(name: "Phones #{SecureRandom.uuid}")
-      session[:user_id] = admin.id
+      sign_in admin
 
       expect {
         post :create, params: {
@@ -150,7 +150,7 @@ RSpec.describe Admin::ProductsController, type: :controller do
         Rails.root.join("spec/fixtures/files/product-image.png"),
         "image/png"
       )
-      session[:user_id] = admin.id
+      sign_in admin
 
       expect {
         post :create, params: {
@@ -179,7 +179,7 @@ RSpec.describe Admin::ProductsController, type: :controller do
     let(:m16) { Memory.create!(value: "16GB") }
     let(:m24) { Memory.create!(value: "24GB") }
 
-    before { session[:user_id] = admin.id }
+    before { sign_in admin }
 
     it "creates a product with chosen colors and storage prices" do
       post :create, params: {
@@ -321,7 +321,7 @@ RSpec.describe Admin::ProductsController, type: :controller do
         price: 4999.90,
         category: category
       )
-      session[:user_id] = admin.id
+      sign_in admin
 
       patch :approve_ai_description, params: { id: product.id }
 
@@ -352,7 +352,7 @@ RSpec.describe Admin::ProductsController, type: :controller do
         filename: "generated.png",
         content_type: "image/png"
       )
-      session[:user_id] = admin.id
+      sign_in admin
 
       patch :approve_ai_image, params: { id: product.id }
 
@@ -382,7 +382,7 @@ RSpec.describe Admin::ProductsController, type: :controller do
         price: 4999.90,
         category: category
       )
-      session[:user_id] = admin.id
+      sign_in admin
 
       get :show, params: { id: product.id }
 

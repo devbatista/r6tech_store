@@ -23,7 +23,8 @@ E-commerce de eletrônicos (celulares e afins) construído com Ruby on Rails. Po
 
 - Home com banners, vitrine de produtos e chamada para avaliação de aparelhos usados via WhatsApp
 - Catálogo e página de produto com seleção de variação (cor, memória RAM e armazenamento)
-- Carrinho com atualização via Turbo Streams e drawer lateral; carrinho anônimo é mesclado ao carrinho do usuário no login
+- Login pelo modal da home, cadastro e recuperação de senha (Devise, em `app/controllers/users/`); carrinho anônimo é mesclado ao carrinho do usuário no login ou no cadastro
+- Carrinho com atualização via Turbo Streams e drawer lateral
 - Conta do cliente: dados pessoais, múltiplos endereços (com busca por CEP) e histórico de pedidos
 - Checkout com cotação de frete em tempo real (Melhor Envio) e escolha de meio de pagamento (PIX, cartão de crédito ou boleto, conforme habilitado nas configurações)
 - Pedidos com endereço de entrega congelado no momento da compra e cancelamento pelo cliente

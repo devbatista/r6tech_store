@@ -8,11 +8,11 @@ RSpec.describe OrdersController, type: :controller do
   it "redirects a visitor to login before checkout" do
     post :create
 
-    expect(response).to redirect_to(login_path)
+    expect(response).to redirect_to(new_user_session_path)
   end
 
   it "redirects checkout to the payment step" do
-    session[:user_id] = user.id
+    sign_in user
     cart = user.carts.create!(status: :active)
     cart.add_product(product, 2)
 

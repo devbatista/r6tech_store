@@ -4,14 +4,15 @@ RSpec.describe HomeController, type: :controller do
   render_views
 
   describe "GET #index" do
-    it "renews the session when the signed-in user no longer exists" do
-      session[:user_id] = SecureRandom.uuid
+    it "treats a signed-in user that no longer exists as a visitor" do
+      user = User.create!(name: "Ghost", email: "ghost@example.com", password: "password")
+      sign_in user
+      user.destroy!
 
       get :index
 
-      expect(session[:user_id]).to be_nil
-      expect(response).to redirect_to(login_path)
-      expect(flash[:alert]).to eq(I18n.t("flash.session_expired"))
+      expect(response).to have_http_status(:ok)
+      expect(controller.current_user).to be_nil
     end
 
     it "renders storefront sections with products and categories" do

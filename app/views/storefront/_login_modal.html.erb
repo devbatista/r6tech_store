@@ -5,7 +5,7 @@
       <a href="#" class="login-modal__close" data-action="modal#close" aria-label="<%= t("storefront.auth.close") %>">×</a>
     </div>
 
-    <%= form_with url: login_path, method: :post, class: "login-modal__form" do |form| %>
+    <%= form_with scope: :user, url: user_session_path, method: :post, class: "login-modal__form" do |form| %>
       <%= form.email_field :email, value: params[:email], placeholder: t("store.login.email_placeholder"), required: true, autocomplete: "email", data: { modal_target: "firstInput" } %>
       <%= form.password_field :password, placeholder: t("store.login.password_placeholder"), required: true, autocomplete: "current-password" %>
 

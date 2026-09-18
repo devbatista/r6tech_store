@@ -1,0 +1,14 @@
+<nav class="auth-links">
+  <%# O login acontece no modal da home, então o link abre a home com o modal. %>
+  <%= link_to t("storefront.auth.already_have_account"), root_path(anchor: "login-modal") %>
+
+  <% if devise_mapping.registerable? && controller_name != "registrations" %>
+    <%= link_to t("storefront.auth.create_account"), new_registration_path(resource_name) %>
+  <% end %>
+
+  <% if devise_mapping.recoverable? && controller_name != "passwords" %>
+    <%= link_to t("storefront.auth.forgot_password"), new_password_path(resource_name) %>
+  <% end %>
+
+  <%= link_to t("storefront.auth.back"), root_path %>
+</nav>

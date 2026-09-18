@@ -23,7 +23,7 @@ RSpec.describe PaymentsController, type: :controller do
   end
 
   it "shows the payment step for a signed-in customer with items" do
-    session[:user_id] = user.id
+    sign_in user
     user.carts.create!(status: :active).add_product(product)
 
     get :new
@@ -36,7 +36,7 @@ RSpec.describe PaymentsController, type: :controller do
   end
 
   it "creates a pending payment and order from the cart" do
-    session[:user_id] = user.id
+    sign_in user
     cart = user.carts.create!(status: :active)
     cart.add_product(product, 2)
 
@@ -57,7 +57,7 @@ RSpec.describe PaymentsController, type: :controller do
     memory = Memory.create!(value: "24GB")
     storage = Storage.create!(value: "512GB")
     ProductVariant.create!(product: product, memory: memory, storage: storage, price: 11_000)
-    session[:user_id] = user.id
+    sign_in user
     cart = user.carts.create!(status: :active)
     cart.add_product(product, 1, memory: memory, storage: storage)
 
@@ -70,7 +70,7 @@ RSpec.describe PaymentsController, type: :controller do
   end
 
   it "stores only non-sensitive card metadata" do
-    session[:user_id] = user.id
+    sign_in user
     user.carts.create!(status: :active).add_product(product)
 
     post :create, params: { payment: checkout_params(payment_method: "credit_card", installments: "6") }
@@ -79,7 +79,7 @@ RSpec.describe PaymentsController, type: :controller do
   end
 
   it "recalculates the selected shipping option on the server" do
-    session[:user_id] = user.id
+    sign_in user
     user.carts.create!(status: :active).add_product(product, 2)
     quote = {
       provider: "melhor_envio",
@@ -101,7 +101,7 @@ RSpec.describe PaymentsController, type: :controller do
   end
 
   it "rejects checkout without a shipping address" do
-    session[:user_id] = user.id
+    sign_in user
     user.carts.create!(status: :active).add_product(product)
 
     expect {
@@ -112,7 +112,7 @@ RSpec.describe PaymentsController, type: :controller do
   end
 
   it "rejects a payment method disabled by the store" do
-    session[:user_id] = user.id
+    sign_in user
     user.carts.create!(status: :active).add_product(product)
 
     expect {
@@ -123,7 +123,7 @@ RSpec.describe PaymentsController, type: :controller do
   end
 
   it "rejects an unknown payment method without creating an order" do
-    session[:user_id] = user.id
+    sign_in user
     user.carts.create!(status: :active).add_product(product)
 
     expect {

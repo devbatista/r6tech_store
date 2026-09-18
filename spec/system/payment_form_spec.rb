@@ -22,8 +22,8 @@ RSpec.describe "Payment form", type: :system do
   it "reveals and formats card fields without submitting sensitive values" do
     visit root_path(login: true)
     within "#login-modal" do
-      fill_in "email", with: @user.email
-      fill_in "password", with: "password123"
+      fill_in "user[email]", with: @user.email
+      fill_in "user[password]", with: "password123"
       click_button I18n.t("storefront.auth.login")
     end
 

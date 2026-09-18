@@ -24,7 +24,7 @@ RSpec.describe Admin::ClientsController, type: :controller do
         role: :customer
       )
 
-      session[:user_id] = admin.id
+      sign_in admin
 
       get :index, params: { query: "searchable-client" }
 

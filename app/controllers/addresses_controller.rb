@@ -30,7 +30,7 @@ class AddressesController < BaseController
     def require_customer!
       return if current_user&.customer?
 
-      redirect_to login_path, alert: t("storefront.auth.sign_in_to_account")
+      require_sign_in!(return_to: account_path, alert: t("storefront.auth.sign_in_to_account"))
     end
 
     def set_address

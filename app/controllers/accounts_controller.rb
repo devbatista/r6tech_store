@@ -29,7 +29,8 @@ class AccountsController < BaseController
 
     def update_password
       if current_user.update_with_password(password_params)
-        session[:user_id] = current_user.id
+        # Trocar a senha invalida a sessão atual; mantém o usuário logado.
+        bypass_sign_in(current_user)
         redirect_to account_path(anchor: "details"), notice: t("flash.password_updated")
       else
         redirect_to account_path(anchor: "details"), alert: current_user.errors.full_messages.to_sentence
@@ -51,7 +52,6 @@ class AccountsController < BaseController
     def require_customer!
       return if current_user&.customer?
 
-      session[:return_to] = account_path
-      redirect_to login_path, alert: t("storefront.auth.sign_in_to_account")
+      require_sign_in!(return_to: account_path, alert: t("storefront.auth.sign_in_to_account"))
     end
 end

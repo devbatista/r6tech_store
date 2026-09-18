@@ -14,7 +14,7 @@ RSpec.describe Admin::CategoriesController, type: :controller do
       Category.create!(name: "Searchable Accessories")
       Category.create!(name: "Hidden Phones")
 
-      session[:user_id] = admin.id
+      sign_in admin
 
       get :index, params: { query: "Accessories" }
 
@@ -36,7 +36,7 @@ RSpec.describe Admin::CategoriesController, type: :controller do
         Rails.root.join("spec/fixtures/files/product-image.png"),
         "image/png"
       )
-      session[:user_id] = admin.id
+      sign_in admin
 
       post :create, params: { category: { name: "Category with image", image: image } }
 
@@ -52,7 +52,7 @@ RSpec.describe Admin::CategoriesController, type: :controller do
         role: :admin
       )
       parent = Category.create!(name: "Parent category")
-      session[:user_id] = admin.id
+      sign_in admin
 
       post :create, params: { category: { name: "Root category", parent_id: parent.id } }
 
@@ -74,7 +74,7 @@ RSpec.describe Admin::CategoriesController, type: :controller do
         filename: "category-image.png",
         content_type: "image/png"
       )
-      session[:user_id] = admin.id
+      sign_in admin
 
       patch :update, params: {
         id: category.id,

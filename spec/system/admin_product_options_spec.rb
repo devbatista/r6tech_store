@@ -16,8 +16,8 @@ RSpec.describe "Admin product options", type: :system do
   def login_as_admin
     visit "/?login=true"
     within "#login-modal" do
-      fill_in "email", with: @admin.email
-      fill_in "password", with: "password123"
+      fill_in "user[email]", with: @admin.email
+      fill_in "user[password]", with: "password123"
       find(".login-modal__form button").click
     end
     expect(page).to have_current_path(admin_root_path, wait: 5)

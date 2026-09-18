@@ -26,8 +26,7 @@ class OrdersController < BaseController
     def require_customer!
       return if current_user&.customer?
 
-      session[:return_to] = cart_path
-      redirect_to login_path, alert: t("store.auth.sign_in_to_checkout")
+      require_sign_in!(return_to: cart_path, alert: t("store.auth.sign_in_to_checkout"))
     end
 
     def set_order

@@ -83,7 +83,7 @@ Legenda de prioridade:
 
 ## 🟠 3. Notificações por e-mail
 
-**Problema:** As flags `notify_on_paid`, `notify_on_shipped`, `notify_on_delivered` e `notification_sender` são salvas em `Setting`, mas não existe nenhum mailer além do `ApplicationMailer` vazio. O `mailer_sender` do Devise ainda é o placeholder de exemplo, então "Esqueci minha senha" não funciona. SMTP não está configurado em produção.
+**Problema:** As flags `notify_on_paid`, `notify_on_shipped`, `notify_on_delivered` e `notification_sender` são salvas em `Setting`, mas não existe nenhum mailer além do `ApplicationMailer` vazio. SMTP não está configurado em produção, então o "Esqueci minha senha" do Devise ainda não entrega e-mail.
 
 **Decisão — serviço de envio:**
 
@@ -99,7 +99,7 @@ Legenda de prioridade:
 **Tarefas:**
 
 - [ ] Configurar `config.action_mailer.delivery_method` e `smtp_settings` em `production.rb` com credenciais nas `credentials`
-- [ ] Trocar `config.mailer_sender` em `config/initializers/devise.rb` e o `default from` do `ApplicationMailer` para usar `Setting.instance.notification_sender`
+- [ ] Trocar o `default from` do `ApplicationMailer` para usar `Setting.instance.notification_sender` (o `config.mailer_sender` do Devise já foi ajustado no item 4)
 - [ ] Criar `OrderMailer` com `paid`, `shipped` e `delivered`, respeitando as flags de `Setting`
 - [ ] Disparar o e-mail em `Order#sync_payment_status` / `Admin::OrdersController#update_status` via `deliver_later` (Sidekiq já está configurado)
 - [ ] Criar `OrderMailer#confirmation` enviado ao criar o pedido, com resumo dos itens e do frete
@@ -108,28 +108,38 @@ Legenda de prioridade:
 
 ---
 
-## 🟠 4. Unificar autenticação
+## ✅ 4. Unificar autenticação
+
+**Concluído em 18/09/2026.** Sistema custom removido; login, cadastro e recuperação de senha passam pelo Devise com controllers em `app/controllers/users/`. Suíte com 162 exemplos e 0 falhas.
 
 **Problema:** O storefront usa um `SessionsController` próprio com `session[:user_id]`, enquanto o modal de login linka para `new_user_registration_path` e `new_user_password_path` do Devise. Quem se cadastra pelo Devise fica autenticado no Warden, mas `BaseController#current_user` não enxerga — a pessoa cria a conta e continua deslogada. As telas do Devise usam o layout antigo (`application.html.erb`, Bootstrap), fora do visual da loja.
 
 **Decisão — qual sistema manter:**
 
-- [ ] **A. Manter Devise e remover o `SessionsController` custom** (recomendado)
+- [x] **A. Manter Devise e remover o `SessionsController` custom** (recomendado) — **escolhida**
   Devise já está no Gemfile e no modelo. Ganha recuperação de senha, `remember_me`, lockable e confirmação de e-mail de graça. É preciso customizar o `SessionsController` do Devise para preservar o merge de carrinho e o redirect de admin.
 - [ ] **B. Remover Devise e manter o custom**
   Menos dependências, mas é preciso implementar do zero cadastro, recuperação de senha, remember-me e todas as proteções que o Devise já oferece.
 
-**Tarefas (assumindo opção A):**
+**Tarefas:**
 
-- [ ] Criar `Users::SessionsController < Devise::SessionsController` com o merge de carrinho (`CartMerger`) em `after_sign_in_path_for` ou callback
-- [ ] Trocar `BaseController#current_user` pelo `current_user` do Devise e remover `session[:user_id]`
-- [ ] Rodar `rails g devise:views` e adaptar registrations, sessions e passwords ao layout `storefront`
-- [ ] Ajustar o modal de login para postar em `user_session_path`
-- [ ] Remover as rotas `login`/`logout` manuais ou apontá-las para o Devise
-- [ ] Remover o layout `application.html.erb` antigo se não sobrar nenhum uso
-- [ ] Remover a coluna `users.password_digest` via migration (sobra de um `has_secure_password` anterior)
+- [x] `Users::SessionsController`, `Users::RegistrationsController` e `Users::PasswordsController` (concern `Users::BaseDeviseController` com layout `storefront`, carrinho e merge via `CartMerger`)
+- [x] `BaseController` usa o `current_user` do Devise; `session[:user_id]` e `session[:return_to]` substituídos por `store_location_for`
+- [x] Views do Devise em `app/views/users/` no visual da loja (cadastro, esqueci a senha, nova senha); login continua no modal da home
+- [x] Modal posta em `user_session_path` com campos `user[email]`/`user[password]`
+- [x] Rotas `login`/`logout` manuais removidas; Devise responde em `/users/login` e `/users/logout`
+- [x] Layout `application.html.erb` antigo removido; `UsersController` (sem rotas) removido
+- [x] Coluna `users.password_digest` removida via migration
+- [x] `bypass_sign_in` após troca de senha (conta do cliente e conta do admin), porque o Devise invalida a sessão quando o salt muda
+- [x] `config.mailer_sender` do Devise lê `Setting#notification_sender` (com fallback), no lugar do placeholder
+- [x] Specs: sessions (merge de carrinho, `return_to`, admin → painel, credenciais inválidas, logout) e registrations (cadastro → logado + merge, role não editável, erros)
 - [ ] Decidir se `confirmable` será ativado (depende do item 3 estar pronto)
-- [ ] Specs de sistema: cadastro → logado; login com carrinho anônimo → carrinho mesclado; admin → redirecionado ao painel
+- [ ] Remover `spec/test_helper.rb`, `spec/application_system_test_case.rb`, `spec/channels/` e `spec/fixtures/*.yml`: sobras do Minitest que o RSpec não carrega
+
+**Comportamento que mudou:**
+
+- Um usuário removido do banco enquanto logado agora vira visitante anônimo (padrão do Devise), em vez de receber o aviso "sessão expirada".
+- `GET /users/edit` (edição de conta do Devise) redireciona para a página da conta, que já cuida de perfil e senha.
 
 ---
 
@@ -222,4 +232,5 @@ Ao marcar uma opção acima, anote aqui a data e o motivo em uma linha, para que
 
 | Data | Item | Decisão | Motivo |
 | --- | --- | --- | --- |
+| 18/09/2026 | 4 | A — manter Devise | Já estava instalado e no modelo; entrega cadastro, recuperação de senha e remember-me sem código próprio |
 | 18/09/2026 | 1 | A — `dartsass-rails` + Propshaft | Resolve a causa raiz (`sassc-rails` deprecado) e alinha com o padrão do Rails 8; Propshaft foi necessário para reescrever `url()` de fontes com digest |

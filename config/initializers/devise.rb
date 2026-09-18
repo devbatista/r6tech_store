@@ -24,7 +24,9 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
+  # Usa o remetente configurado no admin (Configurações > Notificações); o fallback
+  # cobre o caso de a loja ainda não ter sido configurada.
+  config.mailer_sender = ->(_mapping) { Setting.instance.notification_sender.presence || "no-reply@r6tech.store" }
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'

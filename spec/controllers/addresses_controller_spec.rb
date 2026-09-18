@@ -4,7 +4,7 @@ RSpec.describe AddressesController, type: :controller do
   let!(:user) { User.create!(name: "Customer", email: "address-customer@example.com", password: "password") }
   let!(:address) { user.addresses.create!(label: "Casa", recipient: user.name, zip_code: "01310-100", street: "Avenida Paulista", city: "São Paulo", state: "SP") }
 
-  before { session[:user_id] = user.id }
+  before { sign_in user }
 
   it "creates an address for the current customer" do
     expect {

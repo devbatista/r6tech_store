@@ -44,6 +44,11 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
+  # `sign_in user` nos controller specs; `login_as user` nos system specs.
+  config.include Devise::Test::ControllerHelpers, type: :controller
+  config.include Warden::Test::Helpers, type: :system
+  config.after(:each, type: :system) { Warden.test_reset! }
+
   # Compila o SCSS antes da suíte: o Propshaft levanta MissingAssetError se
   # app/assets/builds/application.css não existir (rspec não passa por test:prepare).
   config.before(:suite) do

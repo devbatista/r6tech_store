@@ -8,11 +8,11 @@ RSpec.describe AccountsController, type: :controller do
   it "redirects visitors to login" do
     get :show
 
-    expect(response).to redirect_to(login_path)
+    expect(response).to redirect_to(new_user_session_path)
   end
 
   it "renders the account dashboard for customers" do
-    session[:user_id] = user.id
+    sign_in user
 
     get :show
 
@@ -21,7 +21,7 @@ RSpec.describe AccountsController, type: :controller do
   end
 
   it "renders an order detail inside the account page" do
-    session[:user_id] = user.id
+    sign_in user
     order = user.orders.create!(status: :pending, total: 100)
 
     get :show, params: { order_id: order.id }
@@ -32,7 +32,7 @@ RSpec.describe AccountsController, type: :controller do
   end
 
   it "renders an address form inside the account page" do
-    session[:user_id] = user.id
+    sign_in user
 
     get :show, params: { new_address: 1 }
 
@@ -41,7 +41,7 @@ RSpec.describe AccountsController, type: :controller do
   end
 
   it "updates the customer's name and email" do
-    session[:user_id] = user.id
+    sign_in user
 
     patch :update, params: { user: { name: "Updated Customer", email: "updated-customer@example.com" } }
 
@@ -50,7 +50,7 @@ RSpec.describe AccountsController, type: :controller do
   end
 
   it "updates the customer's password with the current password" do
-    session[:user_id] = user.id
+    sign_in user
 
     patch :update, params: { user: { current_password: "password", password: "new-password", password_confirmation: "new-password" } }
 
@@ -58,7 +58,7 @@ RSpec.describe AccountsController, type: :controller do
   end
 
   it "does not update the password with an invalid current password" do
-    session[:user_id] = user.id
+    sign_in user
 
     patch :update, params: { user: { current_password: "wrong", password: "new-password", password_confirmation: "new-password" } }
 

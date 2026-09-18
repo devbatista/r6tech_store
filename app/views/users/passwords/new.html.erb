@@ -1,0 +1,28 @@
+<% content_for :title, "#{t("storefront.auth.forgot_password_title")} | #{storefront_name}" %>
+
+<section class="page-heading account-heading">
+  <div class="store-container">
+    <h1><%= t("storefront.auth.forgot_password_title") %></h1>
+  </div>
+</section>
+
+<section class="store-section auth-section">
+  <div class="store-container">
+    <div class="account-profile-form auth-form">
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "account-profile-form__section" }) do |f| %>
+        <h3><%= t("storefront.auth.forgot_password_heading") %></h3>
+        <p><%= t("storefront.auth.forgot_password_hint") %></p>
+
+        <%= render "users/shared/error_messages", resource: resource %>
+
+        <div class="account-profile-form__grid account-profile-form__grid--single">
+          <label><%= t("storefront.account_page.email") %><%= f.email_field :email, required: true, autofocus: true, autocomplete: "email" %></label>
+        </div>
+
+        <%= f.submit t("storefront.auth.forgot_password_submit"), class: "store-button store-button--dark" %>
+      <% end %>
+
+      <%= render "users/shared/links" %>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,30 @@
+<% content_for :title, "#{t("storefront.auth.reset_password_title")} | #{storefront_name}" %>
+
+<section class="page-heading account-heading">
+  <div class="store-container">
+    <h1><%= t("storefront.auth.reset_password_title") %></h1>
+  </div>
+</section>
+
+<section class="store-section auth-section">
+  <div class="store-container">
+    <div class="account-profile-form auth-form">
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "account-profile-form__section" }) do |f| %>
+        <h3><%= t("storefront.auth.reset_password_heading") %></h3>
+        <p><%= t("storefront.account_page.password_hint") %></p>
+
+        <%= render "users/shared/error_messages", resource: resource %>
+        <%= f.hidden_field :reset_password_token %>
+
+        <div class="account-profile-form__grid">
+          <label><%= t("storefront.account_page.new_password") %><%= f.password_field :password, required: true, autofocus: true, autocomplete: "new-password", minlength: @minimum_password_length %></label>
+          <label><%= t("storefront.account_page.password_confirmation") %><%= f.password_field :password_confirmation, required: true, autocomplete: "new-password" %></label>
+        </div>
+
+        <%= f.submit t("storefront.auth.reset_password_submit"), class: "store-button store-button--dark" %>
+      <% end %>
+
+      <%= render "users/shared/links" %>
+    </div>
+  </div>
+</section>
