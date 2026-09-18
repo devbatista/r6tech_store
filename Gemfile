@@ -5,8 +5,11 @@ ruby "3.3.1"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.1.0"
 
-# The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-gem "sprockets-rails"
+# The modern asset pipeline for Rails [https://github.com/rails/propshaft]
+gem "propshaft"
+
+# Compile SCSS with Dart Sass [https://github.com/rails/dartsass-rails]
+gem "dartsass-rails"
 
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.5.9"
@@ -76,7 +79,6 @@ end
 gem "stringio", "3.1.7"
 gem 'devise', '~> 4.9'
 gem "bcrypt", "~> 3.1.7"
-gem "sassc-rails"
 gem "kaminari"
 gem "connection_pool", "~> 2.5"
 gem "sidekiq", "~> 7.3"

@@ -44,6 +44,13 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
+  # Compila o SCSS antes da suíte: o Propshaft levanta MissingAssetError se
+  # app/assets/builds/application.css não existir (rspec não passa por test:prepare).
+  config.before(:suite) do
+    require "dartsass/runner"
+    system(*Dartsass::Runner.dartsass_compile_command, exception: true)
+  end
+
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
 

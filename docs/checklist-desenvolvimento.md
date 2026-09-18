@@ -10,14 +10,17 @@ Legenda de prioridade:
 
 ---
 
-## 🔴 1. Corrigir compilação de CSS (suíte de testes e deploy)
+## ✅ 1. Corrigir compilação de CSS (suíte de testes e deploy)
+
+**Concluído em 18/09/2026.** Sprockets + `sassc-rails` foram substituídos por Propshaft + `dartsass-rails`. Suíte com 151 exemplos e 0 falhas; `assets:precompile` de produção passando.
 
 **Problema:** `app/assets/stylesheets/storefront/storefront.css` usa `max()` e `min()` nativos do CSS. O `sassc-rails` (libsass) interpreta como funções Sass e falha. Em `development` o CSS não passa pelo compressor, mas em `test` e no `assets:precompile` de produção ele passa. Resultado: 30 specs falhando e deploy quebrado.
 
 **Decisão — como resolver o compressor:**
 
-- [ ] **A. Migrar para `dartsass-rails`** (recomendado)
+- [x] **A. Migrar para `dartsass-rails`** (recomendado) — **escolhida**
   Substitui o `sassc-rails`, que está deprecado. O Dart Sass entende `min()`/`max()`/`clamp()` nativos. Exige mover os `.scss` para `app/assets/stylesheets` com um entrypoint e rodar o build via `bin/rails dartsass:build` / `dartsass:watch`. Mudança moderada, mas resolve a causa raiz e tira uma gem morta do projeto.
+  Na prática exigiu trocar também Sprockets por Propshaft: o SCSS usava `font-url()`/`asset-url()`, que só existem no `sassc-rails`, e o Sprockets não reescreve `url()` em CSS puro — as fontes com digest quebrariam em produção. O Propshaft faz essa reescrita e é o padrão do Rails 8.
 - [ ] **B. Desativar o compressor Sass**
   `config.assets.css_compressor = nil` em `production.rb` e `test.rb`. Correção de uma linha; o CSS fica sem minificação e o `sassc-rails` continua no projeto.
 - [ ] **C. Contornar no CSS**
@@ -25,11 +28,21 @@ Legenda de prioridade:
 
 **Tarefas:**
 
-- [ ] Aplicar a decisão acima
+- [x] Aplicar a decisão acima
+  - `Gemfile`: `propshaft` + `dartsass-rails` no lugar de `sprockets-rails` + `sassc-rails`
+  - `app/assets/config/manifest.js` removido (só existia para o Sprockets)
+  - `font-url()`/`asset-url()` → `url()` em `icon/style.scss` e `scss/component/_sections.scss`
+  - `icon/style` removido do `stylesheet_link_tag` do layout admin (já é importado por `application.scss`)
+  - `config/initializers/dartsass.rb` com as opções de build; `app/assets/builds/` ignorado no git
+  - `bin/dev` + `Procfile.dev`, serviço `css` no `docker-compose.yml`, `dartsass:build` no `bin/docker-dev-entrypoint`
+  - `spec/rails_helper.rb` builda o CSS em `before(:suite)` (rspec não passa por `test:prepare`)
+  - Arquivos de demo do icomoon removidos de `app/assets/stylesheets/icon/`; `selection.json` movido para `docs/icomoon-selection.json`
 - [ ] Revisar `storefront.css:46`: `width: min(650px, ...)` junto com `min-width: 650px` se contradizem; definir o comportamento desejado no mobile
-- [ ] Rodar `bundle exec rspec` e confirmar 0 falhas
-- [ ] Rodar `RAILS_ENV=production bin/rails assets:precompile` localmente para confirmar que o build passa
+- [x] Rodar `bundle exec rspec` e confirmar 0 falhas
+- [x] Rodar `RAILS_ENV=production bin/rails assets:precompile` localmente para confirmar que o build passa
 - [ ] Adicionar `assets:precompile` ao pipeline de CI (ou ao `Dockerfile`) para que isso não volte a passar despercebido
+- [ ] Migrar os partials SCSS de `@import` para `@use`/`@forward` (o Dart Sass 3.0 vai remover `@import`; o aviso está silenciado em `config/initializers/dartsass.rb`)
+- [ ] Decidir o destino de `app/assets/stylesheets/scss/app.scss`: não é entrypoint nem é importado por ninguém
 
 ---
 
@@ -209,4 +222,4 @@ Ao marcar uma opção acima, anote aqui a data e o motivo em uma linha, para que
 
 | Data | Item | Decisão | Motivo |
 | --- | --- | --- | --- |
-| | | | |
+| 18/09/2026 | 1 | A — `dartsass-rails` + Propshaft | Resolve a causa raiz (`sassc-rails` deprecado) e alinha com o padrão do Rails 8; Propshaft foi necessário para reescrever `url()` de fontes com digest |

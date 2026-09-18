@@ -9,7 +9,7 @@ E-commerce de eletrônicos (celulares e afins) construído com Ruby on Rails. Po
 - Ruby 3.3.1 · Rails 8.1
 - PostgreSQL (UUID como chave primária em todas as tabelas)
 - Hotwire (Turbo + Stimulus) com importmap
-- Sprockets + Sass para assets
+- Propshaft + Dart Sass (`dartsass-rails`) para assets
 - Devise para autenticação
 - Active Storage para imagens de produto
 - Sidekiq + sidekiq-scheduler (Redis) para jobs em background
@@ -92,11 +92,13 @@ Para que a cotação de frete funcione, cada produto precisa ter peso (kg) e lar
 ```sh
 bundle install
 rails db:setup
-rails server
+bin/dev                                      # sobe o Rails e o watcher do Dart Sass (via foreman)
 bundle exec sidekiq -C config/sidekiq.yml   # em outro terminal, requer Redis
 ```
 
 Acesse em [http://localhost:3000](http://localhost:3000).
+
+O SCSS do admin (`app/assets/stylesheets/application.scss`) é compilado pelo Dart Sass em `app/assets/builds/application.css`, que fica fora do git. Se preferir rodar `rails server` direto, gere o CSS antes com `bin/rails dartsass:build` (ou mantenha `bin/rails dartsass:watch` em outro terminal). O CSS da vitrine (`storefront/storefront.css`) é CSS puro e não passa pelo Sass.
 
 ## Rodando com Docker
 
@@ -106,13 +108,13 @@ Adicione o domínio local ao seu hosts:
 sudo sh -c 'echo "127.0.0.1 r6tech.store-local" >> /etc/hosts'
 ```
 
-Suba a aplicação (web, Sidekiq, PostgreSQL e Redis):
+Suba a aplicação (web, watcher de CSS, Sidekiq, PostgreSQL e Redis):
 
 ```sh
 docker compose up --build
 ```
 
-A aplicação fica disponível em [http://r6tech.store-local](http://r6tech.store-local). O container roda `rails db:prepare` automaticamente antes de iniciar o servidor.
+A aplicação fica disponível em [http://r6tech.store-local](http://r6tech.store-local). O container `web` roda `dartsass:build` (e `db:prepare`, se `PREPARE_DB_ON_BOOT=true`) antes de iniciar o servidor; o container `css` mantém o CSS recompilado a cada alteração nos `.scss`.
 
 Portas e credenciais podem ser ajustadas por variáveis de ambiente:
 

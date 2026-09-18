@@ -32,5 +32,9 @@
 
 /public/assets
 
+# Ignore CSS compiled by Dart Sass.
+/app/assets/builds/*
+!/app/assets/builds/.keep
+
 # Ignore master key for decrypting credentials and more.
 /config/master.key
