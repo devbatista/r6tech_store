@@ -24,9 +24,15 @@ Rails.application.routes.draw do
   resources :orders, only: [:index, :show, :create] do
     member do
       patch :cancel
+      post :pay
+      get "payment/return", action: :payment_return, as: :payment_return
     end
   end
   resource :payment, only: [:new, :create]
+
+  namespace :webhooks do
+    post "mercado_pago", to: "mercado_pago#create"
+  end
 
   resource :cart, only: :show do
     resources :items, controller: "cart_items", only: [:create, :update, :destroy]

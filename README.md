@@ -26,7 +26,8 @@ E-commerce de eletrônicos (celulares e afins) construído com Ruby on Rails. Po
 - Login pelo modal da home, cadastro e recuperação de senha (Devise, em `app/controllers/users/`); carrinho anônimo é mesclado ao carrinho do usuário no login ou no cadastro
 - Carrinho com atualização via Turbo Streams e drawer lateral
 - Conta do cliente: dados pessoais, múltiplos endereços (com busca por CEP) e histórico de pedidos
-- Checkout com cotação de frete em tempo real (Melhor Envio) e escolha de meio de pagamento (PIX, cartão de crédito ou boleto, conforme habilitado nas configurações)
+- Checkout com cotação de frete em tempo real (Melhor Envio) e escolha de meio de pagamento (PIX, cartão ou boleto, conforme habilitado nas configurações)
+- Pagamento pelo **Checkout Pro do Mercado Pago**: o cliente é redirecionado ao ambiente do Mercado Pago e o resultado volta por webhook assinado e pela URL de retorno; nenhum dado de cartão passa pela loja
 - Pedidos com endereço de entrega congelado no momento da compra e cancelamento pelo cliente
 
 ### Painel administrativo (`/admin`)
@@ -65,6 +66,8 @@ O admin pode gerar descrição e imagem de um produto com IA (OpenAI Responses A
 
 - `Shipping::Quote` / `Shipping::CheckoutQuotes` — cotação de frete a partir do carrinho, usando o provider `Shipping::Providers::MelhorEnvio`
 - `Ai::ProductSuggestionRunner`, `Ai::ProductDescriptionGenerator`, `Ai::ProductImageGenerator` — geração de conteúdo com o provider `Ai::Providers::OpenAi`
+- `Payments::Checkout` — cria a preference do Checkout Pro e devolve a URL de pagamento; `Payments::Sync` lê o pagamento na API do Mercado Pago e atualiza `Payment` e `Order` (idempotente); `Payments::Providers::MercadoPago::{Client, Preference, WebhookSignature}`
+- `Payments::ExpireStaleOrdersJob` — cancela, a cada hora, pedidos pendentes há mais de 3 dias sem pagamento
 - `CartMerger` — mescla o carrinho de visitante com o do usuário autenticado
 
 ## Configuração
@@ -87,6 +90,10 @@ OPENAI_IMAGE_RESPONSE_MODEL=gpt-4.1-mini
 REDIS_URL=redis://localhost:6379/0
 SIDEKIQ_CONCURRENCY=5
 
+# Mercado Pago (Checkout Pro)
+MERCADO_PAGO_ACCESS_TOKEN=TEST-...   # credencial de teste fora de produção
+MERCADO_PAGO_WEBHOOK_SECRET=       # assinatura secreta configurada no painel de webhooks
+
 # Amazon SES — envio de e-mail em produção
 APP_HOST=r6tech.store          # host usado nos links dos e-mails
 AWS_REGION=us-east-1
@@ -94,7 +101,7 @@ SES_SMTP_USERNAME=
 SES_SMTP_PASSWORD=
 ```
 
-Os tokens do Melhor Envio e da OpenAI também podem ser guardados nas credentials do Rails, em `melhor_envio.token` e `openai.api_key`. As credenciais SMTP do SES (geradas no console do SES, diferentes das chaves IAM) podem ficar em `aws.ses.smtp_username`, `aws.ses.smtp_password` e `aws.ses.region`. O domínio do remetente precisa estar verificado no SES e a conta fora do sandbox para enviar a qualquer destinatário.
+Os tokens do Melhor Envio e da OpenAI também podem ser guardados nas credentials do Rails, em `melhor_envio.token` e `openai.api_key`. As credenciais do Mercado Pago podem ficar em `mercado_pago.access_token` e `mercado_pago.webhook_secret`. O webhook precisa ser cadastrado no painel de desenvolvedor do Mercado Pago apontando para `https://<APP_HOST>/webhooks/mercado_pago` (evento *Pagamentos*); a URL só é enviada na preference quando `APP_HOST` é servido por HTTPS, então em desenvolvimento o status chega pela URL de retorno do checkout. As credenciais SMTP do SES (geradas no console do SES, diferentes das chaves IAM) podem ficar em `aws.ses.smtp_username`, `aws.ses.smtp_password` e `aws.ses.region`. O domínio do remetente precisa estar verificado no SES e a conta fora do sandbox para enviar a qualquer destinatário.
 
 Em desenvolvimento nada é enviado: os e-mails ficam em [http://localhost:3000/letter_opener](http://localhost:3000/letter_opener) e os templates podem ser conferidos em [http://localhost:3000/rails/mailers](http://localhost:3000/rails/mailers). Para usar o Melhor Envio em produção, troque `MELHOR_ENVIO_BASE_URL` por `https://melhorenvio.com.br` e use um token de produção.
 

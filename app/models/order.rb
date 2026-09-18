@@ -107,7 +107,7 @@ class Order < ApplicationRecord
       return unless payment
 
       payment.paid! if paid? && !payment.paid?
-      payment.cancelled! if cancelled? && !payment.cancelled?
+      payment.cancelled! if cancelled? && !payment.cancelled? && !payment.refunded?
     end
 
     def deliver_confirmation_email

@@ -46,13 +46,15 @@ Legenda de prioridade:
 
 ---
 
-## 🟠 2. Processar pagamentos de verdade
+## ✅ 2. Processar pagamentos de verdade
+
+**Concluído em 18/09/2026.** Mercado Pago Checkout Pro (redirect) com webhook assinado, URL de retorno, nova tentativa pela página do pedido e expiração automática. Suíte com 204 exemplos e 0 falhas. Falta só a parte operacional (credenciais e cadastro do webhook), que depende do domínio.
 
 **Problema:** `Payment` é criado com `awaiting_payment` e nada acontece depois. Não há gateway, webhook, nem uso de `provider`/`external_reference`. Os campos de cartão do checkout são só visuais. O pedido só vira `paid` quando o admin muda o status manualmente.
 
 **Decisão — gateway de pagamento:**
 
-- [ ] **A. Mercado Pago** (recomendado para começar)
+- [x] **A. Mercado Pago** (recomendado para começar) — **escolhida**
   PIX, cartão e boleto no mesmo provedor, Checkout Pro (redirect) ou Checkout Transparente, SDK Ruby oficial, sandbox gratuito. Boa cobertura no Brasil e documentação em português.
 - [ ] **B. Pagar.me / Stone**
   API completa, boa para cartão com antifraude. Exige contrato comercial antes do sandbox de produção.
@@ -63,21 +65,38 @@ Legenda de prioridade:
 
 **Decisão — modo de integração:**
 
-- [ ] **A. Checkout hospedado / redirect** (recomendado)
+- [x] **A. Checkout hospedado / redirect** (recomendado) — **escolhida**
   O cliente é redirecionado para a página do gateway. Não há dados de cartão passando pela aplicação, o que elimina o escopo de PCI. Menos controle sobre o visual.
 - [ ] **B. Checkout transparente**
   O form fica na loja e envia um token do gateway. Visual próprio, mas exige tokenização no frontend e mais cuidado com segurança.
 
 **Tarefas:**
 
-- [ ] Criar `app/services/payments/providers/<gateway>/client.rb` no mesmo padrão de `Shipping::Providers::MelhorEnvio`
-- [ ] Preencher `payments.provider` e `payments.external_reference` ao criar a cobrança
-- [ ] Adicionar rota e controller de webhook (`POST /webhooks/<gateway>`) com validação de assinatura
-- [ ] Mapear os eventos do gateway para `Payment#status` e disparar a transição do pedido (`pending → paid`)
-- [ ] Definir o comportamento de expiração: PIX/boleto não pagos em X horas → `Payment#failed` e `Order#cancelled`
-- [ ] Remover os campos de cartão do `payment_form_controller.js` se a decisão for checkout hospedado
-- [ ] Guardar credenciais em `Rails.application.credentials` e documentar no README
-- [ ] Specs: criação de cobrança (com stub HTTP), recepção de webhook válido e inválido, transições de status
+- [x] `Payments::Providers::MercadoPago::Client` (HTTP), `Preference` (payload do Checkout Pro) e `WebhookSignature` (validação do `x-signature`), no padrão de `Shipping::Providers::MelhorEnvio`
+- [x] `Payments::Checkout` cria a preference (idempotente por `payment.id`) e guarda `provider`, `preference_id` e `init_point` no `Payment`
+- [x] `Payments::Sync` consulta `/v1/payments/:id`, grava `external_reference` (id do pagamento no MP) e o status, e move o pedido (`pending → paid`, `cancelled`/`refunded → cancelled` quando a transição é permitida)
+- [x] `POST /webhooks/mercado_pago` valida a assinatura, responde 200 e enfileira `Payments::SyncJob` (retry em erro do provedor)
+- [x] `GET /orders/:id/payment/return` (back_url) sincroniza pelo `payment_id` da query, sem confiar no `status` da query
+- [x] `POST /orders/:id/pay` reabre o checkout para pedidos `awaiting_payment`/`failed` (nova tentativa após recusa)
+- [x] Expiração: `Payments::ExpireStaleOrdersJob` (hora em hora) cancela pedidos pendentes há mais de 3 dias sem pagamento
+- [x] Campos de cartão removidos do checkout e do `payment_form_controller.js`; o método escolhido na loja restringe os tipos de pagamento exibidos pelo Mercado Pago
+- [x] Admin > Pedido mostra provedor, id do pagamento no MP e status/detalhe originais
+- [x] Credenciais em `credentials` (`mercado_pago.access_token`, `mercado_pago.webhook_secret`) ou `MERCADO_PAGO_*`; README, `.env.example` e compose atualizados
+- [x] Specs: `spec/services/payments/*`, `spec/requests/webhooks/mercado_pago_spec.rb`, `spec/jobs/payments/*`, controllers e system (`webmock` adicionado ao grupo de teste)
+
+**Pendências operacionais (fora do código):**
+
+- [ ] Criar a aplicação no painel de desenvolvedor do Mercado Pago e obter as credenciais de teste (`TEST-...`) e de produção
+- [ ] Testar o fluxo no sandbox com usuários de teste (comprador e vendedor) do Mercado Pago
+- [ ] Cadastrar o webhook em `https://<APP_HOST>/webhooks/mercado_pago` (evento *Pagamentos*) e copiar a assinatura secreta para `mercado_pago.webhook_secret` — depende do domínio existir e servir HTTPS
+- [ ] Em desenvolvimento, para receber webhooks, expor a máquina com um túnel (ngrok, Cloudflare Tunnel) e definir `APP_HOST` com esse host; sem isso o status chega só pela URL de retorno
+
+**Decisões menores tomadas:**
+
+- A loja continua pedindo o método (PIX, cartão, boleto) antes do redirect e usa `excluded_payment_types` para o Mercado Pago mostrar só aquele tipo. Se preferir deixar o cliente escolher lá, é só parar de enviar a exclusão em `Preference#excluded_payment_types`.
+- Frete vai em `shipments.cost` (modo `not_specified`), não como item.
+- Recusa de cartão não cancela o pedido: `Payment` vira `failed` e o botão "Pagar agora" permite tentar de novo pela mesma preference.
+- `Order#sync_payment_status` não sobrescreve mais um pagamento `refunded` com `cancelled` ao cancelar o pedido.
 
 ---
 
@@ -250,6 +269,7 @@ Ao marcar uma opção acima, anote aqui a data e o motivo em uma linha, para que
 
 | Data | Item | Decisão | Motivo |
 | --- | --- | --- | --- |
+| 18/09/2026 | 2 | A — Mercado Pago, Checkout Pro (redirect) | PIX, cartão e boleto no mesmo provedor, sandbox sem contrato; redirect tira a loja do escopo PCI |
 | 18/09/2026 | 3 | B — Amazon SES via SMTP | Escolha do time; integração sem gem extra, mais barato em volume. Exige verificar domínio e sair do sandbox |
 | 18/09/2026 | 4 | A — manter Devise | Já estava instalado e no modelo; entrega cadastro, recuperação de senha e remember-me sem código próprio |
 | 18/09/2026 | 1 | A — `dartsass-rails` + Propshaft | Resolve a causa raiz (`sassc-rails` deprecado) e alinha com o padrão do Rails 8; Propshaft foi necessário para reescrever `url()` de fontes com digest |

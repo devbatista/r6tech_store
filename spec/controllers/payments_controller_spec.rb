@@ -20,6 +20,8 @@ RSpec.describe PaymentsController, type: :controller do
 
   before do
     Setting.instance.update!(pay_pix: true, pay_credit_card: true, pay_boleto: false)
+    # A criação da preference no Mercado Pago é coberta em spec/services/payments.
+    allow(Payments::Checkout).to receive(:call).and_return("https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=pref-1")
   end
 
   it "shows the payment step for a signed-in customer with items" do
@@ -29,13 +31,15 @@ RSpec.describe PaymentsController, type: :controller do
     get :new
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include("payment-card-fields")
-    expect(response.body).to include('autocomplete="cc-number"')
-    expect(response.body).not_to include('name="card_number"')
-    expect(response.body).not_to include('name="card_cvv"')
+    expect(response.body).to include(I18n.t("storefront.payment.go_to_checkout"))
+    expect(response.body).to include('value="pix"')
+    expect(response.body).to include('value="credit_card"')
+    expect(response.body).not_to include('value="boleto"')
+    # Nenhum dado de cartão é coletado na loja: o pagamento acontece no Mercado Pago.
+    expect(response.body).not_to include('autocomplete="cc-')
   end
 
-  it "creates a pending payment and order from the cart" do
+  it "creates a pending payment and order from the cart and sends the customer to the gateway" do
     sign_in user
     cart = user.carts.create!(status: :active)
     cart.add_product(product, 2)
@@ -45,6 +49,8 @@ RSpec.describe PaymentsController, type: :controller do
     }.to change(Order, :count).by(1).and change(Payment, :count).by(1)
 
     payment = Payment.last
+    expect(Payments::Checkout).to have_received(:call).with(payment: payment)
+    expect(response).to redirect_to("https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=pref-1")
     expect(payment).to be_awaiting_payment
     expect(payment.amount).to eq(40)
     expect(payment.order).to eq(Order.last)
@@ -69,13 +75,18 @@ RSpec.describe PaymentsController, type: :controller do
     expect(item.price).to eq(11_000)
   end
 
-  it "stores only non-sensitive card metadata" do
+  it "keeps the order and sends the customer to the order page when the gateway is unavailable" do
     sign_in user
     user.carts.create!(status: :active).add_product(product)
+    allow(Payments::Checkout).to receive(:call).and_raise(Payments::ConfigurationError, "MERCADO_PAGO_ACCESS_TOKEN is missing")
 
-    post :create, params: { payment: checkout_params(payment_method: "credit_card", installments: "6") }
+    expect {
+      post :create, params: { payment: checkout_params(payment_method: "pix") }
+    }.to change(Order, :count).by(1)
 
-    expect(Payment.last.metadata).to eq("installments" => 6)
+    expect(response).to redirect_to(order_path(Order.last))
+    expect(flash[:alert]).to eq(I18n.t("storefront.payment.checkout_unavailable"))
+    expect(Payment.last).to be_awaiting_payment
   end
 
   it "recalculates the selected shipping option on the server" do
@@ -133,10 +144,9 @@ RSpec.describe PaymentsController, type: :controller do
     expect(response).to have_http_status(:unprocessable_entity)
   end
 
-  def checkout_params(payment_method:, installments: nil)
+  def checkout_params(payment_method:)
     {
       payment_method: payment_method,
-      installments: installments,
       address_id: address.id,
       shipping_service_id: "fixed"
     }.compact

@@ -11,3 +11,8 @@
       class: "ProductAiSuggestionSweepJob"
       queue: default
       description: "Queue AI suggestions for products missing generated content"
+    payments_expire_stale_orders:
+      cron: "0 15 * * * *"
+      class: "Payments::ExpireStaleOrdersJob"
+      queue: default
+      description: "Cancel pending orders whose payment was never completed"

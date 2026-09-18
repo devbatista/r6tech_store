@@ -13,6 +13,12 @@
       <p><span><%= t("storefront.shipping.service") %></span><strong><%= [@order.shipping_carrier, @order.shipping_service].compact.join(" - ") %></strong></p>
     <% end %>
     <div class="cart-summary__total"><span><%= t("storefront.cart.total") %></span><strong><%= number_to_currency(@order.total) %></strong></div>
-    <%= link_to t("storefront.orders.back"), orders_path, class: "store-button store-button--dark store-button--full" %>
+    <% if @order.pending? && @order.payment&.payable? %>
+      <%= button_to t("storefront.payment.pay_now"), pay_order_path(@order), method: :post, class: "store-button store-button--dark store-button--full", form: { data: { turbo: false } } %>
+      <p class="order-detail__hint"><%= t("storefront.payment.pay_now_hint") %></p>
+    <% elsif @order.payment&.processing? %>
+      <p class="order-detail__hint"><%= t("storefront.payment.processing_hint") %></p>
+    <% end %>
+    <%= link_to t("storefront.orders.back"), orders_path, class: "store-button store-button--full" %>
   </aside>
 </div></section>

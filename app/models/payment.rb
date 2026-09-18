@@ -18,4 +18,18 @@ class Payment < ApplicationRecord
 
   validates :payment_method, :status, presence: true
   validates :amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
+
+  # Ainda pode ser pago pelo cliente (inclui nova tentativa depois de uma recusa).
+  def payable?
+    awaiting_payment? || failed?
+  end
+
+  # URL do Checkout Pro guardada quando a preference foi criada.
+  def checkout_url
+    metadata["init_point"].presence
+  end
+
+  def provider_status
+    metadata["provider_status"].presence
+  end
 end

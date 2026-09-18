@@ -99,6 +99,16 @@
               <span><%= t("storefront.payment.status") %></span>
               <strong><%= t("storefront.payment.statuses.#{@order.payment.status}") %></strong>
             </div>
+            <% if @order.payment.provider.present? %>
+              <div class="product-show-detail-row">
+                <span><%= t("admin.orders.payment_provider") %></span>
+                <strong>
+                  <%= t("storefront.payment.providers.#{@order.payment.provider}", default: @order.payment.provider) %>
+                  <% if @order.payment.external_reference.present? %> · #<%= @order.payment.external_reference %><% end %>
+                  <% if @order.payment.provider_status.present? %> (<%= @order.payment.provider_status %><% if @order.payment.metadata["provider_status_detail"].present? %>: <%= @order.payment.metadata["provider_status_detail"] %><% end %>)<% end %>
+                </strong>
+              </div>
+            <% end %>
           <% end %>
           <div class="product-show-detail-row">
             <span><%= t("storefront.cart.shipping") %></span>

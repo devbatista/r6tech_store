@@ -16,10 +16,10 @@ RSpec.describe "Payment form", type: :system do
       state: "SP",
       default: true
     )
-    Setting.instance.update!(pay_pix: true, pay_credit_card: true)
+    Setting.instance.update!(pay_pix: true, pay_credit_card: true, shipping_fee: 12.5)
   end
 
-  it "reveals and formats card fields without submitting sensitive values" do
+  it "shows the enabled methods without collecting card data and updates the total with shipping" do
     visit root_path(login: true)
     within "#login-modal" do
       fill_in "user[email]", with: @user.email
@@ -30,17 +30,16 @@ RSpec.describe "Payment form", type: :system do
     visit product_path(@product)
     click_button I18n.t("storefront.cart.add")
     visit new_payment_path
-    expect(page).to have_css(".payment-card-fields", visible: :hidden)
 
-    find("input[value='credit_card']", visible: :all).choose
-    expect(page).to have_css(".payment-card-fields", visible: :visible)
+    expect(page).to have_field("payment[payment_method]", with: "pix", visible: :all)
+    expect(page).to have_field("payment[payment_method]", with: "credit_card", visible: :all)
+    expect(page).not_to have_css("input[autocomplete^='cc-']", visible: :all)
+    expect(page).to have_text(I18n.t("storefront.payment.integration_notice"))
 
-    card_number = find("input[autocomplete='cc-number']")
-    card_number.set("4111111111111111")
+    within ".cart-summary" do
+      expect(page).to have_text("R$ 32,50")
+    end
 
-    expect(card_number.value).to eq("4111 1111 1111 1111")
-    expect(page).to have_text("Visa")
-    expect(card_number[:name]).to be_blank
-    expect(find("input[autocomplete='cc-csc']")[:name]).to be_blank
+    expect(page).to have_button(I18n.t("storefront.payment.go_to_checkout"))
   end
 end

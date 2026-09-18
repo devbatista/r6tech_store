@@ -42,16 +42,19 @@ class PaymentsController < BaseController
       created_order.create_payment!(
         payment_method: @payment.payment_method,
         amount: created_order.total,
-        status: :awaiting_payment,
-        metadata: payment_metadata
+        status: :awaiting_payment
       )
       created_order
     end
 
-    redirect_to order_path(order), notice: t("storefront.payment.order_created")
+    # O pedido já existe; se o gateway falhar, o cliente termina de pagar pela página do pedido.
+    redirect_to Payments::Checkout.call(payment: order.payment), allow_other_host: true
   rescue Shipping::Error => error
     @payment.errors.add(:base, error.message)
     render :new, status: :unprocessable_entity
+  rescue Payments::Error => error
+    Rails.logger.error("[payments] checkout failed for order #{order.id}: #{error.message}")
+    redirect_to order_path(order), alert: t("storefront.payment.checkout_unavailable")
   end
 
   private
@@ -83,14 +86,7 @@ class PaymentsController < BaseController
     end
 
     def payment_params
-      params.require(:payment).permit(:payment_method, :installments, :address_id, :shipping_service_id)
-    end
-
-    def payment_metadata
-      return {} unless @payment.credit_card?
-
-      installments = payment_params[:installments].to_i.clamp(1, 12)
-      { installments: installments }
+      params.require(:payment).permit(:payment_method, :address_id, :shipping_service_id)
     end
 
     def selected_address

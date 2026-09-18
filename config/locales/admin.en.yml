@@ -166,6 +166,7 @@ en:
       phone: "Phone"
       summary: "Order summary"
       payment_details: "Payment details"
+      payment_provider: "Provider"
       created: "Created"
       shipping_address: "Shipping address"
       delivery_details: "Delivery details"
