@@ -1,141 +1,154 @@
-# Virtual Shop
+# R6Tech Store
 
-A simple e-commerce platform built with Ruby on Rails.
+E-commerce de eletrônicos (celulares e afins) construído com Ruby on Rails. Possui uma vitrine para o cliente (storefront) e um painel administrativo completo, com cotação de frete via Melhor Envio e geração de descrições/imagens de produto com IA.
 
-## Features
+> ⚠️ Projeto em desenvolvimento ativo, usado como plataforma de estudo. Novas funcionalidades são adicionadas ao longo do tempo. Sugestões e contribuições são bem-vindas.
 
-- User authentication (Devise)
-- Admin and customer roles
-- Product categories with nested (parent/child) relationships
-- Product management (CRUD)
-- Order management with order items
-- Seeds for users, categories, products, and orders
-- RSpec tests for models and business rules
+## Stack
 
-## Models
+- Ruby 3.3.1 · Rails 8.1
+- PostgreSQL (UUID como chave primária em todas as tabelas)
+- Hotwire (Turbo + Stimulus) com importmap
+- Sprockets + Sass para assets
+- Devise para autenticação
+- Active Storage para imagens de produto
+- Sidekiq + sidekiq-scheduler (Redis) para jobs em background
+- Kaminari para paginação
+- RSpec, FactoryBot, Shoulda Matchers e Capybara para testes
+- Docker Compose para desenvolvimento
 
-### User
-- Devise authentication
-- Roles: `customer` (default), `admin`
-- Associations: has many orders, has many carts
+## Funcionalidades
 
-### Category
-- Self-referencing: supports parent and subcategories
-- Associations: has many products, has many subcategories
-- Validations: unique name per parent, cannot be its own parent or descendant
+### Storefront (cliente)
 
-### Product
-- Belongs to a category
-- Associations: has many order items, has many cart items
-- Validations: name, price, and stock presence; price and stock must be non-negative
+- Home com banners, vitrine de produtos e chamada para avaliação de aparelhos usados via WhatsApp
+- Catálogo e página de produto com seleção de variação (cor, memória RAM e armazenamento)
+- Carrinho com atualização via Turbo Streams e drawer lateral; carrinho anônimo é mesclado ao carrinho do usuário no login
+- Conta do cliente: dados pessoais, múltiplos endereços (com busca por CEP) e histórico de pedidos
+- Checkout com cotação de frete em tempo real (Melhor Envio) e escolha de meio de pagamento (PIX, cartão de crédito ou boleto, conforme habilitado nas configurações)
+- Pedidos com endereço de entrega congelado no momento da compra e cancelamento pelo cliente
 
-### Order
-- Belongs to a user
-- Has many order items
-- Status enum: `pending`, `paid`, `shipped`, `delivered`, `cancelled`
-- Validations: status and total presence
+### Painel administrativo (`/admin`)
 
-### OrderItem
-- Belongs to an order and a product
-- Stores quantity and price at the time of order
+- Dashboard
+- Produtos: CRUD, imagens, dimensões/peso para frete e variações (cor × memória × armazenamento, cada uma com seu preço)
+- Categorias hierárquicas (categoria pai/subcategorias)
+- Pedidos: listagem, detalhe e atualização de status respeitando as transições permitidas
+- Clientes
+- Configurações da loja: dados de contato e redes sociais, frete, notificações, meios de pagamento, aparência (dark mode), cores, armazenamentos e administradores
 
-## Seeds
+### Sugestões com IA
 
-Seeds are organized in `db/seeds/`:
-- `0-prepare.rb`: Cleans the database
-- `1-users.rb`: Creates admin and customer users
-- `2-categories.rb`: Creates categories and subcategories
-- `3-products.rb`: Creates products linked to categories
-- `4-orders.rb`: Creates sample orders and order items
+O admin pode gerar descrição e imagem de um produto com IA (OpenAI Responses API) e aprová-las antes de publicar. Um job agendado (`ProductAiSuggestionSweepJob`, a cada 5 minutos) enfileira sugestões para produtos que ainda não têm conteúdo gerado. A lógica está em `app/services/ai/` e o agendamento em `config/sidekiq.yml`.
 
-To load all seeds:
+## Modelos principais
+
+| Modelo | Descrição |
+| --- | --- |
+| `User` | Devise; roles `customer` (padrão) e `admin`; possui endereços, carrinhos e pedidos |
+| `Address` | Endereços do cliente, com marcação de endereço padrão |
+| `Category` | Auto-referenciada (pai/filhas); nome único por pai |
+| `Product` | Pertence a uma categoria; imagens via Active Storage; peso e dimensões para frete; status das sugestões de IA |
+| `Color`, `Memory`, `Storage` | Atributos de variação |
+| `ProductColor`, `ProductStorage`, `ProductVariant` | Ligações produto ↔ atributos; `ProductVariant` guarda o preço da combinação cor + memória + armazenamento |
+| `Cart` / `CartItem` | Status `active`, `abandoned`, `ordered`, `cancelled`; itens guardam a variação escolhida |
+| `Order` / `OrderItem` | Status `pending` → `paid` → `shipped` → `delivered` (ou `cancelled`); itens guardam preço e variação no momento da compra; dados de frete e endereço são copiados para o pedido |
+| `Payment` | Um por pedido; método `pix`, `credit_card` ou `boleto`; status `awaiting_payment`, `processing`, `paid`, `failed`, `cancelled`, `refunded` |
+| `Setting` | Registro único com as configurações da loja |
+
+## Serviços
+
+- `Shipping::Quote` / `Shipping::CheckoutQuotes` — cotação de frete a partir do carrinho, usando o provider `Shipping::Providers::MelhorEnvio`
+- `Ai::ProductSuggestionRunner`, `Ai::ProductDescriptionGenerator`, `Ai::ProductImageGenerator` — geração de conteúdo com o provider `Ai::Providers::OpenAi`
+- `CartMerger` — mescla o carrinho de visitante com o do usuário autenticado
+
+## Configuração
+
+Copie `.env.example` e preencha as variáveis. As principais:
 
 ```sh
-rails db:seed
+# Melhor Envio (sandbox)
+MELHOR_ENVIO_BASE_URL=https://sandbox.melhorenvio.com.br
+MELHOR_ENVIO_TOKEN=seu-token
+MELHOR_ENVIO_ORIGIN_POSTAL_CODE=01001000
+MELHOR_ENVIO_USER_AGENT=r6tech_store (seu-email@example.com)
+
+# OpenAI (sugestões de IA)
+OPENAI_API_KEY=sua-chave
+OPENAI_TEXT_MODEL=gpt-4.1-mini
+OPENAI_IMAGE_RESPONSE_MODEL=gpt-4.1-mini
+
+# Sidekiq
+REDIS_URL=redis://localhost:6379/0
+SIDEKIQ_CONCURRENCY=5
 ```
 
-## Running Tests
+Os tokens do Melhor Envio e da OpenAI também podem ser guardados nas credentials do Rails, em `melhor_envio.token` e `openai.api_key`. Para usar o Melhor Envio em produção, troque `MELHOR_ENVIO_BASE_URL` por `https://melhorenvio.com.br` e use um token de produção.
 
-RSpec is used for model and business rule testing:
+Para que a cotação de frete funcione, cada produto precisa ter peso (kg) e largura, altura e comprimento (cm) cadastrados.
+
+## Rodando localmente
 
 ```sh
-bundle exec rspec
+bundle install
+rails db:setup
+rails server
+bundle exec sidekiq -C config/sidekiq.yml   # em outro terminal, requer Redis
 ```
 
-## Getting Started
+Acesse em [http://localhost:3000](http://localhost:3000).
 
-1. Clone the repository
-2. Install dependencies: `bundle install`
-3. Setup the database: `rails db:setup`
-4. Run the server: `rails server`
-5. Access at [http://localhost:3000](http://localhost:3000)
+## Rodando com Docker
 
-## Running With Docker
-
-Add the local development domain to your hosts file:
+Adicione o domínio local ao seu hosts:
 
 ```sh
 sudo sh -c 'echo "127.0.0.1 r6tech.store-local" >> /etc/hosts'
 ```
 
-Build and start the app with PostgreSQL:
+Suba a aplicação (web, Sidekiq, PostgreSQL e Redis):
 
 ```sh
 docker compose up --build
 ```
 
-The app will be available at [http://r6tech.store-local](http://r6tech.store-local).
-The container runs `rails db:prepare` automatically before starting the server.
+A aplicação fica disponível em [http://r6tech.store-local](http://r6tech.store-local). O container roda `rails db:prepare` automaticamente antes de iniciar o servidor.
 
-Local ports are configurable through environment variables:
+Portas e credenciais podem ser ajustadas por variáveis de ambiente:
 
 ```sh
 WEB_PORT=80 POSTGRES_PORT=5454 docker compose up --build
 ```
 
-To load sample data:
+Carregar dados de exemplo e rodar os testes dentro do container:
 
 ```sh
 docker compose exec web rails db:seed
-```
-
-To run specs:
-
-```sh
 docker compose exec web bundle exec rspec
 ```
 
-## Melhor Envio Sandbox
+## Seeds
 
-The shipping integration is prepared to quote a cart through the Melhor Envio
-sandbox. Configure these environment variables:
+Os seeds ficam em `db/seeds/` e rodam em ordem:
+
+- `0-prepare.rb` — limpa o banco
+- `1-users.rb` — admin e cliente
+- `2-categories.rb` — categorias e subcategorias
+- `3-storages.rb`, `4-colors.rb`, `5-memories.rb` — atributos de variação
+- `5-products.rb` — produtos com variações
+- `7-orders.rb` — pedidos de exemplo
 
 ```sh
-MELHOR_ENVIO_BASE_URL=https://sandbox.melhorenvio.com.br
-MELHOR_ENVIO_TOKEN=your-sandbox-token
-MELHOR_ENVIO_ORIGIN_POSTAL_CODE=01001000
-MELHOR_ENVIO_USER_AGENT=r6tech_store (your-email@example.com)
+rails db:seed
 ```
 
-Register weight in kilograms and width, height, and length in centimeters for
-each product. Quotes are requested from the Rails backend:
+Usuários criados pelos seeds:
 
-```ruby
-quotes = Shipping::Quote.call(cart: cart, destination_postal_code: "01310-100")
+- Admin: `rafael@devbatista.com` / `senha123`
+- Cliente: `robertson@virtualshop.com` / `senha123`
+
+## Testes
+
+```sh
+bundle exec rspec
 ```
-
-The token can alternatively be stored in Rails credentials under
-`melhor_envio.token`. To switch to production, use
-`https://melhorenvio.com.br` as `MELHOR_ENVIO_BASE_URL` and a production token.
-
-## Admin Access
-
-- Default admin user (from seeds):
-  - Email: `rafael@devbatista.com`
-  - Password: `senha123`
-
----
-
-Feel free to contribute or adapt this project!
-
-> ⚠️ **This project is under active development and is being used as a study platform. New features and improvements (including frontend) are being implemented over time. Feel free to follow, suggest, or contribute!**
