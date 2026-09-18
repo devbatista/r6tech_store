@@ -42,6 +42,10 @@ E-commerce de eletrônicos (celulares e afins) construído com Ruby on Rails. Po
 
 O admin pode gerar descrição e imagem de um produto com IA (OpenAI Responses API) e aprová-las antes de publicar. Um job agendado (`ProductAiSuggestionSweepJob`, a cada 5 minutos) enfileira sugestões para produtos que ainda não têm conteúdo gerado. A lógica está em `app/services/ai/` e o agendamento em `config/sidekiq.yml`.
 
+### E-mails transacionais
+
+`OrderMailer` envia ao cliente a confirmação do pedido (sempre) e os avisos de pagamento confirmado, envio e entrega (conforme as flags em Admin > Configurações > Notificações). O remetente também vem dessa tela. Os e-mails são enfileirados no Sidekiq via `deliver_later` a partir de callbacks do modelo `Order`, e os e-mails do Devise (recuperação de senha) usam o mesmo remetente.
+
 ## Modelos principais
 
 | Modelo | Descrição |
@@ -82,9 +86,17 @@ OPENAI_IMAGE_RESPONSE_MODEL=gpt-4.1-mini
 # Sidekiq
 REDIS_URL=redis://localhost:6379/0
 SIDEKIQ_CONCURRENCY=5
+
+# Amazon SES — envio de e-mail em produção
+APP_HOST=r6tech.store          # host usado nos links dos e-mails
+AWS_REGION=us-east-1
+SES_SMTP_USERNAME=
+SES_SMTP_PASSWORD=
 ```
 
-Os tokens do Melhor Envio e da OpenAI também podem ser guardados nas credentials do Rails, em `melhor_envio.token` e `openai.api_key`. Para usar o Melhor Envio em produção, troque `MELHOR_ENVIO_BASE_URL` por `https://melhorenvio.com.br` e use um token de produção.
+Os tokens do Melhor Envio e da OpenAI também podem ser guardados nas credentials do Rails, em `melhor_envio.token` e `openai.api_key`. As credenciais SMTP do SES (geradas no console do SES, diferentes das chaves IAM) podem ficar em `aws.ses.smtp_username`, `aws.ses.smtp_password` e `aws.ses.region`. O domínio do remetente precisa estar verificado no SES e a conta fora do sandbox para enviar a qualquer destinatário.
+
+Em desenvolvimento nada é enviado: os e-mails ficam em [http://localhost:3000/letter_opener](http://localhost:3000/letter_opener) e os templates podem ser conferidos em [http://localhost:3000/rails/mailers](http://localhost:3000/rails/mailers). Para usar o Melhor Envio em produção, troque `MELHOR_ENVIO_BASE_URL` por `https://melhorenvio.com.br` e use um token de produção.
 
 Para que a cotação de frete funcione, cada produto precisa ter peso (kg) e largura, altura e comprimento (cm) cadastrados.
 

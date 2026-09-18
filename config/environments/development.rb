@@ -46,7 +46,10 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Don't care if the mailer can't send.
+  # E-mails não saem da máquina: ficam visíveis em /letter_opener (funciona também no Docker).
+  # Templates podem ser conferidos sem enviar em /rails/mailers.
+  config.action_mailer.delivery_method = :letter_opener_web
+  config.action_mailer.preview_paths << Rails.root.join("spec/mailers/previews").to_s
   config.action_mailer.raise_delivery_errors = false
 
   config.action_mailer.perform_caching = false

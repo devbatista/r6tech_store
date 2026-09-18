@@ -67,9 +67,24 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  # Links nos e-mails (ex.: "Ver meu pedido") precisam do host público da loja.
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "r6tech.store"), protocol: "https" }
+
+  # Entrega via Amazon SES (interface SMTP). Credenciais SMTP são geradas no console do SES
+  # (não são as chaves IAM) e ficam em `credentials` sob `aws.ses`; a região também pode
+  # vir de AWS_REGION. Erros de entrega levantam exceção para o Sidekiq fazer retry.
+  ses = Rails.application.credentials.dig(:aws, :ses) || {}
+  ses_region = ses[:region] || ENV.fetch("AWS_REGION", "us-east-1")
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.smtp_settings = {
+    address: "email-smtp.#{ses_region}.amazonaws.com",
+    port: 587,
+    user_name: ses[:smtp_username] || ENV["SES_SMTP_USERNAME"],
+    password: ses[:smtp_password] || ENV["SES_SMTP_PASSWORD"],
+    authentication: :login,
+    enable_starttls_auto: true
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

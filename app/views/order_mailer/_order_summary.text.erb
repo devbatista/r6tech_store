@@ -1,0 +1,14 @@
+<% order.order_items.includes(:product, :color, :memory, :storage).each do |item| -%>
+- <%= item.product.name %><% if (label = variant_label(item)) %> (<%= label %>)<% end %> x<%= item.quantity %>: <%= number_to_currency(item.price * item.quantity) %>
+<% end -%>
+
+<%= t("order_mailer.summary.shipping") %><% if order.shipping_service.present? %> (<%= order.shipping_service %>)<% end %>: <%= number_to_currency(order.shipping_cost) %>
+<%= t("order_mailer.summary.total") %>: <%= number_to_currency(order.total) %>
+<% if order.shipping_address? -%>
+
+<%= t("order_mailer.summary.shipping_address") %>:
+<% if order.shipping_recipient.present? -%>
+<%= order.shipping_recipient %>
+<% end -%>
+<%= order.shipping_address_line %>
+<% end -%>

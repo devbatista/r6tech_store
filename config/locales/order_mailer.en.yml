@@ -1,0 +1,32 @@
+en:
+  order_mailer:
+    greeting: "Hi, %{name}!"
+    view_order: "View my order"
+    closing: "If you have any questions, just reply to this email. The %{store} team."
+    footer: "You are receiving this email because you placed an order at %{store}."
+    summary:
+      item: "Item"
+      quantity: "Qty."
+      subtotal: "Subtotal"
+      shipping: "Shipping"
+      total: "Total"
+      shipping_address: "Shipping address"
+    confirmation:
+      subject: "We received your order #%{number} — %{store}"
+      title: "Order #%{number} received"
+      message: "Your order has been registered and is awaiting payment confirmation. We will let you know as soon as it is confirmed."
+    paid:
+      subject: "Payment confirmed for order #%{number} — %{store}"
+      title: "Payment confirmed"
+      message: "We received the payment for order #%{number}. We are now picking the items and preparing the shipment."
+    shipped:
+      subject: "Your order #%{number} has shipped — %{store}"
+      title: "Order on its way"
+      message: "Order #%{number} is out for delivery to the address below."
+      delivery_estimate:
+        one: "Estimated delivery: 1 business day."
+        other: "Estimated delivery: %{count} business days."
+    delivered:
+      subject: "Your order #%{number} was delivered — %{store}"
+      title: "Order delivered"
+      message: "Order #%{number} has been delivered. We hope you enjoy it!"

@@ -81,7 +81,9 @@ Legenda de prioridade:
 
 ---
 
-## 🟠 3. Notificações por e-mail
+## ✅ 3. Notificações por e-mail
+
+**Concluído em 18/09/2026.** `OrderMailer` com confirmação, pagamento, envio e entrega; Amazon SES via SMTP em produção; `letter_opener_web` em desenvolvimento. Suíte com 172 exemplos e 0 falhas.
 
 **Problema:** As flags `notify_on_paid`, `notify_on_shipped`, `notify_on_delivered` e `notification_sender` são salvas em `Setting`, mas não existe nenhum mailer além do `ApplicationMailer` vazio. SMTP não está configurado em produção, então o "Esqueci minha senha" do Devise ainda não entrega e-mail.
 
@@ -89,7 +91,7 @@ Legenda de prioridade:
 
 - [ ] **A. Resend** (recomendado)
   API simples, 3 mil e-mails/mês grátis, entrega boa, integra via SMTP ou gem oficial.
-- [ ] **B. Amazon SES**
+- [x] **B. Amazon SES** — **escolhida**
   Mais barato em volume, mas configuração de domínio e saída do sandbox mais burocráticas.
 - [ ] **C. Brevo (ex-Sendinblue)**
   Plano gratuito generoso, painel com métricas. Boa opção se também quiser marketing.
@@ -98,13 +100,29 @@ Legenda de prioridade:
 
 **Tarefas:**
 
-- [ ] Configurar `config.action_mailer.delivery_method` e `smtp_settings` em `production.rb` com credenciais nas `credentials`
-- [ ] Trocar o `default from` do `ApplicationMailer` para usar `Setting.instance.notification_sender` (o `config.mailer_sender` do Devise já foi ajustado no item 4)
-- [ ] Criar `OrderMailer` com `paid`, `shipped` e `delivered`, respeitando as flags de `Setting`
-- [ ] Disparar o e-mail em `Order#sync_payment_status` / `Admin::OrdersController#update_status` via `deliver_later` (Sidekiq já está configurado)
-- [ ] Criar `OrderMailer#confirmation` enviado ao criar o pedido, com resumo dos itens e do frete
-- [ ] Usar `letter_opener` ou o preview de mailers do Rails em desenvolvimento
-- [ ] Specs de mailer para cada template e para o respeito às flags
+- [x] `production.rb`: `delivery_method = :smtp` apontando para `email-smtp.<região>.amazonaws.com:587` (STARTTLS); credenciais em `credentials` sob `aws.ses` ou em `SES_SMTP_USERNAME`/`SES_SMTP_PASSWORD`; `default_url_options` com `APP_HOST`
+- [x] `Setting#sender_address` centraliza remetente e nome da loja; `ApplicationMailer` e o Devise usam o mesmo
+- [x] `OrderMailer` com `confirmation`, `paid`, `shipped` e `delivered` (HTML + texto, pt-BR e en), respeitando `Setting#notify_on?`
+- [x] Disparo por `after_create_commit` / `after_update_commit` em `Order`, via `deliver_later` (fila `default` do Sidekiq)
+- [x] `letter_opener_web` em `/letter_opener` e preview em `/rails/mailers/order_mailer` (`spec/mailers/previews`)
+- [x] Specs: `spec/mailers/order_mailer_spec.rb` e `spec/models/order_notifications_spec.rb`
+- [x] `.env.example`, `docker-compose.yml` e README atualizados
+
+**Pendências operacionais (fora do código):**
+
+Bloqueadas até o domínio da loja existir (situação em 18/09/2026). Enquanto isso, o código está pronto e os e-mails só podem ser conferidos em desenvolvimento (`/letter_opener` e `/rails/mailers`).
+
+- [ ] Registrar o domínio da loja
+- [ ] Verificar o domínio do remetente no SES (registros DKIM/SPF no DNS)
+- [ ] Solicitar saída do sandbox do SES (no sandbox só é possível enviar para endereços verificados)
+- [ ] Gerar as credenciais SMTP no console do SES e gravar em `credentials` (`aws.ses.smtp_username`, `smtp_password`, `region`)
+- [ ] Preencher o remetente em Admin > Configurações > Notificações com um e-mail do domínio verificado
+- [ ] Definir `APP_HOST` em produção com o domínio público da loja
+
+**Decisões menores tomadas:**
+
+- Cancelamento não gera e-mail: não existe flag para isso nas configurações. Se quiser, é adicionar `notify_on_cancelled` em `Setting` e uma ação em `OrderMailer`.
+- `raise_delivery_errors = true` em produção, para que uma falha de entrega faça o Sidekiq fazer retry em vez de sumir silenciosamente.
 
 ---
 
@@ -232,5 +250,6 @@ Ao marcar uma opção acima, anote aqui a data e o motivo em uma linha, para que
 
 | Data | Item | Decisão | Motivo |
 | --- | --- | --- | --- |
+| 18/09/2026 | 3 | B — Amazon SES via SMTP | Escolha do time; integração sem gem extra, mais barato em volume. Exige verificar domínio e sair do sandbox |
 | 18/09/2026 | 4 | A — manter Devise | Já estava instalado e no modelo; entrega cadastro, recuperação de senha e remember-me sem código próprio |
 | 18/09/2026 | 1 | A — `dartsass-rails` + Propshaft | Resolve a causa raiz (`sassc-rails` deprecado) e alinha com o padrão do Rails 8; Propshaft foi necessário para reescrever `url()` de fontes com digest |

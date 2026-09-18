@@ -1,1 +1,6 @@
+<%= @store_name || Setting.instance.display_name %>
+
 <%= yield %>
+
+--
+<%= t("order_mailer.footer", store: @store_name || Setting.instance.display_name) %>

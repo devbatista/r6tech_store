@@ -1,4 +1,5 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "from@example.com"
+  # Remetente vem das configurações da loja (Admin > Configurações > Notificações).
+  default from: -> { Setting.instance.sender_address }
   layout "mailer"
 end

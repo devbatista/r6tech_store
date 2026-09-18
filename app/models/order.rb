@@ -23,9 +23,17 @@ class Order < ApplicationRecord
     cancelled: "cancelled"
   }
 
+  # Status que têm e-mail correspondente em OrderMailer.
+  NOTIFIABLE_STATUSES = %w[paid shipped delivered].freeze
+
   validates :status, presence: true
   validates :total, presence: true, numericality: { greater_than_or_equal_to: 0 }
   after_update :sync_payment_status, if: :saved_change_to_status?
+
+  # after_commit para o job do Sidekiq não rodar antes de o pedido (e seus itens,
+  # criados na mesma transação em create_from_cart!) estarem no banco.
+  after_create_commit :deliver_confirmation_email
+  after_update_commit :deliver_status_email, if: :saved_change_to_status?
 
   def self.create_from_cart!(user:, cart:, setting: Setting.instance, shipping_address: nil, shipping_quote: nil)
     quote = shipping_quote || {
@@ -100,5 +108,16 @@ class Order < ApplicationRecord
 
       payment.paid! if paid? && !payment.paid?
       payment.cancelled! if cancelled? && !payment.cancelled?
+    end
+
+    def deliver_confirmation_email
+      OrderMailer.with(order: self).confirmation.deliver_later
+    end
+
+    def deliver_status_email
+      return unless NOTIFIABLE_STATUSES.include?(status)
+      return unless Setting.instance.notify_on?(status)
+
+      OrderMailer.with(order: self).public_send(status).deliver_later
     end
 end

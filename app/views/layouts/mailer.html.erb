@@ -1,13 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <style>
-      /* Email styles need to be inline */
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
 
-  <body>
-    <%= yield %>
+  <body style="margin: 0; padding: 0; background: #f4f4f2; font-family: Helvetica, Arial, sans-serif; color: #1a1a1a;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background: #f4f4f2;">
+      <tr>
+        <td align="center" style="padding: 32px 16px;">
+          <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width: 600px; width: 100%; background: #ffffff; border: 1px solid #e6e3df;">
+            <tr>
+              <td style="padding: 24px 32px; border-bottom: 1px solid #e6e3df; font-size: 18px; font-weight: 700;">
+                <%= @store_name || Setting.instance.display_name %>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 32px; font-size: 15px; line-height: 1.55;">
+                <%= yield %>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 20px 32px; border-top: 1px solid #e6e3df; color: #6f6b66; font-size: 12px; line-height: 1.5;">
+                <%= t("order_mailer.footer", store: @store_name || Setting.instance.display_name) %>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

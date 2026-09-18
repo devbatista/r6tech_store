@@ -1,0 +1,17 @@
+<h1 style="margin: 0 0 16px; font-size: 22px;"><%= t("order_mailer.#{template}.title", number: order_number) %></h1>
+
+<p style="margin: 0 0 16px;"><%= t("order_mailer.greeting", name: order.user.name.to_s.split.first.presence || order.user.name) %></p>
+
+<p style="margin: 0 0 16px;"><%= t("order_mailer.#{template}.message", number: order_number) %></p>
+
+<% if template == "shipped" && order.shipping_delivery_days.present? %>
+  <p style="margin: 0 0 16px;"><%= t("order_mailer.shipped.delivery_estimate", count: order.shipping_delivery_days) %></p>
+<% end %>
+
+<%= render "order_mailer/order_summary", order: order %>
+
+<p style="margin: 0 0 24px;">
+  <a href="<%= account_url(order_id: order.id, anchor: "orders") %>" style="display: inline-block; padding: 12px 22px; background: #1a1a1a; color: #ffffff; text-decoration: none; font-weight: 700;"><%= t("order_mailer.view_order") %></a>
+</p>
+
+<p style="margin: 0; color: #6f6b66;"><%= t("order_mailer.closing", store: @store_name) %></p>

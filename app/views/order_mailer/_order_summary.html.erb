@@ -1,0 +1,39 @@
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 24px 0; border-collapse: collapse; font-size: 14px;">
+  <thead>
+    <tr>
+      <th align="left" style="padding: 8px 0; border-bottom: 2px solid #1a1a1a;"><%= t("order_mailer.summary.item") %></th>
+      <th align="center" style="padding: 8px; border-bottom: 2px solid #1a1a1a;"><%= t("order_mailer.summary.quantity") %></th>
+      <th align="right" style="padding: 8px 0; border-bottom: 2px solid #1a1a1a;"><%= t("order_mailer.summary.subtotal") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% order.order_items.includes(:product, :color, :memory, :storage).each do |item| %>
+      <tr>
+        <td style="padding: 10px 0; border-bottom: 1px solid #e6e3df;">
+          <strong><%= item.product.name %></strong>
+          <% if (label = variant_label(item)) %><br><span style="color: #6f6b66; font-size: 13px;"><%= label %></span><% end %>
+        </td>
+        <td align="center" style="padding: 10px 8px; border-bottom: 1px solid #e6e3df;"><%= item.quantity %></td>
+        <td align="right" style="padding: 10px 0; border-bottom: 1px solid #e6e3df; white-space: nowrap;"><%= number_to_currency(item.price * item.quantity) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2" align="right" style="padding: 10px 8px 4px 0; color: #6f6b66;"><%= t("order_mailer.summary.shipping") %><% if order.shipping_service.present? %> (<%= order.shipping_service %>)<% end %></td>
+      <td align="right" style="padding: 10px 0 4px; white-space: nowrap;"><%= number_to_currency(order.shipping_cost) %></td>
+    </tr>
+    <tr>
+      <td colspan="2" align="right" style="padding: 4px 8px 0 0; font-weight: 700;"><%= t("order_mailer.summary.total") %></td>
+      <td align="right" style="padding: 4px 0 0; font-weight: 700; white-space: nowrap;"><%= number_to_currency(order.total) %></td>
+    </tr>
+  </tfoot>
+</table>
+
+<% if order.shipping_address? %>
+  <p style="margin: 0 0 4px; font-weight: 700;"><%= t("order_mailer.summary.shipping_address") %></p>
+  <p style="margin: 0 0 24px; color: #6f6b66;">
+    <% if order.shipping_recipient.present? %><%= order.shipping_recipient %><br><% end %>
+    <%= order.shipping_address_line %>
+  </p>
+<% end %>

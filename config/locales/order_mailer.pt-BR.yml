@@ -1,0 +1,32 @@
+pt-BR:
+  order_mailer:
+    greeting: "Olá, %{name}!"
+    view_order: "Ver meu pedido"
+    closing: "Qualquer dúvida, é só responder este e-mail. Equipe %{store}."
+    footer: "Você está recebendo este e-mail porque fez um pedido na %{store}."
+    summary:
+      item: "Item"
+      quantity: "Qtd."
+      subtotal: "Subtotal"
+      shipping: "Frete"
+      total: "Total"
+      shipping_address: "Endereço de entrega"
+    confirmation:
+      subject: "Recebemos seu pedido #%{number} — %{store}"
+      title: "Pedido #%{number} recebido"
+      message: "Seu pedido foi registrado e está aguardando a confirmação do pagamento. Assim que for confirmado, avisamos por aqui."
+    paid:
+      subject: "Pagamento confirmado do pedido #%{number} — %{store}"
+      title: "Pagamento confirmado"
+      message: "Recebemos o pagamento do pedido #%{number}. Agora vamos separar os itens e preparar o envio."
+    shipped:
+      subject: "Seu pedido #%{number} foi enviado — %{store}"
+      title: "Pedido a caminho"
+      message: "O pedido #%{number} saiu para entrega no endereço abaixo."
+      delivery_estimate:
+        one: "Prazo estimado: 1 dia útil."
+        other: "Prazo estimado: %{count} dias úteis."
+    delivered:
+      subject: "Seu pedido #%{number} foi entregue — %{store}"
+      title: "Pedido entregue"
+      message: "O pedido #%{number} foi entregue. Esperamos que aproveite!"

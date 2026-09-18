@@ -1,0 +1,14 @@
+<%= t("order_mailer.#{template}.title", number: order_number) %>
+
+<%= t("order_mailer.greeting", name: order.user.name.to_s.split.first.presence || order.user.name) %>
+
+<%= t("order_mailer.#{template}.message", number: order_number) %>
+<% if template == "shipped" && order.shipping_delivery_days.present? -%>
+<%= t("order_mailer.shipped.delivery_estimate", count: order.shipping_delivery_days) %>
+<% end -%>
+
+<%= render "order_mailer/order_summary", order: order %>
+
+<%= t("order_mailer.view_order") %>: <%= account_url(order_id: order.id, anchor: "orders") %>
+
+<%= t("order_mailer.closing", store: @store_name) %>
