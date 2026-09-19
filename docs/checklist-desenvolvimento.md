@@ -180,7 +180,9 @@ Bloqueadas até o domínio da loja existir (situação em 18/09/2026). Enquanto 
 
 ---
 
-## 🟠 5. Controle de estoque
+## ⛔ 5. Controle de estoque
+
+**Não será feito — decisão de 18/09/2026.** A loja opera sem controle de estoque no sistema; disponibilidade é gerida fora dele. As opções abaixo ficam registradas caso a decisão mude.
 
 **Problema:** Não existe coluna de estoque em `products` nem em `product_variants`. Qualquer quantidade pode ser vendida.
 
@@ -210,28 +212,30 @@ Bloqueadas até o domínio da loja existir (situação em 18/09/2026). Enquanto 
 
 ---
 
-## 🟠 6. Configurações salvas mas ignoradas
+## ✅ 6. Configurações salvas mas ignoradas
+
+**Concluído em 19/09/2026.** `tax_rate` e `default_order_status` removidos do formulário, do model, das traduções e do banco (migration `RemoveUnusedFieldsFromSettings`). Suíte com 204 exemplos e 0 falhas.
 
 **Problema:** `tax_rate` e `default_order_status` são editáveis em `/admin/settings/shipping`, gravados em `Setting` e nunca lidos.
 
 **Decisão — o que fazer com cada campo:**
 
 - `tax_rate`
-  - [ ] **A. Remover campo e coluna** (recomendado)
+  - [x] **A. Remover campo e coluna** (recomendado) — **escolhida**
     No Brasil o imposto já está embutido no preço; uma taxa separada confunde o cliente.
   - [ ] **B. Aplicar no total do pedido**
     Somar `subtotal * tax_rate` em `Order.create_from_cart!` e mostrar a linha no carrinho e no pedido.
 - `default_order_status`
-  - [ ] **A. Remover campo e coluna** (recomendado)
+  - [x] **A. Remover campo e coluna** (recomendado) — **escolhida**
     O status inicial de um pedido é sempre `pending`; deixar configurável permite quebrar as transições de `STATUS_TRANSITIONS`.
   - [ ] **B. Usar em `Order.create_from_cart!`**
     Só faz sentido se houver um caso real, como loja que aceita pedido sem pagamento online.
 
 **Tarefas:**
 
-- [ ] Aplicar as decisões (migration de remoção ou uso real)
-- [ ] Atualizar `Admin::Settings::ShippingController` e a view correspondente
-- [ ] Atualizar specs de settings
+- [x] Aplicar as decisões (migration de remoção ou uso real)
+- [x] Atualizar `Admin::Settings::ShippingController` e a view correspondente
+- [x] `Setting::ORDER_STATUSES` e as validações dos dois campos removidos; `spec/agents/system_specifications.md` atualizado
 
 ---
 
@@ -258,7 +262,7 @@ Bloqueadas até o domínio da loja existir (situação em 18/09/2026). Enquanto 
 2. **Item 4** — a unificação de auth muda `current_user`, que todo o resto usa; melhor resolver antes de construir em cima.
 3. **Item 3** — e-mail é pré-requisito para confirmação de conta e para os avisos de pagamento.
 4. **Item 2** — pagamento depende de e-mail (confirmação) e de auth estável.
-5. **Item 5** — estoque depende de pagamento para saber quando baixar.
+5. ~~**Item 5**~~ — descartado.
 6. **Item 6 e 7** — podem ser intercalados a qualquer momento; são pequenos e independentes.
 
 ---
@@ -269,6 +273,8 @@ Ao marcar uma opção acima, anote aqui a data e o motivo em uma linha, para que
 
 | Data | Item | Decisão | Motivo |
 | --- | --- | --- | --- |
+| 19/09/2026 | 6 | A + A — remover `tax_rate` e `default_order_status` | Nunca foram lidos; imposto já vem no preço e o status inicial é sempre `pending` |
+| 18/09/2026 | 5 | Não fazer | Decisão do time: estoque não será controlado pelo sistema |
 | 18/09/2026 | 2 | A — Mercado Pago, Checkout Pro (redirect) | PIX, cartão e boleto no mesmo provedor, sandbox sem contrato; redirect tira a loja do escopo PCI |
 | 18/09/2026 | 3 | B — Amazon SES via SMTP | Escolha do time; integração sem gem extra, mais barato em volume. Exige verificar domínio e sair do sandbox |
 | 18/09/2026 | 4 | A — manter Devise | Já estava instalado e no modelo; entrega cadastro, recuperação de senha e remember-me sem código próprio |

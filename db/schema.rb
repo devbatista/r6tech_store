@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_162345) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_203018) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -223,7 +223,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_162345) do
     t.datetime "created_at", null: false
     t.string "currency", default: "BRL"
     t.boolean "default_dark_mode", default: false, null: false
-    t.string "default_order_status", default: "pending"
     t.string "facebook_url"
     t.decimal "free_shipping_threshold", precision: 10, scale: 2
     t.string "instagram_url"
@@ -236,7 +235,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_162345) do
     t.boolean "pay_pix", default: true, null: false
     t.decimal "shipping_fee", precision: 10, scale: 2, default: "0.0"
     t.string "store_name"
-    t.decimal "tax_rate", precision: 5, scale: 2, default: "0.0"
     t.string "timezone", default: "Brasilia"
     t.datetime "updated_at", null: false
     t.string "whatsapp"

@@ -5,14 +5,12 @@ class Setting < ApplicationRecord
   DEFAULT_SENDER = "no-reply@r6tech.store".freeze
   DEFAULT_STORE_NAME = "R6tech Store".freeze
   TIMEZONES = ["Brasilia", "Fernando de Noronha", "Manaus", "Rio Branco"].freeze
-  ORDER_STATUSES = Order.statuses.keys.freeze
 
   before_validation :force_brazilian_real
 
   validates :contact_email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
-  validates :shipping_fee, :tax_rate, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :shipping_fee, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :free_shipping_threshold, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :default_order_status, inclusion: { in: ORDER_STATUSES }, allow_blank: true
   validates :notification_sender, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
 
   def display_name

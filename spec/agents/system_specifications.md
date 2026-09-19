@@ -228,7 +228,6 @@ Campos importantes:
 - `facebook_url`
 - `shipping_fee`
 - `free_shipping_threshold`
-- `default_order_status`
 - flags de pagamento e notificações
 
 O helper `storefront_whatsapp_url` usa `contact_phone`, remove caracteres não numéricos e monta o link `wa.me`.

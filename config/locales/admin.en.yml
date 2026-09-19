@@ -265,8 +265,6 @@ en:
       shipping_fee: "Shipping fee"
       free_shipping_threshold: "Free shipping threshold"
       free_shipping_threshold_placeholder: "e.g. 500.00"
-      tax_rate: "Tax rate (%)"
-      default_order_status: "Default order status"
       check_storage: "Check the storage information"
       storage: "Storage"
       add_storage: "Add storage"

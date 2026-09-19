@@ -35,19 +35,6 @@
           </fieldset>
         </div>
 
-        <div class="product-form-two-columns">
-          <fieldset>
-            <div class="body-title mb-10"><%= t("admin.settings.tax_rate") %></div>
-            <%= form.number_field :tax_rate, step: 0.01, min: 0, placeholder: "0.00" %>
-          </fieldset>
-
-          <fieldset>
-            <div class="body-title mb-10"><%= t("admin.settings.default_order_status") %></div>
-            <div class="select">
-              <%= form.select :default_order_status, Setting::ORDER_STATUSES.map { |s| [translated_order_status(s), s] } %>
-            </div>
-          </fieldset>
-        </div>
       </div>
 
       <div class="product-form-actions">

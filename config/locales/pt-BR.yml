@@ -605,8 +605,6 @@ pt-BR:
       shipping_fee: "Valor do frete"
       free_shipping_threshold: "Valor minimo para frete gratis"
       free_shipping_threshold_placeholder: "ex.: 500,00"
-      tax_rate: "Taxa (%)"
-      default_order_status: "Status padrao do pedido"
       check_storage: "Confira as informações do armazenamento"
       storage: "Armazenamento"
       add_storage: "Adicionar armazenamento"
