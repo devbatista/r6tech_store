@@ -37,12 +37,12 @@ Legenda de prioridade:
   - `bin/dev` + `Procfile.dev`, serviço `css` no `docker-compose.yml`, `dartsass:build` no `bin/docker-dev-entrypoint`
   - `spec/rails_helper.rb` builda o CSS em `before(:suite)` (rspec não passa por `test:prepare`)
   - Arquivos de demo do icomoon removidos de `app/assets/stylesheets/icon/`; `selection.json` movido para `docs/icomoon-selection.json`
-- [ ] Revisar `storefront.css:46`: `width: min(650px, ...)` junto com `min-width: 650px` se contradizem; definir o comportamento desejado no mobile
+- [x] Revisar `storefront.css:46`: `min-width: 650px` removido no item 7
 - [x] Rodar `bundle exec rspec` e confirmar 0 falhas
 - [x] Rodar `RAILS_ENV=production bin/rails assets:precompile` localmente para confirmar que o build passa
 - [ ] Adicionar `assets:precompile` ao pipeline de CI (ou ao `Dockerfile`) para que isso não volte a passar despercebido
 - [ ] Migrar os partials SCSS de `@import` para `@use`/`@forward` (o Dart Sass 3.0 vai remover `@import`; o aviso está silenciado em `config/initializers/dartsass.rb`)
-- [ ] Decidir o destino de `app/assets/stylesheets/scss/app.scss`: não é entrypoint nem é importado por ninguém
+- [x] `app/assets/stylesheets/scss/app.scss` removido no item 7
 
 ---
 
@@ -171,7 +171,7 @@ Bloqueadas até o domínio da loja existir (situação em 18/09/2026). Enquanto 
 - [x] `config.mailer_sender` do Devise lê `Setting#notification_sender` (com fallback), no lugar do placeholder
 - [x] Specs: sessions (merge de carrinho, `return_to`, admin → painel, credenciais inválidas, logout) e registrations (cadastro → logado + merge, role não editável, erros)
 - [ ] Decidir se `confirmable` será ativado (depende do item 3 estar pronto)
-- [ ] Remover `spec/test_helper.rb`, `spec/application_system_test_case.rb`, `spec/channels/` e `spec/fixtures/*.yml`: sobras do Minitest que o RSpec não carrega
+- [x] Sobras do Minitest removidas no item 7
 
 **Comportamento que mudou:**
 
@@ -239,20 +239,26 @@ Bloqueadas até o domínio da loja existir (situação em 18/09/2026). Enquanto 
 
 ---
 
-## 🟡 7. Limpeza e dívida técnica
+## ✅ 7. Limpeza e dívida técnica
 
-- [ ] **`products.price` obrigatório mesmo com variações**
-  O form esconde o campo quando há variação, mas a validação `presence: true` continua em `Product`. Tornar condicional (`unless: -> { product_variants.any? }`) ou preencher automaticamente com o menor preço das variantes.
-- [ ] **Remover `app/javascript/controllers/hello_controller.js`** e a linha correspondente em `controllers/index.js`
-- [ ] **`docs/layouts/store/`** — template HTML original do tema, com Bootstrap, Swiper etc.
-  - [ ] **A. Remover do repositório** (recomendado)
-    Já foi portado para `app/views/storefront` e `app/assets`. Guardar o zip original fora do repo se quiser referência.
-  - [ ] **B. Manter**
-    Só se ainda for consultar páginas do tema que não foram portadas.
-- [ ] **Renomear `db/seeds/5-products.rb` → `6-products.rb`** para a sequência ficar contínua
-- [ ] **Preencher ou remover `spec/models/storage_spec.rb`** (está vazio, 1 pending)
-- [ ] **Verificar `config/locales/pt-BR.yml`** — "Metodos de pagamento" está sem acento nas chaves `payment_methods` e `payment_methods_hint` (contraria `spec/agents/system_specifications.md`)
-- [ ] **Assets do admin** — `app/assets/javascripts` inclui jQuery, Morris, Raphael, jVectorMap e vários `line-chart-*.js`; verificar quais o dashboard realmente usa e remover o resto
+**Concluído em 19/09/2026.** Suíte com 210 exemplos, 0 falhas e 0 pendentes. `docs/layouts/store/` foi mantido por decisão do time.
+
+- [x] **`products.price` obrigatório mesmo com variações** — verificado: não é bug. `Admin::ProductsController#assign_base_price` já deriva o preço base da variação mais barata antes de salvar, então a validação nunca falha pelo formulário. Mantida como está.
+- [x] **`hello_controller.js` removido** (o `index.js` carrega controllers por convenção, sem lista manual)
+- [x] **`docs/layouts/store/`** — **mantido** (decisão de 19/09/2026): referência do tema original para páginas ainda não portadas.
+- [x] **Seeds renumerados**: `5-products.rb` → `6-products.rb`, `db/seeds.rb` atualizado e seeds validados
+- [x] **`spec/models/storage_spec.rb`** preenchido (associações, validações e catálogo de capacidades)
+- [x] **Acentuação em `config/locales/pt-BR.yml`** — 69 linhas corrigidas (`endereço`, `opção`, `não`, `você`, `Métodos de pagamento`, mensagens de erro do Active Record etc.); `devise.pt-BR.yml` reescrito com acentos e "e-mail"
+- [x] **Assets do admin** — Morris, Raphael e jVectorMap ficam (o dashboard usa o donut e o mapa). Removidos os `line-chart-{5,6,8,11,12,13,22}.js` órfãos e seus `javascript_include_tag`; os 20 scripts restantes do dashboard resolvem com 200.
+- [x] Sobras do item 1: `scss/app.scss` (não era importado) removido; `min-width: 650px` do `.hero__content` removido (contradizia `width: min(650px, …)` e causava overflow entre 690 e 760 px)
+- [x] Sobras do item 4: `spec/test_helper.rb`, `spec/application_system_test_case.rb`, `spec/channels/` e `spec/fixtures/*.yml` (Minitest) removidos; `spec/fixtures/files/` mantido
+
+**Ainda em aberto (baixa prioridade):**
+
+- [ ] Migrar os partials SCSS de `@import` para `@use`/`@forward` antes do Dart Sass 3.0
+- [ ] Adicionar `assets:precompile` e `bundle exec rspec` a um pipeline de CI
+- [ ] O mapa "Localização dos usuários" do dashboard ainda é o dos EUA, com dados de exemplo do tema; trocar por dados reais (ou remover) quando houver métricas
+- [ ] `confirmable` do Devise, se a loja quiser exigir confirmação de e-mail no cadastro
 
 ---
 
@@ -263,7 +269,7 @@ Bloqueadas até o domínio da loja existir (situação em 18/09/2026). Enquanto 
 3. **Item 3** — e-mail é pré-requisito para confirmação de conta e para os avisos de pagamento.
 4. **Item 2** — pagamento depende de e-mail (confirmação) e de auth estável.
 5. ~~**Item 5**~~ — descartado.
-6. **Item 6 e 7** — podem ser intercalados a qualquer momento; são pequenos e independentes.
+6. **Item 6 e 7** — concluídos.
 
 ---
 
@@ -273,6 +279,7 @@ Ao marcar uma opção acima, anote aqui a data e o motivo em uma linha, para que
 
 | Data | Item | Decisão | Motivo |
 | --- | --- | --- | --- |
+| 19/09/2026 | 7 | Manter `docs/layouts/store/` | Referência do tema original para partes ainda não portadas |
 | 19/09/2026 | 6 | A + A — remover `tax_rate` e `default_order_status` | Nunca foram lidos; imposto já vem no preço e o status inicial é sempre `pending` |
 | 18/09/2026 | 5 | Não fazer | Decisão do time: estoque não será controlado pelo sistema |
 | 18/09/2026 | 2 | A — Mercado Pago, Checkout Pro (redirect) | PIX, cartão e boleto no mesmo provedor, sandbox sem contrato; redirect tira a loja do escopo PCI |
