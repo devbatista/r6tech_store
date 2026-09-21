@@ -1,6 +1,6 @@
 # Checklist de Desenvolvimento
 
-Pendências identificadas na análise do projeto em 18/09/2026, organizadas por prioridade. Cada item traz as tarefas e, quando há mais de um caminho possível, as opções com uma recomendação. Marque a opção escolhida em **Decisão** antes de começar a implementação, para que o histórico da escolha fique registrado aqui.
+Pendências do projeto organizadas por prioridade, em duas fases: a **fase 1** (itens 1–7, levantada em 18/09/2026 e concluída em 19/09/2026) e a **fase 2** (itens 8–17, levantada em 21/09/2026 a partir do que ficou evidente durante a fase 1). Cada item traz as tarefas e, quando há mais de um caminho possível, as opções com uma recomendação. Marque a opção escolhida em **Decisão** antes de começar a implementação, para que o histórico da escolha fique registrado aqui.
 
 Legenda de prioridade:
 
@@ -253,16 +253,192 @@ Bloqueadas até o domínio da loja existir (situação em 18/09/2026). Enquanto 
 - [x] Sobras do item 1: `scss/app.scss` (não era importado) removido; `min-width: 650px` do `.hero__content` removido (contradizia `width: min(650px, …)` e causava overflow entre 690 e 760 px)
 - [x] Sobras do item 4: `spec/test_helper.rb`, `spec/application_system_test_case.rb`, `spec/channels/` e `spec/fixtures/*.yml` (Minitest) removidos; `spec/fixtures/files/` mantido
 
-**Ainda em aberto (baixa prioridade):**
-
-- [ ] Migrar os partials SCSS de `@import` para `@use`/`@forward` antes do Dart Sass 3.0
-- [ ] Adicionar `assets:precompile` e `bundle exec rspec` a um pipeline de CI
-- [ ] O mapa "Localização dos usuários" do dashboard ainda é o dos EUA, com dados de exemplo do tema; trocar por dados reais (ou remover) quando houver métricas
-- [ ] `confirmable` do Devise, se a loja quiser exigir confirmação de e-mail no cadastro
+**Ainda em aberto:** ver a fase 2 abaixo (itens 9, 13, 14 e 17).
 
 ---
 
-## Ordem sugerida
+# Fase 2 — pendências levantadas em 21/09/2026
+
+Itens que só ficaram evidentes durante a execução da fase 1. Mesma convenção: opções com recomendação onde há escolha, e a decisão registrada na tabela do final.
+
+Legenda de prioridade:
+
+- 🔴 Risco de perda de dados ou bloqueio de deploy
+- 🟠 Funcionalidade incompleta visível para o cliente ou para o admin
+- 🟡 Melhoria e dívida técnica
+
+---
+
+## 🔴 8. Uploads em produção (Active Storage)
+
+**Problema:** `config/environments/production.rb` usa `active_storage.service = :local`. O container Docker de produção é efêmero, então imagens de produto, logo da loja e imagens geradas por IA somem a cada deploy ou restart.
+
+**Decisão — onde guardar os arquivos:**
+
+- [ ] **A. Amazon S3** (recomendado)
+  A conta AWS já vai existir por causa do SES. Bucket privado + URLs assinadas pelo Active Storage; gem `aws-sdk-s3`.
+- [ ] **B. Cloudflare R2**
+  Compatível com S3 (mesma gem), sem custo de saída de dados. Bom se o tráfego de imagens for alto.
+- [ ] **C. Volume persistente no host**
+  Só faz sentido se o deploy for em servidor próprio com Kamal/Docker e um volume montado. Não escala para mais de um container.
+
+**Tarefas:**
+
+- [ ] Adicionar `aws-sdk-s3` e o serviço em `config/storage.yml` com credenciais em `credentials` (`aws.s3.*`)
+- [ ] `config.active_storage.service = :amazon` (ou o nome escolhido) em produção
+- [ ] Definir CORS no bucket se o upload direto pelo navegador for usado
+- [ ] Conferir que `image_processing`/libvips continuam gerando variantes com o storage remoto
+- [ ] Migrar arquivos existentes se já houver ambiente de produção com dados
+
+---
+
+## 🔴 9. Deploy e infraestrutura
+
+**Problema:** existe `Dockerfile` de produção, mas nenhuma definição de onde e como a aplicação roda. Sem isso não há como fechar `RAILS_MASTER_KEY`, banco, Redis, Sidekiq e storage.
+
+**Decisão — plataforma:**
+
+- [ ] **A. Kamal em VPS** (recomendado para custo)
+  Padrão do Rails 8; `kamal init` gera `config/deploy.yml`. Um servidor (Hetzner, DigitalOcean) roda web + Sidekiq + Postgres + Redis via Docker. Mais barato, exige cuidar de backup e atualizações.
+- [ ] **B. PaaS (Render, Fly.io, Railway)**
+  Postgres e Redis gerenciados, deploy por git push, menos operação. Custo mensal maior.
+
+**Tarefas:**
+
+- [ ] Configurar a plataforma escolhida com os serviços web, Sidekiq, Postgres e Redis
+- [ ] Definir `RAILS_MASTER_KEY`, `APP_HOST`, `DATABASE_URL`, `REDIS_URL` e as credenciais dos itens 2, 3 e 8
+- [ ] HTTPS (obrigatório para o webhook do Mercado Pago e para `force_ssl`)
+- [ ] Backup automático do Postgres
+- [ ] **CI**: workflow no GitHub Actions rodando `bundle exec rspec` e `RAILS_ENV=production bin/rails assets:precompile` a cada push (evita repetir o cenário do item 1)
+
+---
+
+## 🟠 10. Monitoramento e proteção
+
+**Problema:** nenhuma ferramenta de erro (Sentry, Honeybadger) e nenhum rate limiting. Falhas em webhook, Sidekiq e e-mail vão só para o log; login e cadastro aceitam tentativas ilimitadas.
+
+**Decisão — rastreamento de erros:**
+
+- [ ] **A. Sentry** (recomendado)
+  Plano gratuito suficiente para começar; captura Rails, Sidekiq e JS.
+- [ ] **B. Honeybadger**
+  Mais simples, foco em Ruby. Plano gratuito menor.
+
+**Tarefas:**
+
+- [ ] Instalar a gem escolhida com o DSN em `credentials`
+- [ ] `rack-attack` com limites em `POST /users/login`, `POST /users`, `POST /users/password` e `POST /webhooks/mercado_pago`
+- [ ] Alertas de fila do Sidekiq (jobs mortos) — o painel `sidekiq/web` pode ser montado em `/admin/sidekiq` só para admins
+- [ ] Health check `/up` já existe; apontar o monitor da plataforma para ele
+
+---
+
+## 🟠 11. Páginas legais
+
+**Problema:** não há termos de uso, política de privacidade nem política de trocas e devoluções. Para e-commerce no Brasil são exigidas pelo CDC (direito de arrependimento em 7 dias) e pela LGPD.
+
+**Tarefas:**
+
+- [ ] Páginas estáticas (ou editáveis no admin) para termos, privacidade e trocas/devoluções
+- [ ] Links no rodapé da loja e aceite no cadastro/checkout
+- [ ] Dados da empresa (CNPJ, endereço, contato) no rodapé — exigência do Decreto 7.962/2013
+- [ ] Textos revisados por alguém com conhecimento jurídico antes de publicar
+
+---
+
+## 🟠 12. Dashboard e busca do admin
+
+**Problema:** o dashboard mostra números, produtos ("Neptune Longsleeve") e o mapa dos EUA vindos do template do tema. O campo de busca do header do admin é um formulário estático que não faz nada.
+
+**Tarefas:**
+
+- [ ] Substituir os cards por métricas reais: pedidos e receita (hoje, 7 dias, 30 dias), ticket médio, pedidos por status, produtos mais vendidos, clientes novos
+- [ ] Trocar os gráficos ApexCharts para consumir esses dados (`line-chart-1..4` e `7`) ou remover os que não fizerem sentido
+- [ ] Remover o mapa dos EUA (jVectorMap, Raphael e Morris podem sair junto se nada mais os usar) ou trocar por dados por estado do Brasil
+- [ ] Busca do header: procurar produtos, pedidos (por id curto) e clientes (por nome/e-mail)
+
+---
+
+## 🟠 13. Frete: etiqueta e rastreio
+
+**Problema:** o Melhor Envio é usado só para cotar. Comprar a etiqueta, imprimir e obter o código de rastreio é manual e fora do sistema; o status `shipped` é marcado à mão e o e-mail de envio não leva rastreio.
+
+**Decisão — escopo:**
+
+- [ ] **A. Só rastreio** (recomendado para começar)
+  Campo `tracking_code` no pedido, preenchido pelo admin ao marcar como enviado; e-mail de envio e página do pedido mostram o código com link para os Correios/transportadora.
+- [ ] **B. Compra de etiqueta pelo sistema**
+  Integrar o carrinho de fretes do Melhor Envio (`/api/v2/me/cart`, checkout, geração e impressão da etiqueta). Mais trabalho; depende de saldo na conta do Melhor Envio.
+
+**Tarefas (opção A):**
+
+- [ ] Migration `orders.tracking_code` e `orders.tracking_url`
+- [ ] Campo no `update_status` do admin quando o novo status for `shipped`
+- [ ] Exibir na página do pedido, na conta do cliente e em `OrderMailer#shipped`
+
+---
+
+## 🟠 14. Cancelamento e estorno
+
+**Problema:** o cliente pode cancelar um pedido `pending` e o admin pode cancelar um `paid`, mas nada acontece no Mercado Pago: um pagamento aprovado continua aprovado lá e o dinheiro não volta.
+
+**Tarefas:**
+
+- [ ] `Payments::Refund` chamando `POST /v1/payments/:id/refunds` quando um pedido `paid` for cancelado pelo admin
+- [ ] Definir se o cliente pode cancelar um pedido já pago (direito de arrependimento em 7 dias sugere que sim, com estorno)
+- [ ] `OrderMailer#cancelled` (hoje cancelamento não gera e-mail) — exige a flag `notify_on_cancelled` em `Setting`
+- [ ] Specs com `webmock` no padrão de `spec/services/payments`
+
+---
+
+## 🟡 15. Confirmação de e-mail no cadastro
+
+**Problema:** qualquer e-mail é aceito no cadastro sem verificação. Depende do item 3 estar operacional (SES fora do sandbox).
+
+**Tarefas:**
+
+- [ ] Ativar `:confirmable` no `User` com a migration do Devise (`confirmation_token`, `confirmed_at`, `confirmation_sent_at`, `unconfirmed_email`)
+- [ ] Decidir `allow_unconfirmed_access_for` (ex.: 2 dias) para não travar a compra de quem acabou de se cadastrar
+- [ ] View `users/confirmations/new` no visual da loja e `Users::ConfirmationsController` com o `BaseDeviseController`
+- [ ] Marcar como confirmados os usuários existentes na migration
+
+---
+
+## 🟡 16. Cadastro de produtos: SEO e catálogo
+
+**Problema:** URLs usam UUID (`/products/5b8020de-…`), não há `sitemap.xml`, meta description nem dados estruturados. Para uma loja que depende de busca orgânica isso pesa.
+
+**Tarefas:**
+
+- [ ] Slug em produtos e categorias (`friendly_id` ou coluna `slug` própria) mantendo os UUIDs como redirect
+- [ ] `sitemap.xml` (gem `sitemap_generator`) gerado por job diário
+- [ ] Meta tags por página (título, descrição, Open Graph) e JSON-LD `Product`/`Offer` na página do produto
+- [ ] `robots.txt` liberando a loja e bloqueando `/admin`, `/cart`, `/account`
+
+---
+
+## 🟡 17. Dívida técnica remanescente
+
+- [ ] Migrar os partials SCSS de `@import` para `@use`/`@forward` antes do Dart Sass 3.0 (aviso silenciado em `config/initializers/dartsass.rb`)
+- [ ] `Order#status` usa strings soltas em `STATUS_TRANSITIONS`; considerar uma state machine simples se as regras crescerem (estorno, devolução)
+- [ ] Locale `en.yml` está desatualizado em relação ao `pt-BR.yml` em algumas seções do admin; decidir se o inglês continua sendo suportado ou remover o seletor de idioma
+- [ ] Assets do admin ainda carregam jQuery e Bootstrap 5 completos; avaliar redução quando o dashboard for refeito (item 12)
+
+---
+
+## Ordem sugerida — fase 2
+
+1. **Item 8 (storage)** — pequeno e evita perda de dados no primeiro deploy.
+2. **Item 9 (deploy + CI)** — destrava os passos operacionais dos itens 2 e 3 e a verificação do domínio.
+3. **Item 10 (monitoramento)** — antes de ter clientes reais.
+4. **Item 11 (páginas legais)** — obrigatório antes de vender.
+5. **Itens 13 e 14** — completam o ciclo do pedido (envio e estorno).
+6. **Item 12** — dashboard útil para o dia a dia do admin.
+7. **Itens 15, 16 e 17** — quando houver fôlego.
+
+---
+
+## Ordem sugerida — fase 1 (concluída)
 
 1. **Item 1** — pequeno, destrava a suíte e o deploy. Fazer primeiro.
 2. **Item 4** — a unificação de auth muda `current_user`, que todo o resto usa; melhor resolver antes de construir em cima.
