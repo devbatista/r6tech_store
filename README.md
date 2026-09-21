@@ -11,7 +11,7 @@ E-commerce de eletrônicos (celulares e afins) construído com Ruby on Rails. Po
 - Hotwire (Turbo + Stimulus) com importmap
 - Propshaft + Dart Sass (`dartsass-rails`) para assets
 - Devise para autenticação
-- Active Storage para imagens de produto
+- Active Storage para imagens (disco em desenvolvimento, Amazon S3 em produção)
 - Sidekiq + sidekiq-scheduler (Redis) para jobs em background
 - Kaminari para paginação
 - RSpec, FactoryBot, Shoulda Matchers e Capybara para testes
@@ -94,14 +94,38 @@ SIDEKIQ_CONCURRENCY=5
 MERCADO_PAGO_ACCESS_TOKEN=TEST-...   # credencial de teste fora de produção
 MERCADO_PAGO_WEBHOOK_SECRET=       # assinatura secreta configurada no painel de webhooks
 
-# Amazon SES — envio de e-mail em produção
-APP_HOST=r6tech.store          # host usado nos links dos e-mails
+# AWS (produção)
+APP_HOST=r6tech.store          # host usado nos links dos e-mails e no CORS do bucket
 AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=             # S3; pode ficar vazio se o container tiver IAM role
+AWS_SECRET_ACCESS_KEY=
+AWS_S3_BUCKET=r6tech-store-production
 SES_SMTP_USERNAME=
 SES_SMTP_PASSWORD=
 ```
 
 Os tokens do Melhor Envio e da OpenAI também podem ser guardados nas credentials do Rails, em `melhor_envio.token` e `openai.api_key`. As credenciais do Mercado Pago podem ficar em `mercado_pago.access_token` e `mercado_pago.webhook_secret`. O webhook precisa ser cadastrado no painel de desenvolvedor do Mercado Pago apontando para `https://<APP_HOST>/webhooks/mercado_pago` (evento *Pagamentos*); a URL só é enviada na preference quando `APP_HOST` é servido por HTTPS, então em desenvolvimento o status chega pela URL de retorno do checkout. As credenciais SMTP do SES (geradas no console do SES, diferentes das chaves IAM) podem ficar em `aws.ses.smtp_username`, `aws.ses.smtp_password` e `aws.ses.region`. O domínio do remetente precisa estar verificado no SES e a conta fora do sandbox para enviar a qualquer destinatário.
+
+### Uploads no S3
+
+Em produção o Active Storage usa o serviço `amazon` de `config/storage.yml`: bucket **privado**, com URLs assinadas de curta duração geradas pela aplicação. Credenciais em `credentials` (`aws.s3.access_key_id`, `secret_access_key`, `region`, `bucket`) ou nas variáveis `AWS_*`; sem nenhuma das duas o SDK usa a IAM role do container. Configuração mínima do bucket:
+
+- Block Public Access ligado (o bucket não precisa ser público)
+- Usuário/role IAM com `s3:PutObject`, `s3:GetObject`, `s3:DeleteObject` e `s3:ListBucket` no bucket
+- **CORS**, porque o formulário de produto envia as imagens direto do navegador para o S3:
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://r6tech.store"],
+    "AllowedMethods": ["PUT"],
+    "AllowedHeaders": ["Content-Type", "Content-MD5", "Content-Disposition"],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+Para migrar arquivos já enviados para o disco local: `bin/rails storage:migrate FROM=local TO=amazon`.
 
 Em desenvolvimento nada é enviado: os e-mails ficam em [http://localhost:3000/letter_opener](http://localhost:3000/letter_opener) e os templates podem ser conferidos em [http://localhost:3000/rails/mailers](http://localhost:3000/rails/mailers). Para usar o Melhor Envio em produção, troque `MELHOR_ENVIO_BASE_URL` por `https://melhorenvio.com.br` e use um token de produção.
 

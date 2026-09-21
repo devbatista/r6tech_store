@@ -269,13 +269,15 @@ Legenda de prioridade:
 
 ---
 
-## 🔴 8. Uploads em produção (Active Storage)
+## ✅ 8. Uploads em produção (Active Storage)
+
+**Concluído em 21/09/2026.** Produção usa o serviço `amazon` (S3, bucket privado com URLs assinadas); desenvolvimento e teste continuam em disco. Falta só criar o bucket e as credenciais na AWS.
 
 **Problema:** `config/environments/production.rb` usa `active_storage.service = :local`. O container Docker de produção é efêmero, então imagens de produto, logo da loja e imagens geradas por IA somem a cada deploy ou restart.
 
 **Decisão — onde guardar os arquivos:**
 
-- [ ] **A. Amazon S3** (recomendado)
+- [x] **A. Amazon S3** (recomendado) — **escolhida**
   A conta AWS já vai existir por causa do SES. Bucket privado + URLs assinadas pelo Active Storage; gem `aws-sdk-s3`.
 - [ ] **B. Cloudflare R2**
   Compatível com S3 (mesma gem), sem custo de saída de dados. Bom se o tráfego de imagens for alto.
@@ -284,11 +286,22 @@ Legenda de prioridade:
 
 **Tarefas:**
 
-- [ ] Adicionar `aws-sdk-s3` e o serviço em `config/storage.yml` com credenciais em `credentials` (`aws.s3.*`)
-- [ ] `config.active_storage.service = :amazon` (ou o nome escolhido) em produção
-- [ ] Definir CORS no bucket se o upload direto pelo navegador for usado
-- [ ] Conferir que `image_processing`/libvips continuam gerando variantes com o storage remoto
-- [ ] Migrar arquivos existentes se já houver ambiente de produção com dados
+- [x] `aws-sdk-s3` e o serviço `amazon` em `config/storage.yml`: credenciais em `credentials` (`aws.s3.*`) ou `AWS_*`, com fallback para IAM role; `cache_control` de 1 ano nos objetos
+- [x] `config.active_storage.service = :amazon` em produção
+- [x] CORS documentado no README (o formulário de produto usa `direct_upload: true`)
+- [x] Variantes: `image_processing`/libvips já estão no Dockerfile de produção; o `S3Service` baixa o original e sobe a variante, nada muda no código
+- [x] `bin/rails storage:migrate FROM=local TO=amazon` para migrar blobs existentes
+- [x] Verificado com boot em `RAILS_ENV=production`: serviço, bucket, região e credenciais resolvidos das variáveis
+
+**Pendências operacionais (fora do código):**
+
+- [ ] Criar o bucket (mesma região do SES, Block Public Access ligado) e o usuário IAM com permissão restrita ao bucket
+- [ ] Aplicar o CORS do README com o domínio real em `AllowedOrigins`
+- [ ] Gravar as credenciais em `credentials` (`aws.s3.*`) ou nas variáveis de ambiente da plataforma de deploy (item 9)
+
+**Decisões menores tomadas:**
+
+- Bucket privado com URLs assinadas (padrão do Rails) em vez de `public: true`: não exige liberar ACLs no bucket nem desligar o Block Public Access. Se no futuro for preciso CDN ou URLs permanentes para SEO de imagens (item 16), a troca é `public: true` no serviço + bucket com ACLs habilitadas ou CloudFront na frente.
 
 ---
 
@@ -455,6 +468,7 @@ Ao marcar uma opção acima, anote aqui a data e o motivo em uma linha, para que
 
 | Data | Item | Decisão | Motivo |
 | --- | --- | --- | --- |
+| 21/09/2026 | 8 | A — Amazon S3, bucket privado | Conta AWS já necessária pelo SES; privado + URL assinada dispensa ACLs públicas |
 | 19/09/2026 | 7 | Manter `docs/layouts/store/` | Referência do tema original para partes ainda não portadas |
 | 19/09/2026 | 6 | A + A — remover `tax_rate` e `default_order_status` | Nunca foram lidos; imposto já vem no preço e o status inicial é sempre `pending` |
 | 18/09/2026 | 5 | Não fazer | Decisão do time: estoque não será controlado pelo sistema |
